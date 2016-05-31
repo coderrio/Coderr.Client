@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Unauthorized</title>
+    <meta name="ROBOTS" content="NOINDEX, NOFOLLOW"/>
+    <meta name="X-Powered-By" content="http://onetrueerror.com"/>
+    <style type="text/css">
+        /*CssStyles*/
+        body {
+            background: #D2EDF6;
+            font-family: Segoe UI, Segoe UI Light, Arial;
+            font-size: 18px;
+            margin-top: 0;
+            text-align: center;
+        }
+
+        .container {
+            margin: 0 auto;
+            padding: 10px;
+            width: 760px;
+        }
+
+        .content { display: inline; }
+
+        .img {
+            text-align: center;
+            width: 100%;
+        }
+
+        @media only screen and (max-width: 720px) {
+            .img img { max-width: 100%; }
+
+            .container { width: 90%; }
+        }
+
+
+        form { width: 100%; }
+    </style>
+</head>
+<body>
+<div class="img">
+    <img src="https://onetrueerror.com/images/Error/Humor/Unauthorized.jpg"/>
+</div>
+<div class="container">
+    <form method="post" action="$URL$">
+        <p>
+            The page that you visited requires that you login.
+        </p>
+        <input type="hidden" value="$reportId$" name="ReportId"/>
+        <input type="hidden" name="Allowed" value="true"/>
+        <div class="AllowFeedbackStyle">
+            <p>
+                If you have logged in, leave feedback below and we'll take a look at it.
+            </p>
+            <textarea rows="10" style="background-color: #f0f0f0; border: 1px solid #ff3333; width: 100%;" name="Description"></textarea>
+        </div>
+
+        <div class="AskForEmailAddress">
+            <p>If this is indeed an error, leave your email below if you would like to receive status updates.</p>
+            <input type="email" style="background-color: #f0f0f0; border: 1px solid #ff3333; width: 100%;" name="Email" placeholder="email address"/>
+        </div>
+        <br/>
+        <input type="submit" value="Submit" style="display: block; width: 100%"/>
+    </form>
+</div>
+<div style="clear: both;"></div>
+
+</body>
+</html>
