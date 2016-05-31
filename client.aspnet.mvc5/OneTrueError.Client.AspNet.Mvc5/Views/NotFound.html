@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>File not found</title>
+    <meta name="ROBOTS" content="NOINDEX, NOFOLLOW"/>
+    <meta name="X-Powered-By" content="http://onetrueerror.com"/>
+    <style type="text/css">
+        /*CssStyles*/
+        body {
+            font-family: Segoe UI, Segoe UI Light, Arial;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .container {
+            margin: 0 auto;
+            padding: 10px;
+            width: 760px;
+        }
+
+        .content { display: inline; }
+
+        .img {
+            text-align: center;
+            width: 100%;
+        }
+
+        @media only screen and (max-width: 720px) {
+            .img img { max-width: 100%; }
+
+            .container { width: 90%; }
+        }
+
+
+        form { width: 100%; }
+    </style>
+</head>
+<body>
+<div class="img">
+    <img src="https://onetrueerror.com/images/Error/Humor/NotFound.jpg"/>
+</div>
+<div class="container">
+    <form method="post" action="$URL$">
+        <p>
+            All information about the missing page have been logged and we'll try to fix it
+            as soon as possible.
+        </p>
+        <input type="hidden" value="$reportId$" name="ReportId"/>
+        <input type="hidden" name="Allowed" value="true"/>
+        <div class="AllowFeedbackStyle">
+            <p>
+                Can you tell us which page you came from and what link you clicked on?
+            </p>
+            <textarea rows="10" style="background-color: #FFF5AD; border: 1px solid #C8B772; width: 100%;" name="Description"></textarea>
+        </div>
+
+        <div class="AskForEmailAddress">
+            <p>Enter your email address if you would like to receive information about when the link have been corrected.</p>
+            <input type="text" style="background-color: #FFF5AD; border: 1px solid #C8B772; width: 100%;" name="Email" placeholder="email address"/>
+        </div>
+        <br/>
+        <input type="submit" value="Submit" style="display: block; width: 100%"/>
+    </form>
+</div>
+<div style="clear: both;"></div>
+
+</body>
+</html>

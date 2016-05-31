@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>OneTrueError.Client.AspNet.Mvc5</id>
+    <version>1.0.0-rc01</version>
+    <authors>Gauffin Interactive AB</authors>
+    <owners>Gauffin Interactive AB</owners>
+    <licenseUrl>http://github.com/gauffininteractive/onetrueerror.client/license.md</licenseUrl>
+    <projectUrl>http://onetrueerror.com</projectUrl>
+    <iconUrl>http://onetrueerror.com/images/ote_50x50.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <summary>
+      Exception capturing library for ASP.NET MVC5.
+    </summary>
+    <description>
+      Exception capturing library. 
+      
+      Detects, uploads and perform different analyses on exceptions.
+
+      Know why, how often and where exceptions are thrown.
+    </description>    <releaseNotes>Beta publish.</releaseNotes>
+    <copyright>Copyright 2016</copyright>
+    <tags>exception error reporting analysis asp.net mvc mvc5</tags>
+    <dependencies>
+      <dependency id="Newtonsoft.json" version="5.0.8" />
+    <dependency id="OneTrueError.Client" version="1.0.0-rc04" />
+    </dependencies>
+  </metadata>
+</package>

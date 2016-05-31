@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+
+<package>
+  <metadata>
+    <id>OneTrueError.Client</id>
+    <version>1.0.0-rc05</version>
+    <authors>Gauffin Interactive AB</authors>
+    <owners>Gauffin Interactive AB</owners>
+    <licenseUrl>http://github.com/gauffininteractive/onetrueerror.client/license.md</licenseUrl>
+    <projectUrl>http://onetrueerror.com</projectUrl>
+    <iconUrl>http://onetrueerror.com/images/ote_50x50.png</iconUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <summary>
+      Exception handling library for .NET.
+    </summary>
+    <description>
+      Exception handling library. Detects, uploads and perform different analyses on exceptions.
+
+      Know why, how often and where exceptions are thrown.
+    </description>
+    <releaseNotes>Beta publish.</releaseNotes>
+    <copyright>Copyright 2016</copyright>
+    <tags>exception error reporting analysis</tags>
+    <dependencies>
+      <dependency id="Newtonsoft.json" version="8.0.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="Nuget\Install.ps1" target="tools\Install.ps1" />
+  </files>
+</package>
