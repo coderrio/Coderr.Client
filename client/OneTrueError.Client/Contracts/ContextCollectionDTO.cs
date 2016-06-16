@@ -28,32 +28,32 @@ namespace OneTrueError.Client.Contracts
         {
             if (name == null) throw new ArgumentNullException("name");
             Name = name;
-            Items = new Dictionary<string, string>();
+            Properties = new Dictionary<string, string>();
         }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ContextCollectionDTO" /> class.
         /// </summary>
         /// <param name="name">Collection name (will be shown in the web site).</param>
-        /// <param name="items">All items in this collection.</param>
+        /// <param name="items">All Properties in this collection.</param>
         /// <exception cref="System.ArgumentNullException">
         ///     name
         ///     or
-        ///     items
+        ///     Properties
         /// </exception>
         public ContextCollectionDTO(string name, NameValueCollection items)
         {
             if (name == null) throw new ArgumentNullException("name");
             if (items == null) throw new ArgumentNullException("items");
             Name = name;
-            Items = new Dictionary<string, string>();
+            Properties = new Dictionary<string, string>();
             foreach (string key in items)
             {
                 if (key == null)
                     Debugger.Break();
 
                 var value = items[key];
-                Items.Add(key ?? "", value);
+                Properties.Add(key ?? "", value);
             }
         }
 
@@ -61,43 +61,43 @@ namespace OneTrueError.Client.Contracts
         ///     Initializes a new instance of the <see cref="ContextCollectionDTO" /> class.
         /// </summary>
         /// <param name="name">Collection name (will be shown in the web site).</param>
-        /// <param name="items">All items in this collection.</param>
+        /// <param name="properties">All Properties in this collection.</param>
         /// <exception cref="System.ArgumentNullException">
         ///     name
         ///     or
-        ///     items
+        ///     Properties
         /// </exception>
-        public ContextCollectionDTO(string name, IDictionary<string, string> items)
+        public ContextCollectionDTO(string name, IDictionary<string, string> properties)
         {
             if (name == null) throw new ArgumentNullException("name");
-            if (items == null) throw new ArgumentNullException("items");
+            if (properties == null) throw new ArgumentNullException("properties");
             Name = name;
-            Items = items;
+            Properties = properties;
         }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ContextCollectionDTO" /> class.
         /// </summary>
         /// <param name="name">Collection name (will be shown in the web site).</param>
-        /// <param name="items">All items in this collection.</param>
+        /// <param name="properties">All Properties in this collection.</param>
         /// <exception cref="System.ArgumentNullException">
         ///     name
         ///     or
-        ///     items
+        ///     Properties
         /// </exception>
-        public ContextCollectionDTO(string name, Dictionary<string, string> items)
+        public ContextCollectionDTO(string name, Dictionary<string, string> properties)
         {
             if (name == null) throw new ArgumentNullException("name");
-            if (items == null) throw new ArgumentNullException("items");
+            if (properties == null) throw new ArgumentNullException("properties");
             Name = name;
-            Items = items;
+            Properties = properties;
         }
 
         /// <summary>
-        ///     All items in the collection
+        ///     All Properties in the collection
         /// </summary>
         [DataMember]
-        public IDictionary<string, string> Items { get; set; }
+        public IDictionary<string, string> Properties { get; set; }
 
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace OneTrueError.Client.Contracts
         public override string ToString()
         {
             return Name + " [" + string.Join("\r\n\t",
-                Items.Select(x => x.Key + "=" + x.Value)) + "]\r\n";
+                Properties.Select(x => x.Key + "=" + x.Value)) + "]\r\n";
         }
     }
 }

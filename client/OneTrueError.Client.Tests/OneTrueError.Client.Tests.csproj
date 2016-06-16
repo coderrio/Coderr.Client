@@ -43,6 +43,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -57,6 +58,7 @@
     <Compile Include="ContextCollections\UserCredentialsTests.cs" />
     <Compile Include="ContextCollections\UserSuppliedInformationTests.cs" />
     <Compile Include="ContextInfoTests.cs" />
+    <Compile Include="CustomDictionary.cs" />
     <Compile Include="ObjectToContextCollectionTests.cs" />
     <Compile Include="PartialTrustRunnerAttribute.cs" />
     <Compile Include="PartialTrustTest.cs" />

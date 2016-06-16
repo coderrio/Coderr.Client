@@ -47,7 +47,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="OneTrueError.Client, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\OneTrueError.Client.1.0.0-rc05\lib\net40\OneTrueError.Client.dll</HintPath>
+      <HintPath>..\packages\OneTrueError.Client.1.0.0-rc09\lib\net40\OneTrueError.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.DynamicData" />
@@ -102,6 +102,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Nuget\ReadMe.txt" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />

@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>An error occurred</title>
+    <meta name="ROBOTS" content="NOINDEX, NOFOLLOW" />
+    <meta name="X-powered-with" content="http://onetrueerror.com" />
+    <style type="text/css">
+        /*CssStyles*/
+        body {
+            background: #f0f0f0;
+            font-family: Segoe UI, Segoe UI Light, Arial;
+        }
+
+        .img {
+            width: 279px;
+            height: 100%;
+        }
+
+        .container {
+            margin: 0 auto;
+            width: 100%;
+            background: white;
+            border: 1px solid #eeeeee;
+            padding: 10px;
+        }
+
+        .content {
+            display: inline;
+        }
+
+        @media only screen and (min-width : 720px) {
+            .img {
+                float: left;
+            }
+
+            .content {
+                float: right;
+                width: 400px;
+            }
+
+            .container {
+                width: 720px;
+            }
+        }
+
+
+        hr {
+            background: #f0f0f0;
+        }
+
+        form {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div style="" class="container">
+        <div style="width: 100%; text-align: center">
+            <h1>Looks like something went wrong!</h1>
+        </div>
+        <form method="post" action="$URL$">
+            <div class="img">
+                <img src="https://onetrueerror.com/images/WebError2.jpg" />
+            </div>
+            <div class="content">
+                <p>
+                    Thanks for taking the time and letting us know about the issue.
+                </p>
+                <p>
+                    We’re working to fix it for you as fast as we can, apologies for the inconvenience.
+                </p>
+                <input type="hidden" value="$reportId$" name="reportId" />
+                <div class="AllowSubmissionStyle">
+                    <p>
+                        However, If you allow us to collect additional error information we'll be able to analyze this error much faster.
+                    </p>
+                    <input type="checkbox" name="Allowed" value="true" checked="$AllowReportUploading$" />
+                    I allow thy to collect the additional information.
+                </div>
+                <div class="AllowFeedbackStyle">
+                    <p>Could you please let us know how to reproduce it? Any information you give us will help us solve it faster.</p>
+                    <textarea rows="10" cols="40" name="Description"></textarea>
+                </div>
+
+                <div class="AskForEmailAddress">
+                    <p>Enter your email address if you would like to receive status updates about this error.</p>
+                    <input type="text" name="email" placeholder="email address" />
+                </div>
+                <hr />
+                <input type="submit" value="Send report" />
+                <a href="/">Back to homepage</a>
+            </div>
+            <div style="clear: both;"></div>
+        </form>
+    </div>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <package>
   <metadata>
     <id>OneTrueError.Client</id>
-    <version>1.0.0-rc05</version>
+    <version>1.0.0-rc09</version>
     <authors>Gauffin Interactive AB</authors>
     <owners>Gauffin Interactive AB</owners>
     <licenseUrl>http://github.com/gauffininteractive/onetrueerror.client/license.md</licenseUrl>
@@ -26,6 +26,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="Nuget\Install.ps1" target="tools\Install.ps1" />
+    <file src="Nuget/ReadMe.txt" target="readme.txt" />
   </files>
 </package>

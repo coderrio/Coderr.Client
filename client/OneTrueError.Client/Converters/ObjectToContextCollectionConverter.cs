@@ -6,23 +6,69 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using OneTrueError.Client.Contracts;
 
 namespace OneTrueError.Client.Converters
 {
     /// <summary>
-    ///     Converts an object into a context collection
+    ///     Converts an object into a context collection.
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         Anonymous objects are added as a "CustomData" collection while all other objects are added in a collection
-    ///         which is named as their type name.
+    ///         The following conversions are supported:
     ///     </para>
+    ///     <list type="table">
+    ///         <listheader>
+    ///             <term>type</term>
+    ///             <description>description</description>
+    ///         </listheader>
+    ///         <item>
+    ///             <term>anonymous object</term>
+    ///             <description>Collection will be named <c>CustomData</c>. All properties will be included</description>
+    ///         </item>
+    ///         <item>
+    ///             <term>class</term>
+    ///             <description>Collection will be named as the class. All properties will be included</description>
+    ///         </item>
+    ///         <item>
+    ///             <term>
+    ///                 <see cref="ContextCollectionDTO" />
+    ///             </term>
+    ///             <description>Collection is included directly</description>
+    ///         </item>
+    ///         <item>
+    ///             <term>
+    ///                 <c>ContextCollectionDTO[]</c>
+    ///             </term>
+    ///             <description>All collections will be added as different ones (and not nested)</description>
+    ///         </item>
+    ///     </list>
     /// </remarks>
     public class ObjectToContextCollectionConverter
     {
+        private readonly MethodInfo _dictionaryConverterMethod;
+        private readonly MethodInfo _keyValuePairEnumeratorConverterMethod;
         private string[] _propertiesToIgnore = new string[0];
+
+        /// <summary>
+        ///     Creates a new instance of <see cref="ObjectToContextCollectionConverter" />.
+        /// </summary>
+        public ObjectToContextCollectionConverter()
+        {
+            MaxPropertyCount = 10000;
+            _dictionaryConverterMethod = GetType()
+                .GetMethod("ConvertDictionary", BindingFlags.Instance | BindingFlags.NonPublic);
+            _keyValuePairEnumeratorConverterMethod = GetType()
+                .GetMethod("ConvertKvpEnumerator", BindingFlags.Instance | BindingFlags.NonPublic);
+        }
+
+        /// <summary>
+        ///     Maximum number of properties that can be added during the collection process.
+        /// </summary>
+        /// <value>
+        ///     Default is 10,000
+        /// </value>
+        public int MaxPropertyCount { get; set; }
 
         /// <summary>
         ///     Turn an object into a string which can be used for debugging.
@@ -42,20 +88,40 @@ namespace OneTrueError.Client.Converters
                 throw new ArgumentNullException("instance");
             if (IsFilteredOut(instance))
                 return new ContextCollectionDTO(collectionName,
-                    new Dictionary<string, string> {{"Error", "The object type can not be traversed by OneTrueError"}});
+                    new Dictionary<string, string> { { "Error", "The object type can not be traversed by OneTrueError" } });
 
             try
             {
+                var dictIf = GetGenericDictionaryInterface(instance);
+                if (dictIf != null)
+                {
+                    var contextCollection = new ContextCollectionDTO(collectionName);
+                    var path = new List<object>();
+                    _dictionaryConverterMethod.MakeGenericMethod(dictIf.GetGenericArguments())
+                        .Invoke(this, new[] { "", instance, contextCollection, path });
+                    return contextCollection;
+                }
+                var kvpTypes = GetKeyValuePairFromEnumeratorInterface(instance);
+                if (kvpTypes != null)
+                {
+                    var contextCollection = new ContextCollectionDTO(collectionName);
+                    var path = new List<object>();
+                    _keyValuePairEnumeratorConverterMethod.MakeGenericMethod(kvpTypes)
+                        .Invoke(this, new[] { "", instance, contextCollection, path });
+                    return contextCollection;
+                }
                 if (instance is ContextCollectionDTO)
-                    return (ContextCollectionDTO) instance;
+                    return (ContextCollectionDTO)instance;
                 if (instance is IDictionary<string, string>)
-                    return new ContextCollectionDTO(collectionName, (IDictionary<string, string>) instance);
+                    return new ContextCollectionDTO(collectionName, (IDictionary<string, string>)instance);
                 if (instance is NameValueCollection)
-                    return new ContextCollectionDTO(collectionName, (NameValueCollection) instance);
+                    return new ContextCollectionDTO(collectionName, (NameValueCollection)instance);
+                if (instance is IDictionary)
+                    return ConvertDictionaryToCollection(collectionName, (IDictionary)instance);
                 var collection = new ContextCollectionDTO(collectionName);
                 if (IsSimpleType(instance.GetType()))
                 {
-                    collection.Items.Add("Value", instance.ToString());
+                    collection.Properties.Add("Value", instance.ToString());
                 }
                 else
                 {
@@ -96,11 +162,11 @@ namespace OneTrueError.Client.Converters
 
 
             if (instance is ContextCollectionDTO)
-                return (ContextCollectionDTO) instance;
+                return (ContextCollectionDTO)instance;
             if (instance is IDictionary<string, string>)
-                return new ContextCollectionDTO("ContextData", (IDictionary<string, string>) instance);
+                return new ContextCollectionDTO("ContextData", (IDictionary<string, string>)instance);
             if (instance is NameValueCollection)
-                return new ContextCollectionDTO("ContextData", (NameValueCollection) instance);
+                return new ContextCollectionDTO("ContextData", (NameValueCollection)instance);
 
             var name = instance.GetType().IsAnonymousType()
                 ? "ContextData"
@@ -150,7 +216,7 @@ namespace OneTrueError.Client.Converters
         protected void ReflectObject(object instance, string prefix, ContextCollectionDTO contextCollection,
             List<object> path)
         {
-            if (path.Contains(instance) || path.Count > 3)
+            if (path.Contains(instance) || path.Count > 10 || MaxPropertyCount <= contextCollection.Properties.Count)
                 return;
             if (IsFilteredOut(instance))
                 return;
@@ -166,72 +232,96 @@ namespace OneTrueError.Client.Converters
                 if (_propertiesToIgnore.Contains(propInfo.Name))
                     continue;
 
+                var propertyName = propInfo.Name;
                 object value;
                 try
                 {
                     value = propInfo.GetValue(instance, null);
-                    if (value == null)
-                    {
-                        contextCollection.Items.Add(prefix + propInfo.Name, "null");
-                        continue;
-                    }
-                    var enc = value as Encoding;
-                    if (enc != null)
-                    {
-                        contextCollection.Items.Add(prefix + propInfo.Name, enc.EncodingName);
-                        continue;
-                    }
-                    var v1 = value as DateTimeFormatInfo;
-                    if (v1 != null)
-                    {
-                        contextCollection.Items.Add(prefix + propInfo.Name, v1.NativeCalendarName);
-                        continue;
-                    }
-                    var v2 = value as CultureInfo;
-                    if (v2 != null)
-                    {
-                        contextCollection.Items.Add(prefix + propInfo.Name, "Culture[" + v2.LCID + "]");
-                        continue;
-                    }
                 }
                 catch (Exception exception)
                 {
-                    contextCollection.Items.Add(prefix + propInfo.Name + "._error", exception.ToString());
+                    contextCollection.Properties.Add(prefix + propertyName + "._error", exception.ToString());
                     continue;
                 }
 
-                if (IsSimpleType(value.GetType()) || propInfo.Name == "Encoding")
+                if (value == null)
                 {
-                    contextCollection.Items.Add(prefix + propInfo.Name, value.ToString());
+                    contextCollection.Properties.Add(prefix + propertyName, "null");
+                    continue;
+                }
+                var enc = value as Encoding;
+                if (enc != null)
+                {
+                    contextCollection.Properties.Add(prefix + propertyName, enc.EncodingName);
+                    continue;
+                }
+                var v1 = value as DateTimeFormatInfo;
+                if (v1 != null)
+                {
+                    contextCollection.Properties.Add(prefix + propertyName, v1.NativeCalendarName);
+                    continue;
+                }
+                var v2 = value as CultureInfo;
+                if (v2 != null)
+                {
+                    contextCollection.Properties.Add(prefix + propertyName, "Culture[" + v2.LCID + "]");
+                    continue;
+                }
+                if (IsSimpleType(value.GetType()) || propertyName == "Encoding")
+                {
+                    contextCollection.Properties.Add(prefix + propertyName, value.ToString());
                 }
                 else
                 {
-                    var items = value as IEnumerable;
-                    if (items != null)
+                    var dictIf = GetGenericDictionaryInterface(value);
+                    var kvpTypes = GetKeyValuePairFromEnumeratorInterface(value);
+                    if (dictIf != null)
                     {
+                        _dictionaryConverterMethod.MakeGenericMethod(dictIf.GetGenericArguments())
+                            .Invoke(this, new[] { propertyName, value, contextCollection, path });
+                    }
+                    else if (kvpTypes != null)
+                    {
+                        _keyValuePairEnumeratorConverterMethod.MakeGenericMethod(kvpTypes)
+                            .Invoke(this, new[] { propertyName, value, contextCollection, path });
+                    }
+                    else if (value is IDictionary)
+                    {
+                        var items = value as IDictionary;
+                        foreach (DictionaryEntry kvp in items)
+                        {
+                            var dictPropName = kvp.Key == null ? "null" : kvp.Key.ToString();
+                            var newPrefix = string.Format("{0}{1}[{2}]", prefix, propertyName, dictPropName);
+                            ReflectValue(newPrefix, kvp.Value, contextCollection,
+                                path);
+                        }
+                    }
+                    else if (value is IEnumerable)
+                    {
+                        var items = value as IEnumerable;
                         var index = 0;
                         foreach (var item in items)
                         {
                             var newPrefix = prefix == ""
-                                ? string.Format("{0}[{1}].", propInfo.Name, index)
-                                : string.Format("{0}{1}[{2}].", prefix, propInfo.Name, index);
-                            ReflectObject(item, newPrefix, contextCollection, path);
+                                ? string.Format("{0}[{1}].", propertyName, index)
+                                : string.Format("{0}{1}[{2}].", prefix, propertyName, index);
+                            ReflectValue(newPrefix, item, contextCollection, path);
                             index++;
                         }
                     }
                     else
                     {
                         var newPrefix = prefix == ""
-                            ? propInfo.Name + "."
-                            : prefix + propInfo.Name + ".";
+                            ? propertyName + "."
+                            : prefix + propertyName + ".";
 
                         if (propInfo.PropertyType == typeof(Type))
-                            contextCollection.Items.Add(newPrefix, value.ToString());
+                            contextCollection.Properties.Add(newPrefix, value.ToString());
                         else if (propInfo.PropertyType == typeof(Assembly))
-                            contextCollection.Items.Add(newPrefix, value.ToString());
+                            contextCollection.Properties.Add(newPrefix, value.ToString());
                         else if (propInfo.PropertyType.Namespace != null &&
                                  propInfo.PropertyType.Namespace.StartsWith("System.Reflection"))
-                            contextCollection.Items.Add(newPrefix, value.ToString());
+                            contextCollection.Properties.Add(newPrefix, value.ToString());
                         else
                             ReflectObject(value, newPrefix, contextCollection, path);
                     }
@@ -239,6 +329,181 @@ namespace OneTrueError.Client.Converters
             }
 
             path.Remove(instance);
+        }
+
+        /// <summary>
+        ///     Use reflection on a complex object to add it's values to our context collection.
+        /// </summary>
+        /// <param name="propertyName">Property that this collection belongs to</param>
+        /// <param name="value"></param>
+        /// <param name="contextCollection">Collection that values should be added to.</param>
+        /// <param name="path">To prevent circular references.</param>
+        protected void ReflectValue(string propertyName, object value, ContextCollectionDTO contextCollection,
+            List<object> path)
+        {
+            if (IsFilteredOut(value))
+                return;
+
+            if (value == null)
+            {
+                contextCollection.Properties.Add(propertyName, "null");
+                return;
+            }
+
+            if (value is string)
+            {
+                contextCollection.Properties.Add(propertyName, value.ToString());
+                return;
+            }
+
+            var enc = value as Encoding;
+            if (enc != null)
+            {
+                contextCollection.Properties.Add(propertyName, enc.EncodingName);
+                return;
+            }
+            var v1 = value as DateTimeFormatInfo;
+            if (v1 != null)
+            {
+                contextCollection.Properties.Add(propertyName, v1.NativeCalendarName);
+                return;
+            }
+            var v2 = value as CultureInfo;
+            if (v2 != null)
+            {
+                contextCollection.Properties.Add(propertyName, "Culture[" + v2.LCID + "]");
+                return;
+            }
+            if (IsSimpleType(value.GetType()) || propertyName == "Encoding")
+            {
+                contextCollection.Properties.Add(propertyName, value.ToString());
+            }
+            else
+            {
+                var dictIf = GetGenericDictionaryInterface(value);
+                var kvpTypes = GetKeyValuePairFromEnumeratorInterface(value);
+                if (dictIf != null)
+                {
+                    _dictionaryConverterMethod.MakeGenericMethod(dictIf.GetGenericArguments())
+                        .Invoke(this, new[] { propertyName, value, contextCollection, path });
+                }
+                else if (kvpTypes != null)
+                {
+                    _keyValuePairEnumeratorConverterMethod.MakeGenericMethod(kvpTypes)
+                        .Invoke(this, new[] { propertyName, value, contextCollection, path });
+                }
+
+                else if (value is IDictionary)
+                {
+                    var items = value as IDictionary;
+                    foreach (DictionaryEntry kvp in items)
+                    {
+                        var newPrefix = string.Format("{0}[{1}].", propertyName, kvp.Key);
+                        ReflectObject(kvp.Value, newPrefix, contextCollection, path);
+                    }
+                }
+                else if (value is IEnumerable)
+                {
+                    var items = value as IEnumerable;
+                    var index = 0;
+                    foreach (var item in items)
+                    {
+                        var newPrefix = string.Format("{0}[{1}].", propertyName, index);
+                        ReflectObject(item, newPrefix, contextCollection, path);
+                        index++;
+                    }
+                }
+                else
+                {
+                    var newPrefix = propertyName + ".";
+
+                    if (value.GetType() == typeof(Type))
+                        contextCollection.Properties.Add(newPrefix, value.ToString());
+                    else if (value.GetType() == typeof(Assembly))
+                        contextCollection.Properties.Add(newPrefix, value.ToString());
+                    else if (value.GetType().Namespace != null &&
+                             value.GetType().Namespace.StartsWith("System.Reflection"))
+                        contextCollection.Properties.Add(newPrefix, value.ToString());
+                    else
+                        ReflectObject(value, newPrefix, contextCollection, path);
+                }
+            }
+
+
+            path.Remove(value);
+        }
+
+        // ReSharper disable once UnusedMember.Local   //used through reflection
+        private void ConvertDictionary<TKey, TValue>(string propertyName, IDictionary<TKey, TValue> value,
+            ContextCollectionDTO contextCollection,
+            List<object> path)
+        {
+            foreach (var kvp in value)
+            {
+                var key = kvp.Key == null ? "null" : kvp.Key.ToString();
+                var prefix = string.IsNullOrEmpty(propertyName)
+                    ? key
+                    : string.Format("{0}[{1}]", propertyName, key);
+                ReflectValue(prefix, kvp.Value, contextCollection, path);
+            }
+        }
+
+
+        private ContextCollectionDTO ConvertDictionaryToCollection(string collectionName, IDictionary dictionary)
+        {
+            var path = new List<object>();
+            if (collectionName == "Dictionary`2")
+                collectionName = "ContextData";
+            var collection = new ContextCollectionDTO(collectionName);
+            foreach (DictionaryEntry kvp in dictionary)
+            {
+                var propertyName = kvp.Key == null ? "null" : kvp.Key.ToString();
+                ReflectValue(propertyName, kvp.Value, collection, path);
+            }
+            return collection;
+        }
+
+        // ReSharper disable once UnusedMember.Local   //used through reflection
+        private void ConvertKvpEnumerator<TKey, TValue>(string propertyName,
+            IEnumerable<KeyValuePair<TKey, TValue>> enumerable, ContextCollectionDTO contextCollection,
+            List<object> path)
+        {
+            var index = 0;
+            foreach (var kvp in enumerable)
+            {
+                var key = kvp.Key == null ? "null" : kvp.Key.ToString();
+                var prefix = string.IsNullOrEmpty(propertyName)
+                    ? string.Format("[{0}]", index++)
+                    : string.Format("[{0}].{1}", propertyName, index++);
+
+                contextCollection.Properties.Add(prefix + ".Key", key);
+                ReflectValue(prefix + ".Value", kvp.Value, contextCollection, path);
+            }
+        }
+
+        private static Type GetGenericDictionaryInterface(object instance)
+        {
+            var dictIf = instance.GetType()
+                .GetInterfaces()
+                .FirstOrDefault(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IDictionary<,>));
+            return dictIf;
+        }
+
+        private static Type[] GetKeyValuePairFromEnumeratorInterface(object instance)
+        {
+            // ReSharper disable once LoopCanBeConvertedToQuery - Easier to debug
+            foreach (var @interface in instance.GetType().GetInterfaces())
+            {
+                if (!@interface.IsGenericType || !@interface.GetGenericArguments()[0].IsGenericType)
+                    continue;
+
+                var kvpType = @interface.GetGenericArguments()[0].GetGenericTypeDefinition();
+                if (kvpType != typeof(KeyValuePair<,>))
+                    continue;
+
+                return @interface.GetGenericArguments()[0].GetGenericArguments();
+            }
+            return null;
         }
 
         private static bool IsFilteredOut(object instance)
