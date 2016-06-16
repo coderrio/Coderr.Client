@@ -101,7 +101,7 @@ namespace OneTrueError.Client.AspNet.Mvc5
             }
 
             var httpCodeIdentifier = new HttpCodeIdentifier(application, exception);
-            var reportingContext = new AspNetContext(application, exception, httpContext);
+            var reportingContext = new AspNetContext(application ?? source, exception, httpContext);
             var report = OneTrue.GenerateReport(reportingContext);
             if (contextCollections.Any())
             {
@@ -111,11 +111,11 @@ namespace OneTrueError.Client.AspNet.Mvc5
             }
 
             // Add http code
-            var properties = report.ContextCollections.FirstOrDefault(x => x.Name == "ExceptionProperties");
-            if (properties != null)
+            var exceptionCollection = report.ContextCollections.FirstOrDefault(x => x.Name == "ExceptionProperties");
+            if (exceptionCollection != null)
             {
-                if (!properties.Items.ContainsKey("HttpCode"))
-                    properties.Items["HttpCode"] = httpCodeIdentifier.HttpCode.ToString();
+                if (!exceptionCollection.Properties.ContainsKey("HttpCode"))
+                    exceptionCollection.Properties["HttpCode"] = httpCodeIdentifier.HttpCode.ToString();
             }
 
             if (!DisplayErrorPage || !OneTrue.Configuration.UserInteraction.AskUserForPermission)

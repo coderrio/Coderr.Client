@@ -86,6 +86,8 @@ namespace OneTrueError.Client.Tests
                         throw new InvalidOperationException(
                             "Test types to be run in PT must derive from MarshalByRefObject");
                     }
+                    if (value == null)
+                        throw new ArgumentNullException("value");
 
                     originalTestClassCommand.TypeUnderTest = value;
                 }

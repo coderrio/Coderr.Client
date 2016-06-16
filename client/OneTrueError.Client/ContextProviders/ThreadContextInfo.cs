@@ -35,19 +35,19 @@ namespace OneTrueError.Client.ContextProviders
             var info = new ContextCollectionDTO(NAME);
             try
             {
-                info.Items.Add("Culture", Thread.CurrentThread.CurrentUICulture.IetfLanguageTag);
-                info.Items.Add("Id", Thread.CurrentThread.ManagedThreadId.ToString(CultureInfo.InvariantCulture));
-                info.Items.Add("Name", Thread.CurrentThread.Name);
-                info.Items.Add("IsBackground", Thread.CurrentThread.IsBackground.ToString(CultureInfo.InvariantCulture));
+                info.Properties.Add("Culture", Thread.CurrentThread.CurrentUICulture.IetfLanguageTag);
+                info.Properties.Add("Id", Thread.CurrentThread.ManagedThreadId.ToString(CultureInfo.InvariantCulture));
+                info.Properties.Add("Name", Thread.CurrentThread.Name);
+                info.Properties.Add("IsBackground", Thread.CurrentThread.IsBackground.ToString(CultureInfo.InvariantCulture));
                 if (Thread.CurrentThread.ExecutionContext != null)
-                    info.Items.Add("ExecutionContext", Thread.CurrentThread.ExecutionContext.ToString());
-                info.Items.Add("Priority", Thread.CurrentThread.Priority.ToString());
-                info.Items.Add("ThreadState", Thread.CurrentThread.ThreadState.ToString());
-                info.Items.Add("UICulture", Thread.CurrentThread.CurrentCulture.IetfLanguageTag);
+                    info.Properties.Add("ExecutionContext", Thread.CurrentThread.ExecutionContext.ToString());
+                info.Properties.Add("Priority", Thread.CurrentThread.Priority.ToString());
+                info.Properties.Add("ThreadState", Thread.CurrentThread.ThreadState.ToString());
+                info.Properties.Add("UICulture", Thread.CurrentThread.CurrentCulture.IetfLanguageTag);
             }
             catch (Exception ex)
             {
-                info.Items.Add("CollectionException", "Failed to fetch thread info: " + ex);
+                info.Properties.Add("CollectionException", "Failed to fetch thread info: " + ex);
             }
             return info;
         }

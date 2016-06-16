@@ -44,7 +44,10 @@ namespace OneTrueError.Client
         {
             if (instance == null) throw new ArgumentNullException("instance");
 
-            var converter = new ObjectToContextCollectionConverter();
+            var converter = new ObjectToContextCollectionConverter
+            {
+                MaxPropertyCount = OneTrue.Configuration.MaxNumberOfPropertiesPerCollection
+            };
             return converter.Convert(instance);
         }
 
@@ -61,7 +64,10 @@ namespace OneTrueError.Client
         {
             if (instance == null) throw new ArgumentNullException("instance");
 
-            var converter = new ObjectToContextCollectionConverter();
+            var converter = new ObjectToContextCollectionConverter
+            {
+                MaxPropertyCount = OneTrue.Configuration.MaxNumberOfPropertiesPerCollection
+            };
             return converter.Convert(name, instance);
         }
     }

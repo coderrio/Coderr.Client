@@ -33,6 +33,7 @@ namespace OneTrueError.Client
                     "This configuration/version of Log4Net do not allow dynamic adding of appenders. Configure this adapter using code instead. See our online documentation for an example.");
 
             var appender = new OneTrueAppender();
+            appender.ActivateOptions();
             attachable.AddAppender(appender);
         }
     }

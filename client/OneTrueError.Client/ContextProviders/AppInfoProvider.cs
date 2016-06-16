@@ -103,26 +103,26 @@ namespace OneTrueError.Client.ContextProviders
         public ContextCollectionDTO Collect(IErrorReporterContext context)
         {
             var info = new ContextCollectionDTO(Name);
-            info.Items.Add("WorkingSet", Environment.WorkingSet.ToString(CultureInfo.InvariantCulture));
-            info.Items.Add("CurrentDirectory", Environment.CurrentDirectory);
+            info.Properties.Add("WorkingSet", Environment.WorkingSet.ToString(CultureInfo.InvariantCulture));
+            info.Properties.Add("CurrentDirectory", Environment.CurrentDirectory);
 
             try
             {
                 var process = Process.GetCurrentProcess();
-                info.Items.Add("ThreadCount", process.Threads.Count.ToString(CultureInfo.InvariantCulture));
-                info.Items.Add("StartTime", process.StartTime.ToString(CultureInfo.InvariantCulture));
-                info.Items.Add("TotalProcessorTime", process.TotalProcessorTime.ToString());
-                info.Items.Add("UserProcessorTime", process.UserProcessorTime.ToString());
-                info.Items.Add("HandleCount", process.HandleCount.ToString(CultureInfo.InvariantCulture));
-                info.Items.Add("ProcessName", process.ProcessName);
-                info.Items.Add("MainModule", process.MainModule.ToString());
-                info.Items.Add("BasePriority", process.BasePriority.ToString(CultureInfo.InvariantCulture));
-                info.Items.Add("VirtualMemorySize", process.VirtualMemorySize64.ToString(CultureInfo.InvariantCulture));
-                info.Items.Add("PrivateMemorySize", process.PrivateMemorySize64.ToString(CultureInfo.InvariantCulture));
+                info.Properties.Add("ThreadCount", process.Threads.Count.ToString(CultureInfo.InvariantCulture));
+                info.Properties.Add("StartTime", process.StartTime.ToString(CultureInfo.InvariantCulture));
+                info.Properties.Add("TotalProcessorTime", process.TotalProcessorTime.ToString());
+                info.Properties.Add("UserProcessorTime", process.UserProcessorTime.ToString());
+                info.Properties.Add("HandleCount", process.HandleCount.ToString(CultureInfo.InvariantCulture));
+                info.Properties.Add("ProcessName", process.ProcessName);
+                info.Properties.Add("MainModule", process.MainModule.ToString());
+                info.Properties.Add("BasePriority", process.BasePriority.ToString(CultureInfo.InvariantCulture));
+                info.Properties.Add("VirtualMemorySize", process.VirtualMemorySize64.ToString(CultureInfo.InvariantCulture));
+                info.Properties.Add("PrivateMemorySize", process.PrivateMemorySize64.ToString(CultureInfo.InvariantCulture));
             }
             catch (Exception ex)
             {
-                info.Items.Add("CollectionException", "Failed to fetch process info: " + ex);
+                info.Properties.Add("CollectionException", "Failed to fetch process info: " + ex);
             }
 
             return info;

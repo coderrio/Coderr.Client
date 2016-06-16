@@ -31,7 +31,10 @@ namespace OneTrueError.Client.ContextProviders
         {
             try
             {
-                var converter = new ObjectToContextCollectionConverter();
+                var converter = new ObjectToContextCollectionConverter
+                {
+                    MaxPropertyCount = OneTrue.Configuration.MaxNumberOfPropertiesPerCollection
+                };
                 var collection = converter.Convert(context.Exception);
                 collection.Name = "ExceptionProperties";
                 return collection;
@@ -39,7 +42,7 @@ namespace OneTrueError.Client.ContextProviders
             catch (Exception ex)
             {
                 var context2 = new ContextCollectionDTO("ExceptionProperties");
-                context2.Items.Add("Failed", ex.ToString());
+                context2.Properties.Add("Failed", ex.ToString());
                 return context2;
             }
         }

@@ -19,7 +19,7 @@ namespace OneTrueError.Client
         /// </summary>
         /// <param name="configurator">config class</param>
         /// <remarks>
-        ///     <para>Adds context collectectors for forms, query string, sessions, user agent and http headers.</para>
+        ///     <para>Adds context collectecors for forms, query string, sessions, user agent and http headers.</para>
         ///     <para>
         ///         MVC exceptions are dected through a custom global error filter.
         ///     </para>

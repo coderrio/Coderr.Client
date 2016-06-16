@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OneTrueError.Client.Config;
 using OneTrueError.Client.Contracts;
@@ -36,6 +37,25 @@ namespace OneTrueError.Client.Processor
         {
             var context = new ErrorReporterContext(null, exception);
             var contextInfo = _configuration.ContextProviders.Collect(context);
+            var reportId = ReportIdGenerator.Generate(exception);
+            return new ErrorReportDTO(reportId, new ExceptionDTO(exception), contextInfo.ToArray());
+        }
+
+        /// <summary>
+        ///     Build an report, but do not upload it
+        /// </summary>
+        /// <param name="exception">caught exception</param>
+        /// <param name="contextData">context data</param>
+        /// <remarks>
+        ///     <para>
+        ///         Will collect context info and generate a report.
+        ///     </para>
+        /// </remarks>
+        public ErrorReportDTO Build(Exception exception, object contextData)
+        {
+            var context = new ErrorReporterContext(null, exception);
+            var contextInfo = _configuration.ContextProviders.Collect(context);
+            AppendCustomContextData(contextData, contextInfo);
             var reportId = ReportIdGenerator.Generate(exception);
             return new ErrorReportDTO(reportId, new ExceptionDTO(exception), contextInfo.ToArray());
         }
@@ -103,14 +123,32 @@ namespace OneTrueError.Client.Processor
         {
             var context = new ErrorReporterContext(null, exception);
             var contextInfo = _configuration.ContextProviders.Collect(context);
-            var col = contextData.ToContextCollection();
-            contextInfo.Add(col);
+            AppendCustomContextData(contextData, contextInfo);
+
             var reportId = ReportIdGenerator.Generate(exception);
             var report = new ErrorReportDTO(reportId, new ExceptionDTO(exception), contextInfo.ToArray());
             var canUpload = _configuration.FilterCollection.CanUploadReport(report);
             if (!canUpload)
                 return;
             _configuration.Uploaders.Upload(report);
+        }
+
+        private static void AppendCustomContextData(object contextData, IList<ContextCollectionDTO> contextInfo)
+        {
+            var dtos = contextData as IEnumerable<ContextCollectionDTO>;
+            if (dtos != null)
+            {
+                var arr = dtos;
+                foreach (var dto in arr)
+                {
+                    contextInfo.Add(dto);
+                }
+            }
+            else
+            {
+                var col = contextData.ToContextCollection();
+                contextInfo.Add(col);
+            }
         }
     }
 }

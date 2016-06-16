@@ -2,6 +2,7 @@
 using OneTrueError.Client.Config;
 using OneTrueError.Client.ContextCollections;
 using OneTrueError.Client.Contracts;
+using OneTrueError.Client.Converters;
 using OneTrueError.Client.Processor;
 using OneTrueError.Client.Reporters;
 
@@ -71,6 +72,54 @@ namespace OneTrueError.Client
         public static ErrorReportDTO GenerateReport(Exception exception)
         {
             return _exceptionProcessor.Build(exception);
+        }
+
+        /// <summary>
+        ///     Will generate a report without uploading it.
+        /// </summary>
+        /// <param name="exception">Exception that you want to get reported</param>
+        /// <param name="contextData">
+        ///     Context specific information which would make it easier to reproduce and correct the
+        ///     exception. See <see cref="ObjectToContextCollectionConverter"/> to understand what kind of information you can attach.
+        /// </param>
+        /// <returns>Unique identifier for this report (generated using <see cref="ReportIdGenerator" />)</returns>
+        /// <exception cref="System.ArgumentNullException">exception</exception>
+        /// <remarks>
+        ///     <para>
+        ///         A lot if context information is also included in the error report. You can configure the attached information
+        ///         by
+        ///         using <c>OneTrue.Configuration.ContextProviders.Add()</c>
+        ///     </para>
+        ///     <para>
+        ///         All library exceptions are directed to the <c>OneTrue.ReportingFailed</c> event.
+        ///         Subscribe on that event if you have trouble with reporting exceptions.
+        ///     </para>
+        /// </remarks>
+        /// <example>
+        ///     <code>
+        /// public ActionResult Activate(UserViewModel model)
+        /// {
+        /// 	if (!ModelState.IsValid)
+        /// 		return View(model);
+        /// 		
+        /// 	try
+        /// 	{
+        /// 		var user = _repos.GetUser(model.Id);
+        /// 		user.Activate(model.ActivationCode);
+        /// 		_repos.Save(user);
+        /// 		return RedirectToAction("Welcome");
+        /// 	}
+        /// 	catch (Exception exception)
+        /// 	{
+        /// 		OneTrue.Report(exception);
+        /// 	}
+        /// }
+        /// </code>
+        /// </example>
+        /// <seealso cref="UploadReport" />
+        public static ErrorReportDTO GenerateReport(Exception exception, object contextData)
+        {
+            return _exceptionProcessor.Build(exception, contextData);
         }
 
         /// <summary>
@@ -153,20 +202,21 @@ namespace OneTrueError.Client
         /// <param name="exception">Exception that you want to get reported</param>
         /// <param name="contextData">
         ///     Context specific information which would make it easier to reproduce and correct the
-        ///     exception.
+        ///     exception. See <see cref="ObjectToContextCollectionConverter"/> to understand what kind of information you can attach.
         /// </param>
         /// <returns>Unique identifier for this report (generated using <see cref="ReportIdGenerator" />)</returns>
         /// <exception cref="System.ArgumentNullException">exception</exception>
         /// <remarks>
         ///     <para>
-        ///         A lot if context information is also included in the error report. You can configure the attached information
+        ///         Context information will be collected and included in the error report. You can configure the attached information
         ///         by
-        ///         using <c>OneTrue.Configuration.ContextProviders.Add()</c>
+        ///         using <c>OneTrue.Configuration.ContextProviders</c>
         ///     </para>
         ///     <para>
         ///         All library exceptions are directed to the <c>OneTrue.ReportingFailed</c> event.
         ///         Subscribe on that event if you have trouble with reporting exceptions.
         ///     </para>
+        /// 
         /// </remarks>
         /// <example>
         ///     <code>
@@ -192,7 +242,7 @@ namespace OneTrueError.Client
         public static void Report(Exception exception, object contextData)
         {
             if (exception == null) throw new ArgumentNullException("exception");
-            _exceptionProcessor.Process(exception);
+            _exceptionProcessor.Process(exception, contextData);
         }
 
         /// <summary>
