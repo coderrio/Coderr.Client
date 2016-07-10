@@ -11,7 +11,8 @@ namespace OneTrueError.Client.AspNet.Demo
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            Session["Complex"] = new {UserName = "Arne", Age = 92};
+            Request.Cookies.Add(new HttpCookie("milk", "sour") {Expires = DateTime.Today.AddDays(30)});
         }
     }
 }

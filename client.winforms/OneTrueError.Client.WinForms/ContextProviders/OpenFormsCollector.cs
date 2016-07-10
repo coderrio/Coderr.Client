@@ -1,46 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading;
 using System.Windows.Forms;
-using OneTrueError.Reporting.ContextProviders;
-using OneTrueError.Reporting.Contracts;
-using OneTrueError.Reporting.Reporters;
+using OneTrueError.Client.ContextProviders;
+using OneTrueError.Client.Contracts;
+using OneTrueError.Client.Reporters;
 
-namespace OneTrueError.Reporting.WinForms.ContextProviders
+namespace OneTrueError.Client.WinForms.ContextProviders
 {
     /// <summary>
-    /// Serializes all open forms into the context collection named <c>"OpenForms"</c>
+    ///     Serializes all open forms into the context collection named <c>"OpenForms"</c>
     /// </summary>
     public class OpenFormsCollector : IContextInfoProvider
     {
         /// <summary>
-        /// Returns <c>OpenForms</c>.
+        ///     Returns <c>OpenForms</c>.
         /// </summary>
-        public string Name { get { return "OpenForms"; } }
+        public string Name
+        {
+            get { return "OpenForms"; }
+        }
 
         /// <summary>
-        /// Collect information
+        ///     Collect information
         /// </summary>
         /// <param name="context">Context information provided by the class which reported the error.</param>
         /// <returns>
-        /// Collection. Items with multiple values are joined using <c>";;"</c>
+        ///     Collection. Items with multiple values are joined using <c>";;"</c>
         /// </returns>
-        public ContextInfoDTO Collect(IErrorReporterContext context)
+        public ContextCollectionDTO Collect(IErrorReporterContext context)
         {
             var values = new Dictionary<string, string>();
 
-            bool invocationRequired = false;
+            var invocationRequired = false;
             foreach (Form form in Application.OpenForms)
             {
                 if (form.InvokeRequired)
                     invocationRequired = true;
             }
             if (invocationRequired || !Application.MessageLoop)
-                return new ContextInfoDTO(Name, new Dictionary<string, string> {{"Error", "Collection on non-ui thread"}});
+                return new ContextCollectionDTO(Name,
+                    new Dictionary<string, string> {{"Error", "Collection on non-ui thread"}});
 
             try
             {
@@ -48,17 +49,16 @@ namespace OneTrueError.Reporting.WinForms.ContextProviders
             }
             catch (Exception exception)
             {
-                return new ContextInfoDTO(Name,
+                return new ContextCollectionDTO(Name,
                     new Dictionary<string, string>
                     {
                         {"Error", "Collection on non-ui thread"},
                         {"Exception", exception.ToString()}
                     });
             }
-
         }
 
-        private ContextInfoDTO Collect(Dictionary<string, string> values)
+        private ContextCollectionDTO Collect(Dictionary<string, string> values)
         {
             var variables = new StringBuilder();
             foreach (Form form in Application.OpenForms)
@@ -67,7 +67,7 @@ namespace OneTrueError.Reporting.WinForms.ContextProviders
                     form.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
                 foreach (var field in fields)
                 {
-                    if (typeof (Control).IsAssignableFrom(field.FieldType))
+                    if (typeof(Control).IsAssignableFrom(field.FieldType))
                     {
                         var control = (Control) field.GetValue(form);
                         if (control != null)
@@ -89,12 +89,13 @@ namespace OneTrueError.Reporting.WinForms.ContextProviders
                     if (!property.CanRead || property.GetIndexParameters().Length > 0)
                         continue;
 
-                    if (typeof (Control).IsAssignableFrom(property.PropertyType))
+                    if (typeof(Control).IsAssignableFrom(property.PropertyType))
                     {
                         var control = (Control) property.GetValue(form, null);
                         if (control != null)
                         {
-                            variables.AppendFormat("{1} = {2} [{0}];;", property.PropertyType, property.Name, control.Text);
+                            variables.AppendFormat("{1} = {2} [{0}];;", property.PropertyType, property.Name,
+                                control.Text);
                         }
                     }
                     else
@@ -107,7 +108,7 @@ namespace OneTrueError.Reporting.WinForms.ContextProviders
 
                 if (values.ContainsKey(form.Name))
                 {
-                    for (int i = 0; i < 100; i++)
+                    for (var i = 0; i < 100; i++)
                     {
                         if (values.ContainsKey(form.Name + "_" + i))
                             continue;
@@ -122,7 +123,7 @@ namespace OneTrueError.Reporting.WinForms.ContextProviders
             }
 
 
-            return new ContextInfoDTO(Name, values);
+            return new ContextCollectionDTO(Name, values);
         }
     }
 }

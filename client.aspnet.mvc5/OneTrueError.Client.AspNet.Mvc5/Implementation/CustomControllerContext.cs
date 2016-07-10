@@ -20,10 +20,8 @@ namespace OneTrueError.Client.AspNet.Mvc5.Implementation
             _routeData.Values.Add("errorId", errorId);
             _routeData.Values.Add("controller", "Error");
             _routeData.Values.Add("action", "InternalServerError");
-
             HttpCode = 500;
             HttpCodeName = "InternalServerError";
-            FindHttpCode(exception);
         }
 
         public int HttpCode { get; set; }
@@ -75,6 +73,7 @@ namespace OneTrueError.Client.AspNet.Mvc5.Implementation
                 HttpStatusCodeName = HttpCodeName
             };
             _routeData.DataTokens["OneTrueModel"] = model;
+            _routeData.Values["action"] = HttpCodeName;
 
             try
             {
@@ -149,12 +148,6 @@ namespace OneTrueError.Client.AspNet.Mvc5.Implementation
             }
 
             return true;
-        }
-
-        private void FindHttpCode(Exception exception)
-        {
-            _routeData.Values["action"] = HttpCodeName;
-            _routeData.Values.Add("httpStatusCode", HttpCode);
         }
     }
 }

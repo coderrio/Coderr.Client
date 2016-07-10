@@ -4,10 +4,10 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
-using OneTrueError.Reporting.Contracts;
-using OneTrueError.Reporting.WinForms.ContextProviders;
+using OneTrueError.Client.Contracts;
+using OneTrueError.Client.WinForms.ContextProviders;
 
-namespace OneTrueError.Reporting.WinForms
+namespace OneTrueError.Client.WinForms
 {
     /// <summary>
     ///     Used to capture a screenshot from forms
@@ -46,11 +46,27 @@ namespace OneTrueError.Reporting.WinForms
             }
         }
 
+        public ContextCollectionDTO CaptureActiveForm()
+        {
+            var screenshots = new Dictionary<string, string>();
+
+            var ms = new MemoryStream();
+
+            if (Form.ActiveForm == null)
+                return null;
+
+            Capture(Form.ActiveForm, ms);
+            var str = Convert.ToBase64String(ms.GetBuffer(), 0, (int) ms.Length);
+            var name = GetFormName(Form.ActiveForm);
+            screenshots.Add(name, str);
+            return new ContextCollectionDTO(ScreenshotProvider.NAME, screenshots);
+        }
+
         /// <summary>
         ///     Capture all forms.
         /// </summary>
-        /// <returns>A collection where all screenshots are BASE64 encoded.</returns>
-        public ContextInfoDTO CaptureAllOpenForms()
+        /// <returns>A collection where all screen shots are BASE64 encoded.</returns>
+        public ContextCollectionDTO CaptureAllOpenForms()
         {
             var screenshots = new Dictionary<string, string>();
 
@@ -78,7 +94,7 @@ namespace OneTrueError.Reporting.WinForms
                 screenshots.Add(name, str);
             }
 
-            return new ContextInfoDTO(ScreenshotProvider.NAME, screenshots);
+            return new ContextCollectionDTO(ScreenshotProvider.NAME, screenshots);
         }
 
         private static string GetFormName(Form form)

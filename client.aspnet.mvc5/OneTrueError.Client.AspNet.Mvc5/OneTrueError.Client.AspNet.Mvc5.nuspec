@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>OneTrueError.Client.AspNet.Mvc5</id>
-    <version>1.0.0-rc02</version>
+    <version>1.0.0-rc03</version>
     <authors>Gauffin Interactive AB</authors>
     <owners>Gauffin Interactive AB</owners>
     <licenseUrl>http://github.com/gauffininteractive/onetrueerror.client/license.md</licenseUrl>

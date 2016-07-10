@@ -12,12 +12,21 @@ namespace OneTrueError.Client.AspNet.ErrorPages
     {
         private readonly string _virtualPath;
 
+        
+        /// <summary>
+        /// Creates a new instance of <see cref="VirtualPathProviderBasedGenerator"/>.
+        /// </summary>
+        /// <param name="virtualPath">Path to the folder that contains the error pages, like <c>"~/Errors/"</c></param>
         public VirtualPathProviderBasedGenerator(string virtualPath)
         {
             if (virtualPath == null) throw new ArgumentNullException("virtualPath");
             _virtualPath = virtualPath;
         }
 
+        /// <summary>
+        ///     Generate HTML document
+        /// </summary>
+        /// <param name="context">context information which can be used while deciding which page to generate</param>
         protected override void GenerateHtml(PageGeneratorContext context)
         {
             var html = PageBuilder.Build(_virtualPath, context.ReporterContext);

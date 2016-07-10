@@ -1,4 +1,4 @@
-﻿namespace OneTrueError.Reporting.WinForms
+﻿namespace OneTrueError.Client.WinForms
 {
     partial class NotificationControl
     {

@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneTrueError.Client.AspNet", "OneTrueError.Client.AspNet\OneTrueError.Client.AspNet.csproj", "{FA2B6ECC-4E09-42A5-9239-C50CD640AC5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneTrueError.Client.AspNet.Tests", "..\OneTrueError.Client.AspNet.Tests\OneTrueError.Client.AspNet.Tests.csproj", "{44FACAA3-63F5-46D7-9749-C12E5C284878}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneTrueError.Client.AspNet.Tests", "OneTrueError.Client.AspNet.Tests\OneTrueError.Client.AspNet.Tests.csproj", "{44FACAA3-63F5-46D7-9749-C12E5C284878}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoApp", "DemoApp\DemoApp.csproj", "{27A6DD0C-3388-4F39-89FA-B02749D7C289}"
 EndProject

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace OneTrueError.Reporting.WinForms.ContextProviders
+namespace OneTrueError.Client.WinForms.ContextProviders
 {
     /// <summary>
     ///     Context providers for WinForms and WPF.

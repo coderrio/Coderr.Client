@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Windows.Forms;
-using OneTrueError.Reporting.Contracts;
-using OneTrueError.Reporting.Reporters;
+using OneTrueError.Client.Contracts;
 
-namespace OneTrueError.Reporting.WinForms
+namespace OneTrueError.Client.WinForms
 {
     /// <summary>
     ///     Class that processes unhandled exceptions that WinForms/WPF applications throw.
@@ -20,14 +19,18 @@ namespace OneTrueError.Reporting.WinForms
         {
             FormFactory =
                 model =>
-                    new ReportDialog(model.ReportId) {ExceptionMessage = model.Context.Exception.Message};
+                    new ReportDialog(model.Report) {ExceptionMessage = model.Context.Exception.Message};
         }
 
         private static void OnException(object sender, ThreadExceptionEventArgs e)
         {
             var context = new WinformsErrorReportContext(_instance, e.Exception);
-            string id = OneTrue.Report(context);
-            var ctx = new FormFactoryContext {Context = context, ReportId = id};
+
+            var dto = OneTrue.GenerateReport(context);
+            if (!OneTrue.Configuration.UserInteraction.AskUserForPermission)
+                OneTrue.UploadReport(dto);
+
+            var ctx = new FormFactoryContext { Context = context, Report = dto };
             var dialog = FormFactory(ctx);
             dialog.ShowDialog();
         }

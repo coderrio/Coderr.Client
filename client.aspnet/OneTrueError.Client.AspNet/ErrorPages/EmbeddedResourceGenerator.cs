@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using System.IO;
 using System.Reflection;
 using System.Web;
@@ -13,12 +14,23 @@ namespace OneTrueError.Client.AspNet.ErrorPages
         private readonly Assembly _assembly;
         private readonly string _path;
 
+        /// <summary>
+        /// Creates a new instance of <see cref="EmbeddedResourceGenerator"/>.
+        /// </summary>
+        /// <param name="assembly">Assembly to load embedded resources from</param>
+        /// <param name="path">Namespace path to where the folders are located, example: <c>"YourApp.Views.Errors"</c></param>
         public EmbeddedResourceGenerator(Assembly assembly, string path)
         {
+            if (assembly == null) throw new ArgumentNullException("assembly");
+            if (path == null) throw new ArgumentNullException("path");
             _assembly = assembly;
             _path = path;
         }
 
+        /// <summary>
+        ///     Generate HTML document
+        /// </summary>
+        /// <param name="context">context information which can be used while deciding which page to generate</param>
         protected override void GenerateHtml(PageGeneratorContext context)
         {
             var html = LoadErrorPage(context.ReporterContext.HttpStatusCodeName);

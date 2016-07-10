@@ -55,16 +55,7 @@ namespace OneTrueError.Client.AspNet
     ///     </para>
     ///     <list type="bullet">
     ///         <item>
-    ///             <see cref="ConfigExtensions.NotFoundPageGenerator" />
-    ///         </item>
-    ///         <item>
-    ///             <see cref="ConfigExtensions.PageGenerator" />
-    ///         </item>
-    ///         <item>
     ///             <see cref="ConfigExtensions.SetErrorPageGenerator" />
-    ///         </item>
-    ///         <item>
-    ///             <see cref="ConfigExtensions.SetNotFoundPage(OneTrueConfiguration,string)" />
     ///         </item>
     ///     </list>
     /// </summary>

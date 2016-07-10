@@ -2,13 +2,13 @@
 using OneTrueError.Client.AspNet.ErrorPages;
 using OneTrueError.Client.Config;
 
-// Keeps in the root namespace to get intelli sense
+// Keeps in the root namespace to get intellisense
 
 // ReSharper disable once CheckNamespace
 namespace OneTrueError.Client
 {
     /// <summary>
-    ///     Extensions for the <see cref="OneTrue" /> config class.
+    ///     Extensions for the <see cref="OneTrue" /> configuration class.
     /// </summary>
     public static class ConfigExtensions
     {
