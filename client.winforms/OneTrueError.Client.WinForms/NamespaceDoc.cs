@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace OneTrueError.Reporting.WinForms
+namespace OneTrueError.Client.WinForms
 {
     /// <summary>
     ///     <para>

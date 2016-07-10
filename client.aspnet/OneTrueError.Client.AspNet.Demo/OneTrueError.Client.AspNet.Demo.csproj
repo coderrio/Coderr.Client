@@ -53,7 +53,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="OneTrueError.Client, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\OneTrueError.Client.1.0.0-rc05\lib\net40\OneTrueError.Client.dll</HintPath>
+      <HintPath>..\packages\OneTrueError.Client.1.0.0-rc09\lib\net40\OneTrueError.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.DynamicData" />
@@ -74,6 +74,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Nuget\ReadMe.txt" />
     <Content Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

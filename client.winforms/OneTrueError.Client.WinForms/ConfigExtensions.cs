@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Windows.Forms;
-using OneTrueError.Reporting.Contracts;
-using OneTrueError.Reporting.WinForms;
+using OneTrueError.Client.Config;
+using OneTrueError.Client.WinForms;
+using OneTrueError.Client.WinForms.ContextProviders;
 // Keeps in the root namespace to get intelli sense
-using OneTrueError.Reporting.WinForms.ContextProviders;
 
-namespace OneTrueError.Reporting
+// ReSharper disable once CheckNamespace
+namespace OneTrueError.Client
 {
     /// <summary>
     /// Use <c>OneTrue.Configuration.CatchWinFormsExceptions()</c> to get started.
@@ -17,7 +18,7 @@ namespace OneTrueError.Reporting
         /// </summary>
         /// <param name="configurator">OneTrueError configurator (accessed through <see cref="OneTrue.Configuration"/>).</param>
         [Obsolete("Spelling error. Will be removed. Use OneTrue.Configuration.CatchWinFormsExceptions()")]
-        public static void CatchWinFormsExeptions(this OneConfiguration configurator)
+        public static void CatchWinFormsExeptions(this OneTrueConfiguration configurator)
         {
             if (configurator == null) throw new ArgumentNullException("configurator");
             WinFormsErrorReporter.Activate();
@@ -28,7 +29,7 @@ namespace OneTrueError.Reporting
         /// Catch all uncaught windows form exceptions.
         /// </summary>
         /// <param name="configurator">OneTrueError configurator (accessed through <see cref="OneTrue.Configuration"/>).</param>
-        public static void CatchWinFormsExceptions(this OneConfiguration configurator)
+        public static void CatchWinFormsExceptions(this OneTrueConfiguration configurator)
         {
             if (configurator == null) throw new ArgumentNullException("configurator");
             WinFormsErrorReporter.Activate();
@@ -36,10 +37,22 @@ namespace OneTrueError.Reporting
         }
 
         /// <summary>
-        /// Take a screenshot of every form that is opened when an error happen.
+        /// Take a screen shot of every form that is opened when an error happen.
         /// </summary>
         /// <param name="configurator">OneTrueError configurator (accessed through <see cref="OneTrue.Configuration"/>).</param>
-        public static void TakeScreenshots(this OneConfiguration configurator)
+        public static void TakeScreenshots(this OneTrueConfiguration configurator)
+        {
+            if (configurator == null) throw new ArgumentNullException("configurator");
+            WinFormsErrorReporter.Activate();
+            OneTrue.Configuration.ContextProviders.Add(new ScreenshotProvider(true));
+        }
+
+
+        /// <summary>
+        /// Take a screen shot of every form that is opened when an error happen.
+        /// </summary>
+        /// <param name="configurator">OneTrueError configurator (accessed through <see cref="OneTrue.Configuration"/>).</param>
+        public static void TakeScreenshotOfActiveFormOnly(this OneTrueConfiguration configurator)
         {
             if (configurator == null) throw new ArgumentNullException("configurator");
             WinFormsErrorReporter.Activate();
@@ -99,7 +112,7 @@ namespace OneTrueError.Reporting
         /// OneTrue.Configuration.SetErrorForm(context => new CustomReportDialog() { reportId = context.reportId });
         /// </code>
         /// </example>
-        public static void SetErrorForm(this OneConfiguration configurator, Func<FormFactoryContext, Form> formFactory)
+        public static void SetErrorForm(this OneTrueConfiguration configurator, Func<FormFactoryContext, Form> formFactory)
         {
             if (configurator == null) throw new ArgumentNullException("configurator");
             if (formFactory == null) throw new ArgumentNullException("formFactory");

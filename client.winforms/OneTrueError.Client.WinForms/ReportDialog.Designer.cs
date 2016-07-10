@@ -1,4 +1,4 @@
-﻿namespace OneTrueError.Reporting.WinForms
+﻿namespace OneTrueError.Client.WinForms
 {
     partial class ReportDialog
     {
@@ -37,8 +37,8 @@
             this.btnCancel = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.controlsPanel = new System.Windows.Forms.Panel();
-            this.errorDescription1 = new OneTrueError.Reporting.WinForms.ErrorDescription();
-            this.notificationControl1 = new OneTrueError.Reporting.WinForms.NotificationControl();
+            this.errorDescription1 = new ErrorDescription();
+            this.notificationControl1 = new NotificationControl();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.controlsPanel.SuspendLayout();
@@ -117,7 +117,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.pictureBox1.Image = global::OneTrueError.Reporting.WinForms.Properties.Resources.bigstock_Log_Output_45918232;
+            this.pictureBox1.Image = global::OneTrueError.Client.WinForms.Properties.Resources.bigstock_Log_Output_45918232;
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(199, 334);

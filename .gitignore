@@ -236,3 +236,6 @@ _Pvt_Extensions
 .fake/
 
 client/Help/*
+client.aspnet.mvc5/Help/*
+client.aspnet/Help/*
+client.log4net/Help/*

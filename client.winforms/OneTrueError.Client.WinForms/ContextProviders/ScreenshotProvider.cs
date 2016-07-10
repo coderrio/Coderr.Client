@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using OneTrueError.Reporting.ContextProviders;
-using OneTrueError.Reporting.Contracts;
-using OneTrueError.Reporting.Reporters;
+using OneTrueError.Client.ContextProviders;
+using OneTrueError.Client.Contracts;
+using OneTrueError.Client.Reporters;
 
-namespace OneTrueError.Reporting.WinForms.ContextProviders
+namespace OneTrueError.Client.WinForms.ContextProviders
 {
     /// <summary>
     ///     Can capture a screenshot of all open forms
@@ -16,6 +16,17 @@ namespace OneTrueError.Reporting.WinForms.ContextProviders
         ///     "Screenshots"
         /// </summary>
         public const string NAME = "Screenshots";
+        private bool _allForms;
+
+        public ScreenshotProvider(bool ofAllForms)
+        {
+            _allForms = ofAllForms;
+        }
+
+        public ScreenshotProvider()
+            : this(false)
+        {
+        }
 
         /// <summary>
         ///     "Screenshots"
@@ -30,18 +41,21 @@ namespace OneTrueError.Reporting.WinForms.ContextProviders
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public ContextInfoDTO Collect(IErrorReporterContext context)
+        public ContextCollectionDTO Collect(IErrorReporterContext context)
         {
             try
             {
                 var shooter = new FormScreenshooter();
-                var context2= shooter.CaptureAllOpenForms();
+
+                var context2 = _allForms
+                    ? shooter.CaptureAllOpenForms()
+                    : shooter.CaptureActiveForm();
                 
                 return context2;
             }
             catch (Exception ex)
             {
-                return new ContextInfoDTO("Screenshots", new Dictionary<string, string>()
+                return new ContextCollectionDTO("Screenshots", new Dictionary<string, string>()
                 {
                     {"Error", ex.ToString()},
                     {"Thread", Thread.CurrentThread.ManagedThreadId + "[" + Thread.CurrentThread.Name + "]"}

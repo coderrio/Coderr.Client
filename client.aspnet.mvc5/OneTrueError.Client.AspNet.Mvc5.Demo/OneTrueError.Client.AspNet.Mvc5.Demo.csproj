@@ -135,9 +135,9 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\Error3.cshtml" />
-    <Content Include="Views\ErrorOLD\Error.cshtml" />
-    <Content Include="Views\ErrorOLD\InternalServerError.cshtml" />
-    <Content Include="Views\ErrorOLD\NotFound.cshtml" />
+    <Content Include="Views\Error\Error.cshtml" />
+    <Content Include="Views\Error\InternalServerError.cshtml" />
+    <Content Include="Views\Error\NotFound.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

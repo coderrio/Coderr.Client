@@ -17,6 +17,7 @@ namespace OneTrueError.Client.AspNet.Mvc5.Demo
 
             OneTrue.Configuration.CatchMvcExceptions();
             OneTrue.Configuration.DisplayErrorPages();
+
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
         }

@@ -59,6 +59,7 @@ namespace OneTrueError.Client.AspNet
                 var response = new HttpResponse(sw);
                 var httpContext = new HttpContext(request, response);
                 httpContext.Items["ErrorReportContext"] = context;
+                httpContext.Items["ErrorContext"] = context;
                 httpContext.Items["Exception"] = context.Exception;
 
                 var pageType = BuildManager.GetCompiledType(virtualFilePath);
@@ -69,6 +70,10 @@ namespace OneTrueError.Client.AspNet
                     exceptionProperty.SetValue(pageObj, context.Exception, null);
 
                 var contextProperty = pageObj.GetType().GetProperty("ExceptionContext");
+                if (contextProperty != null && contextProperty.PropertyType == typeof(HttpErrorReporterContext))
+                    contextProperty.SetValue(pageObj, context, null);
+
+                contextProperty = pageObj.GetType().GetProperty("ErrorContext");
                 if (contextProperty != null && contextProperty.PropertyType == typeof(HttpErrorReporterContext))
                     contextProperty.SetValue(pageObj, context, null);
 

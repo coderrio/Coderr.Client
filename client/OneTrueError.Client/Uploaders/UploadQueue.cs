@@ -90,7 +90,7 @@ namespace OneTrueError.Client.Uploaders
             {
                 _queue.Enqueue(item);
                 if (_queue.Count == 1)
-                    ThreadPool.QueueUserWorkItem(UploadItem);
+                    ThreadPool.QueueUserWorkItem(TryUploadItem);
             }
         }
 
@@ -130,7 +130,7 @@ namespace OneTrueError.Client.Uploaders
             _quitEvent.Set();
         }
 
-        private void UploadItem(object state)
+        private void TryUploadItem(object state)
         {
             while (true)
             {

@@ -43,7 +43,6 @@ namespace OneTrueError.Client.AspNet.Mvc5
         /// <param name="context">The http application instance (ASP.NET)</param>
         public void Init(HttpApplication context)
         {
-            DisplayErrorPage = false;
             context.Error += OnError;
             Application = context;
         }

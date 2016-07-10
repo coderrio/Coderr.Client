@@ -1,7 +1,7 @@
 ﻿using System;
-using OneTrueError.Reporting.Reporters;
+using OneTrueError.Client.Reporters;
 
-namespace OneTrueError.Reporting.WinForms
+namespace OneTrueError.Client.WinForms
 {
     /// <summary>
     /// Customization for WinForms/WPF applications

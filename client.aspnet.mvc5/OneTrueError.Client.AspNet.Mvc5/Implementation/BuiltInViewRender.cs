@@ -100,7 +100,7 @@ namespace OneTrueError.Client.AspNet.Mvc5.Implementation
                     {
                         page =
                             string.Format(
-                                @"{{""error"": {{ ""msg""=""{0}"", ""reportId""=""{1}""}}, hint=""Use the report id when contacting us if you need further assistance."" }}",
+                                @"{{""error"": {{ ""msg"": ""{0}"", ""reportId"": ""{1}""}}, hint: ""Use the report id when contacting us if you need further assistance."" }}",
                                 context.Exception.Message, context.ErrorId);
                         context.HttpContext.Response.ContentType = "application/json";
                     }

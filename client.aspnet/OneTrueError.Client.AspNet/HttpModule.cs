@@ -90,8 +90,8 @@ namespace OneTrueError.Client.AspNet
                     x => x.Name.Equals("ExceptionProperties", StringComparison.OrdinalIgnoreCase));
             if (collection != null)
             {
-                if (!collection.Items.ContainsKey("HttpCode"))
-                    collection.Items.Add("HttpCode", context.HttpStatusCode.ToString());
+                if (!collection.Properties.ContainsKey("HttpCode"))
+                    collection.Properties.Add("HttpCode", context.HttpStatusCode.ToString());
             }
 
             if (OneTrue.Configuration.UserInteraction.AskUserForPermission)
