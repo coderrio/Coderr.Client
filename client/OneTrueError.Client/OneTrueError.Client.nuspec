@@ -3,7 +3,7 @@
 <package>
   <metadata>
     <id>OneTrueError.Client</id>
-    <version>1.0.0-rc09</version>
+    <version>1.0.0-rc10</version>
     <authors>Gauffin Interactive AB</authors>
     <owners>Gauffin Interactive AB</owners>
     <licenseUrl>http://github.com/gauffininteractive/onetrueerror.client/license.md</licenseUrl>
@@ -11,12 +11,12 @@
     <iconUrl>http://onetrueerror.com/images/ote_50x50.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <summary>
-      Exception handling library for .NET.
+      Open source exception handling system. Detects, uploads and analyses exceptions in real time.
     </summary>
     <description>
-      Exception handling library. Detects, uploads and perform different analyses on exceptions.
+      Open source exception handling system. Detects, uploads and analyses exceptions in real time.
 
-      Know why, how often and where exceptions are thrown.
+      Know why, how often and where exceptions are thrown. OneTrueError packs lots of context information
     </description>
     <releaseNotes>Beta publish.</releaseNotes>
     <copyright>Copyright 2016</copyright>

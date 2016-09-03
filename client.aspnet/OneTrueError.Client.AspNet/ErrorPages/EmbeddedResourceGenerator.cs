@@ -59,6 +59,8 @@ namespace OneTrueError.Client.AspNet.ErrorPages
                 html = html.Replace("$AllowReportUploading$", "");
             }
 
+            html = html.Replace("$ExceptionMessage$", context.ReporterContext.ErrorMessage);
+
             context.SendResponse("text/html", html);
         }
 
