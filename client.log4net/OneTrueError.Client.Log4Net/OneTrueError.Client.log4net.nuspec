@@ -3,20 +3,20 @@
 <package>
   <metadata>
     <id>OneTrueError.Client.log4net</id>
-    <version>1.0.0-rc06</version>
+    <version>1.0.0</version>
     <authors>Gauffin Interactive AB</authors>
     <owners>Gauffin Interactive AB</owners>
-    <licenseUrl>http://github.com/gauffininteractive/onetrueerror.client/license.md</licenseUrl>
+    <licenseUrl>https://github.com/gauffininteractive/onetrueerror.client/blob/master/LICENSE.md</licenseUrl>
     <projectUrl>http://onetrueerror.com</projectUrl>
     <iconUrl>http://onetrueerror.com/images/ote_50x50.png</iconUrl>
-    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <summary>
       Injects OneTrueError into the log4net pipeline. Allows OneTrueError to automatically pick up all exceptions that are being logged.
     </summary>
     <description>
       Allows OneTrueError to automatically pick up all exceptions that are being logged using log4net.
 
-      Exception handling library. Detects, uploads and perform different analyses on exceptions.
+      OneTrueError is an exception analysis service. It detects exceptions, attach context information and uploads everything for further analysis in the OneTrueError server.
 
       Know why, how often and where exceptions are thrown.
     </description>
@@ -24,7 +24,7 @@
     <copyright>Copyright 2016</copyright>
     <tags>exception error reporting analysis log4net logging</tags>
     <dependencies>
-      <dependency id="OneTrueError.Client" version="1.0.0-rc06" />
+      <dependency id="OneTrueError.Client" version="1.0.0" />
     </dependencies>
   </metadata>
   <files>

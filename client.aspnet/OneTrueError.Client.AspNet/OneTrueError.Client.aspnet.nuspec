@@ -3,7 +3,7 @@
 <package>
   <metadata>
     <id>OneTrueError.Client.AspNet</id>
-    <version>1.0.0-rc02</version>
+    <version>1.0.0</version>
     <authors>Gauffin Interactive AB</authors>
     <owners>Gauffin Interactive AB</owners>
     <licenseUrl>https://github.com/gauffininteractive/onetrueerror.client/blob/master/LICENSE.md</licenseUrl>
@@ -11,19 +11,24 @@
     <iconUrl>http://onetrueerror.com/images/ote_50x50.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <summary>
-      ASP.NET integration library for OneTrueError. Detects and uploads all unhandled exceptions to OneTrueError.
+      ASP.NET integration library for OneTrueError. Attaches context information like HttpRequest, HttpSession, Uploaded files
+      etc to each reported exception.
+      
+      OneTrueError is an exception handling system which detects and uploads all unhandled exceptions for further analysis
+      in a web based application.
     </summary>
     <description>
-      ASP.NET integration library for OneTrueError. Will detect and upload all unhandled exceptions to OneTrueError.
-      Will also include context information like the HTTP request, information about any uploaded files, session variables etc.
-
-      OneTrueError is an exception analysis service which makes it much easier to identify and correct unique errors.
+      ASP.NET integration library for OneTrueError. Attaches context information like HttpRequest, HttpSession, Uploaded files
+      etc to each reported exception.
+      
+      OneTrueError is an exception handling system which detects and uploads all unhandled exceptions for further analysis
+      in a web based application.
     </description>
     <releaseNotes>Beta publish.</releaseNotes>
     <copyright>Copyright 2016 Gauffin Interactive AB</copyright>
     <tags>exception error reporting analysis</tags>
     <dependencies>
-      <dependency id="Newtonsoft.json" version="8.0.0" />
+      <dependency id="OneTrueError.Client" version="1.0.0" />
     </dependencies>
   </metadata>
   <files>

@@ -19,7 +19,7 @@ goto end
 if "%2"=="" goto blank
 set packageName=.%2
 if "%2"=="core" set packageName=""
-client\.nuget\nuget pack client%packageName%\OneTrueError.Client%packageName%\OneTrueError.client%packageName%.csproj -OutputDirectory NugetPackages
+client\.nuget\nuget pack client%packageName%\OneTrueError.Client%packageName%\OneTrueError.client%packageName%.csproj -OutputDirectory NugetPackages -Prop Configuration=Release
 
 
 goto end

@@ -25,7 +25,6 @@
     <copyright>Copyright 2016</copyright>
     <tags>exception error reporting analysis winforms threadexception</tags>
     <dependencies>
-      <dependency id="Newtonsoft.json" version="8.0.0" />
       <dependency id="OneTrueError.Client" version="1.0.0" />
     </dependencies>
   </metadata>
