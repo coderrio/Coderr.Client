@@ -10,16 +10,17 @@ namespace OneTrueError.Client.WinForms
             InitializeComponent();
         }
 
-        private void NotificationControl_Load(object sender, EventArgs e)
+        public string Email
         {
-
+            get { return tbEmail.Text; }
         }
 
-        public string Email { get { return tbEmail.Text; }}
+        private void NotificationControl_Load(object sender, EventArgs e)
+        {
+        }
 
         private void tbEmail_TextChanged(object sender, EventArgs e)
         {
-
         }
     }
 }

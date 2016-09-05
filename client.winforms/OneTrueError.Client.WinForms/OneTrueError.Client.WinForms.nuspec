@@ -2,8 +2,8 @@
 
 <package>
   <metadata>
-    <id>OneTrueError.Client.AspNet</id>
-    <version>1.0.0-rc02</version>
+    <id>OneTrueError.Client.WinForms</id>
+    <version>1.0.0</version>
     <authors>Gauffin Interactive AB</authors>
     <owners>Gauffin Interactive AB</owners>
     <licenseUrl>https://github.com/gauffininteractive/onetrueerror.client/blob/master/LICENSE.md</licenseUrl>
@@ -11,22 +11,25 @@
     <iconUrl>http://onetrueerror.com/images/ote_50x50.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <summary>
-      ASP.NET integration library for OneTrueError. Detects and uploads all unhandled exceptions to OneTrueError.
+      WinForms integration library for OneTrueError. Detects and uploads all unhandled exceptions to OneTrueError.
+
+      OneTrueError is an exception analysis service which makes it much easier to identify and correct unique errors.
     </summary>
     <description>
-      ASP.NET integration library for OneTrueError. Will detect and upload all unhandled exceptions to OneTrueError.
-      Will also include context information like the HTTP request, information about any uploaded files, session variables etc.
+      WinForms integration library for OneTrueError. Will detect and upload all unhandled exceptions to OneTrueError.
+      Will also include context information like the form controls and a screenshot of the active form.
 
       OneTrueError is an exception analysis service which makes it much easier to identify and correct unique errors.
     </description>
     <releaseNotes>Beta publish.</releaseNotes>
-    <copyright>Copyright 2016 Gauffin Interactive AB</copyright>
-    <tags>exception error reporting analysis</tags>
+    <copyright>Copyright 2016</copyright>
+    <tags>exception error reporting analysis winforms threadexception</tags>
     <dependencies>
       <dependency id="Newtonsoft.json" version="8.0.0" />
+      <dependency id="OneTrueError.Client" version="1.0.0" />
     </dependencies>
   </metadata>
   <files>
-    <file src="Nuget/readme.txt" target="readme.txt" />
+    <file src="Nuget/ReadMe.txt" target="readme.txt" />
   </files>
 </package>

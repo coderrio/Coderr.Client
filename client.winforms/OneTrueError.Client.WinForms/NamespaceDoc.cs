@@ -20,10 +20,14 @@ namespace OneTrueError.Client.WinForms
     ///     <para>
     ///         Additional configuration options:
     ///     </para>
-    /// <list type="bullet">
-    /// <item><see cref="ConfigExtensions.TakeScreenshots" /></item>
-    /// <item><see cref="ConfigExtensions.SetErrorForm" /></item>
-    /// </list>
+    ///     <list type="bullet">
+    ///         <item>
+    ///             <see cref="ConfigExtensions.TakeScreenshots" />
+    ///         </item>
+    ///         <item>
+    ///             <see cref="ConfigExtensions.SetErrorForm" />
+    ///         </item>
+    ///     </list>
     /// </summary>
     [CompilerGenerated]
     internal class NamespaceDoc

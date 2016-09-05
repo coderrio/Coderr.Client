@@ -46,6 +46,10 @@ namespace OneTrueError.Client.WinForms
             }
         }
 
+        /// <summary>
+        ///     Take a screenshot only of the active form
+        /// </summary>
+        /// <returns>collection where the screenshot it base64 encoded using the name of the form as property name</returns>
         public ContextCollectionDTO CaptureActiveForm()
         {
             var screenshots = new Dictionary<string, string>();

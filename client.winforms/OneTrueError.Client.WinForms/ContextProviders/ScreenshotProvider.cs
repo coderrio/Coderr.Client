@@ -16,13 +16,26 @@ namespace OneTrueError.Client.WinForms.ContextProviders
         ///     "Screenshots"
         /// </summary>
         public const string NAME = "Screenshots";
-        private bool _allForms;
 
+        private readonly bool _allForms;
+
+        /// <summary>
+        ///     Creates a new instance of "<see cref="ScreenshotProvider" />
+        /// </summary>
+        /// <param name="ofAllForms">if <c>true</c>: take a screenshot of all open forms; otherwise only of the active form.</param>
         public ScreenshotProvider(bool ofAllForms)
         {
             _allForms = ofAllForms;
         }
 
+        /// <summary>
+        ///     Creates a new instance of <see cref="ScreenshotProvider" />.
+        /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         Will only take a screenshot of the active form.
+        ///     </para>
+        /// </remarks>
         public ScreenshotProvider()
             : this(false)
         {
@@ -50,12 +63,12 @@ namespace OneTrueError.Client.WinForms.ContextProviders
                 var context2 = _allForms
                     ? shooter.CaptureAllOpenForms()
                     : shooter.CaptureActiveForm();
-                
+
                 return context2;
             }
             catch (Exception ex)
             {
-                return new ContextCollectionDTO("Screenshots", new Dictionary<string, string>()
+                return new ContextCollectionDTO("Screenshots", new Dictionary<string, string>
                 {
                     {"Error", ex.ToString()},
                     {"Thread", Thread.CurrentThread.ManagedThreadId + "[" + Thread.CurrentThread.Name + "]"}

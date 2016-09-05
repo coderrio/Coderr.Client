@@ -87,12 +87,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OneTrueError.Reporting\OneTrueError.Reporting.csproj">
-      <Project>{41E7B66F-91A4-4DB0-AE6F-6C8EC9740031}</Project>
-      <Name>OneTrueError.Reporting</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="ErrorDescription.resx">
       <DependentUpon>ErrorDescription.cs</DependentUpon>
     </EmbeddedResource>
@@ -109,11 +103,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="OneTrueError.Client.WinForms.nuspec" />
     <None Include="packages.config" />
     <None Include="Resources\bigstock-Log-Output-45918232.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Nuget\ReadMe.txt" />
+    <None Include="Nuget\ReadMe.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

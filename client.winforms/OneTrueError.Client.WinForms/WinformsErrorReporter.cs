@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Windows.Forms;
-using OneTrueError.Client.Contracts;
 
 namespace OneTrueError.Client.WinForms
 {
@@ -13,7 +12,6 @@ namespace OneTrueError.Client.WinForms
         private static readonly WinFormsErrorReporter _instance = new WinFormsErrorReporter();
 
         private static bool _activated;
-        internal static Func<FormFactoryContext, Form> FormFactory { get; set; }
 
         static WinFormsErrorReporter()
         {
@@ -22,18 +20,7 @@ namespace OneTrueError.Client.WinForms
                     new ReportDialog(model.Report) {ExceptionMessage = model.Context.Exception.Message};
         }
 
-        private static void OnException(object sender, ThreadExceptionEventArgs e)
-        {
-            var context = new WinformsErrorReportContext(_instance, e.Exception);
-
-            var dto = OneTrue.GenerateReport(context);
-            if (!OneTrue.Configuration.UserInteraction.AskUserForPermission)
-                OneTrue.UploadReport(dto);
-
-            var ctx = new FormFactoryContext { Context = context, Report = dto };
-            var dialog = FormFactory(ctx);
-            dialog.ShowDialog();
-        }
+        internal static Func<FormFactoryContext, Form> FormFactory { get; set; }
 
         /// <summary>
         ///     Activate this library.
@@ -47,6 +34,19 @@ namespace OneTrueError.Client.WinForms
             _activated = true;
 
             Application.ThreadException += OnException;
+        }
+
+        private static void OnException(object sender, ThreadExceptionEventArgs e)
+        {
+            var context = new WinformsErrorReportContext(_instance, e.Exception);
+
+            var dto = OneTrue.GenerateReport(context);
+            if (!OneTrue.Configuration.UserInteraction.AskUserForPermission)
+                OneTrue.UploadReport(dto);
+
+            var ctx = new FormFactoryContext {Context = context, Report = dto};
+            var dialog = FormFactory(ctx);
+            dialog.ShowDialog();
         }
     }
 }

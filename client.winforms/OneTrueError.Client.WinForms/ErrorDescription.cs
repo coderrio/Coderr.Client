@@ -9,6 +9,9 @@ namespace OneTrueError.Client.WinForms
             InitializeComponent();
         }
 
-        public string UserInfo { get { return feedback2.Text; } }
+        public string UserInfo
+        {
+            get { return feedback2.Text; }
+        }
     }
 }
