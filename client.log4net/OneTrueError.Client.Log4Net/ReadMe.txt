@@ -16,6 +16,7 @@ It must be added after the log4net configuration, but before the first usage of 
 
 More information
 ===================
-http://onetrueerror.com/documentation/client/log4net/install.md
+
+http://onetrueerror.com/documentation/client/libraries/log4net/install.md
 
 
