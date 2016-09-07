@@ -56,12 +56,16 @@ namespace OneTrueError.Client.WinForms
 
             var ms = new MemoryStream();
 
-            if (Form.ActiveForm == null)
+            var form = Form.ActiveForm ??
+                       (Application.OpenForms.Count > 0
+                           ? Application.OpenForms[Application.OpenForms.Count - 1]
+                           : null);
+            if (form == null)
                 return null;
 
-            Capture(Form.ActiveForm, ms);
+            Capture(form, ms);
             var str = Convert.ToBase64String(ms.GetBuffer(), 0, (int) ms.Length);
-            var name = GetFormName(Form.ActiveForm);
+            var name = GetFormName(form);
             screenshots.Add(name, str);
             return new ContextCollectionDTO(ScreenshotProvider.NAME, screenshots);
         }

@@ -239,3 +239,4 @@ client/Help/*
 client.aspnet.mvc5/Help/*
 client.aspnet/Help/*
 client.log4net/Help/*
+client.winforms/Help/*
