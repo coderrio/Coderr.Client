@@ -22,7 +22,7 @@ namespace OneTrueError.Client.AspNet.Mvc5
     ///     </para>
     ///     <list type="bullet">
     ///         <item>
-    ///             <see cref="ConfigurationExtensions.DisableErrorPages" />
+    ///             <see cref="ConfigurationExtensions.DisplayErrorPages" />
     ///         </item>
     ///     </list>
     ///     <para>

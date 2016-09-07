@@ -3,6 +3,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using OneTrueError.Client.Contracts;
 
 namespace OneTrueError.Client.AspNet.Mvc5.Implementation
 {
@@ -141,6 +142,30 @@ namespace OneTrueError.Client.AspNet.Mvc5.Implementation
             try
             {
                 result.ExecuteResult(ctx);
+            }
+            catch (InvalidOperationException ex)
+            {
+                if (ex.Message.Contains("HandleErrorInfo"))
+                {
+                    requestContext.HttpContext.Response.Write(@"<html>
+<head>
+<title>Configuration error</title>
+</head>
+<body>
+<h1>Configuration error</h1>
+<p>The default ASP.NET MVC error view <code>Shared\Error.cshtml</code> uses <code>HandleErrorInfo</code> as a view model while OneTrueError expects <code>OneTrueViewModel</code>.</p>
+<p>You have three options:</p>
+<ol>
+<li>Change view model in it: <code>@model OneTrueError.Client.AspNet.Mvc5.OneTrueViewModel</code></li>
+<li>Remove the view <code>Shared\Errors.cshtml</code> to get OneTrueErrors built in error pages.</li>
+<li>Disable OneTrueErrors error page handling, remove <code>OneTrue.Configuration.DisplayErrorPages();</code> from global.asax.</li>
+</ol>
+<h1>Actual error</h1>
+<pre>" + model.Exception + "</pre></body></html>");
+                    requestContext.HttpContext.Response.ContentType = "text/html";
+                    requestContext.HttpContext.Response.End();
+                }
+                OneTrue.Report(ex, model);
             }
             catch (Exception ex)
             {

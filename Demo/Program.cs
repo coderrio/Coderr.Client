@@ -16,7 +16,7 @@ namespace Demo
             OneTrue.Configuration.Credentials(url, "13d82df603a845c7a27164c4fec19dd6",
                 "6f0a0a7fac6d42caa7cc47bb34a6520b");
             OneTrue.Configuration.TakeScreenshotOfActiveFormOnly();
-            OneTrue.Configuration.TakeScreenshots();
+            //OneTrue.Configuration.TakeScreenshots();
             OneTrue.Configuration.CatchWinFormsExceptions();
             OneTrue.Configuration.UserInteraction.AskUserForDetails = true;
             OneTrue.Configuration.UserInteraction.AskUserForPermission = true;
