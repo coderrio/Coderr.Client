@@ -65,7 +65,8 @@ namespace OneTrueError.Client.WinForms
 
             Capture(form, ms);
             var str = Convert.ToBase64String(ms.GetBuffer(), 0, (int) ms.Length);
-            screenshots.Add(Guid.NewGuid().ToString(), str);
+            var name = GetFormName(screenshots, form);
+            screenshots.Add(name, str);
             return new ContextCollectionDTO(ScreenshotProvider.NAME, screenshots);
         }
 
@@ -83,7 +84,8 @@ namespace OneTrueError.Client.WinForms
             {
                 Capture(Form.ActiveForm, ms);
                 var str = Convert.ToBase64String(ms.GetBuffer(), 0, (int) ms.Length);
-                screenshots.Add(Guid.NewGuid().ToString(), str);
+                var name = GetFormName(screenshots, Form.ActiveForm);
+                screenshots.Add(name, str);
             }
             
             foreach (Form form in Application.OpenForms)
@@ -95,10 +97,23 @@ namespace OneTrueError.Client.WinForms
                 ms.SetLength(0);
                 Capture(form, ms);
                 var str = Convert.ToBase64String(ms.GetBuffer(), 0, (int) ms.Length);
-                screenshots.Add(Guid.NewGuid().ToString(), str);
+                var name = GetFormName(screenshots, form)
+                screenshots.Add(name, str);
             }
 
             return new ContextCollectionDTO(ScreenshotProvider.NAME, screenshots);
         }
+        
+        private static string GetFormName(IDictionary<string,string> screenshots, Form form)		
+-       {		
+-            var name = form.Name;		
+-            if (string.IsNullOrEmpty(name))		
+-                name = string.IsNullOrEmpty(form.Text) ? "Noname": form.Text;
+
+             if (screenshots.ContainsKey(name))
+                name = string.Format("{0}{1}",name,Guid.NewGuid().ToString());
+
+-            return name;		
+-        }
     }
 }
