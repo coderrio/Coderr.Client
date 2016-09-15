@@ -303,8 +303,8 @@ namespace OneTrueError.Client.Converters
                         foreach (var item in items)
                         {
                             var newPrefix = prefix == ""
-                                ? string.Format("{0}[{1}].", propertyName, index)
-                                : string.Format("{0}{1}[{2}].", prefix, propertyName, index);
+                                ? string.Format("{0}[{1}]", propertyName, index)
+                                : string.Format("{0}{1}[{2}]", prefix, propertyName, index);
                             ReflectValue(newPrefix, item, contextCollection, path);
                             index++;
                         }
