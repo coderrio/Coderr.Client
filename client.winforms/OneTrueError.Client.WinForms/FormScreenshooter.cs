@@ -56,12 +56,16 @@ namespace OneTrueError.Client.WinForms
 
             var ms = new MemoryStream();
 
-            if (Form.ActiveForm == null)
+            var form = Form.ActiveForm ??
+                       (Application.OpenForms.Count > 0
+                           ? Application.OpenForms[Application.OpenForms.Count - 1]
+                           : null);
+            if (form == null)
                 return null;
 
-            Capture(Form.ActiveForm, ms);
+            Capture(form, ms);
             var str = Convert.ToBase64String(ms.GetBuffer(), 0, (int) ms.Length);
-            var name = GetFormName(Form.ActiveForm);
+            var name = GetFormName(screenshots, form);
             screenshots.Add(name, str);
             return new ContextCollectionDTO(ScreenshotProvider.NAME, screenshots);
         }
@@ -80,11 +84,10 @@ namespace OneTrueError.Client.WinForms
             {
                 Capture(Form.ActiveForm, ms);
                 var str = Convert.ToBase64String(ms.GetBuffer(), 0, (int) ms.Length);
-                var name = GetFormName(Form.ActiveForm);
+                var name = GetFormName(screenshots, Form.ActiveForm);
                 screenshots.Add(name, str);
             }
-
-
+            
             foreach (Form form in Application.OpenForms)
             {
                 if (form == Form.ActiveForm)
@@ -94,23 +97,23 @@ namespace OneTrueError.Client.WinForms
                 ms.SetLength(0);
                 Capture(form, ms);
                 var str = Convert.ToBase64String(ms.GetBuffer(), 0, (int) ms.Length);
-                var name = GetFormName(form);
+                var name = GetFormName(screenshots, form)
                 screenshots.Add(name, str);
             }
 
             return new ContextCollectionDTO(ScreenshotProvider.NAME, screenshots);
         }
+        
+        private static string GetFormName(IDictionary<string,string> screenshots, Form form)		
+-       {		
+-            var name = form.Name;		
+-            if (string.IsNullOrEmpty(name))		
+-                name = string.IsNullOrEmpty(form.Text) ? "Noname": form.Text;
 
-        private static string GetFormName(Form form)
-        {
-            var name = form.Name;
-            if (string.IsNullOrEmpty(name))
-            {
-                name = string.IsNullOrEmpty(form.Text)
-                    ? "Noname"
-                    : form.Text;
-            }
-            return name;
-        }
+             if (screenshots.ContainsKey(name))
+                name = string.Format("{0}{1}",name,Guid.NewGuid().ToString());
+
+-            return name;		
+-        }
     }
 }

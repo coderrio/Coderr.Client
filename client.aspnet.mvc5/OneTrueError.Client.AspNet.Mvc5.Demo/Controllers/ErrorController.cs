@@ -2,7 +2,7 @@
 
 namespace OneTrueError.Client.AspNet.Mvc5.Demo.Controllers
 {
-public class ErrorController : Controller
+public class ErrorNoController : Controller
 {
     public ActionResult Index(OneTrueViewModel model)
     {

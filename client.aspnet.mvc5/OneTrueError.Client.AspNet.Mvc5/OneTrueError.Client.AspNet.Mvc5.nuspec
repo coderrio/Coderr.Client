@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>OneTrueError.Client.AspNet.Mvc5</id>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <authors>Gauffin Interactive AB</authors>
     <owners>Gauffin Interactive AB</owners>
     <licenseUrl>https://github.com/gauffininteractive/onetrueerror.client/blob/master/LICENSE.md</licenseUrl>
@@ -20,7 +20,7 @@
       OneTrueError is an exception analysis service which makes it much easier to identify and correct errors.
       Know why, how often and where exceptions are thrown.
     </description>
-    <releaseNotes>Beta publish.</releaseNotes>
+    <releaseNotes>Improved how the internal error pages are handled.</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>exception error reporting analysis asp.net mvc mvc5</tags>
     <dependencies>
