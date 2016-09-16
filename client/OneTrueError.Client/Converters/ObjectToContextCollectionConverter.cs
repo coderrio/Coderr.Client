@@ -217,7 +217,10 @@ namespace OneTrueError.Client.Converters
             List<object> path)
         {
             if (path.Contains(instance) || path.Count > 10 || MaxPropertyCount <= contextCollection.Properties.Count)
+            {
+                contextCollection.Properties.Add(prefix + "_error", "Circular reference or to deep hierarchy.");
                 return;
+            }
             if (IsFilteredOut(instance))
                 return;
 
@@ -303,8 +306,8 @@ namespace OneTrueError.Client.Converters
                         foreach (var item in items)
                         {
                             var newPrefix = prefix == ""
-                                ? string.Format("{0}[{1}].", propertyName, index)
-                                : string.Format("{0}{1}[{2}].", prefix, propertyName, index);
+                                ? string.Format("{0}[{1}]", propertyName, index)
+                                : string.Format("{0}{1}[{2}]", prefix, propertyName, index);
                             ReflectValue(newPrefix, item, contextCollection, path);
                             index++;
                         }
@@ -474,7 +477,7 @@ namespace OneTrueError.Client.Converters
                 var key = kvp.Key == null ? "null" : kvp.Key.ToString();
                 var prefix = string.IsNullOrEmpty(propertyName)
                     ? string.Format("[{0}]", index++)
-                    : string.Format("[{0}].{1}", propertyName, index++);
+                    : string.Format("{0}[{1}]", propertyName, index++);
 
                 contextCollection.Properties.Add(prefix + ".Key", key);
                 ReflectValue(prefix + ".Value", kvp.Value, contextCollection, path);

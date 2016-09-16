@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace OneTrueError.Client.Tests
+namespace OneTrueError.Client.Tests.TestObjects
 {
     public class CustomDictionary : IEnumerable<KeyValuePair<string, object>>
     {
