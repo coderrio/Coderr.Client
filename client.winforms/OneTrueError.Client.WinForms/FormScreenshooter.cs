@@ -97,7 +97,7 @@ namespace OneTrueError.Client.WinForms
                 ms.SetLength(0);
                 Capture(form, ms);
                 var str = Convert.ToBase64String(ms.GetBuffer(), 0, (int) ms.Length);
-                var name = GetFormName(screenshots, form)
+                var name = GetFormName(screenshots, form);
                 screenshots.Add(name, str);
             }
 
@@ -105,15 +105,15 @@ namespace OneTrueError.Client.WinForms
         }
         
         private static string GetFormName(IDictionary<string,string> screenshots, Form form)		
--       {		
--            var name = form.Name;		
--            if (string.IsNullOrEmpty(name))		
--                name = string.IsNullOrEmpty(form.Text) ? "Noname": form.Text;
+       {		
+            var name = form.Name;		
+            if (string.IsNullOrEmpty(name))		
+                name = string.IsNullOrEmpty(form.Text) ? "Noname": form.Text;
 
              if (screenshots.ContainsKey(name))
                 name = string.Format("{0}{1}",name,Guid.NewGuid().ToString());
 
--            return name;		
--        }
+            return name;		
+        }
     }
 }
