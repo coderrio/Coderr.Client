@@ -1,0 +1,49 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:OneTrueError.Client.Wpf">
+    <DataTemplate DataType="{x:Type local:ErrorReportDialogPresenter}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="298"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+
+            <Image Grid.Column="0"
+               Grid.RowSpan="4"
+               Source="{Binding SideBarImage}"
+               />
+
+            <ContentControl Grid.Column="1"
+                        Grid.Row="0"
+                        Content="{Binding ErrorMessage}"/>
+
+            <ContentControl Grid.Column="1"
+                        Grid.Row="1"
+                        Content="{Binding UserErrorDescription}"/>
+
+            <ContentControl Grid.Column="1"
+                        Grid.Row="2"
+                        Content="{Binding NotificationControl}"/>
+
+            <Grid Grid.Column="1"
+                    Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0"
+                        Command="{Binding SubmitCommand}"/>
+                <Button Grid.Column="1"
+                        Command="{Binding CancelCommand}"/>
+            </Grid>
+
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>
