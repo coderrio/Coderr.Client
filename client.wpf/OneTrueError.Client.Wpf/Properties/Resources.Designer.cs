@@ -59,15 +59,5 @@ namespace OneTrueError.Client.Wpf.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap bigstock_Log_Output_45918232 {
-            get {
-                object obj = ResourceManager.GetObject("bigstock_Log_Output_45918232", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
     }
 }

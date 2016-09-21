@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Windows.Input;
 using Microsoft.Practices.Prism.Commands;
 using OneTrueError.Client.ContextCollections;
@@ -23,11 +22,6 @@ namespace OneTrueError.Client.Wpf
             ErrorMessage = new ErrorMessagePresenter(ErrorReportDetailsProvider.ExceptionMessage);
             UserErrorDescription = new UserErrorDescriptionPresenter();
             NotificationControl = new NotificationControlPresenter();
-        }
-
-        public Bitmap SideBarImage
-        {
-            get { return Properties.Resources.bigstock_Log_Output_45918232; }
         }
 
         public bool AskForUserDetails

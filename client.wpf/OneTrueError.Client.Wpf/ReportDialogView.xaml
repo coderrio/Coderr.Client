@@ -4,7 +4,7 @@
     <DataTemplate DataType="{x:Type local:ErrorReportDialogPresenter}">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="300" />
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
@@ -17,32 +17,42 @@
 
             <Image Grid.Column="0"
                    Grid.Row="0"
-               Grid.RowSpan="4"
-               Source="Resources/bigstock-Log-Output-45918232.jpg"
+                   Grid.RowSpan="4"
+                   Stretch="Fill"
+                   StretchDirection="Both"
+                   Source="Resources/bigstock-Output.jpg"
+                   Margin="10"
                />
 
             <ContentControl Grid.Column="1"
-                        Grid.Row="0"
-                        Content="{Binding ErrorMessage}"/>
+                            Grid.Row="0"
+                            Content="{Binding ErrorMessage}"
+                            Margin="10"/>
 
             <ContentControl Grid.Column="1"
-                        Grid.Row="1"
-                        Content="{Binding UserErrorDescription}"/>
+                            Grid.Row="1"
+                            Content="{Binding UserErrorDescription}"
+                            Margin="10"/>
 
             <ContentControl Grid.Column="1"
-                        Grid.Row="2"
-                        Content="{Binding NotificationControl}"/>
+                            Grid.Row="2"
+                            Content="{Binding NotificationControl}"
+                            Margin="10"/>
 
             <Grid Grid.Column="1"
-                    Grid.Row="3">
+                  Grid.Row="3"
+                  Margin="10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
+                
                 <Button Grid.Column="0"
-                        Command="{Binding SubmitCommand}"/>
+                        Command="{Binding SubmitCommand}"
+                        Content="Submit"/>
                 <Button Grid.Column="1"
-                        Command="{Binding CancelCommand}"/>
+                        Command="{Binding CancelCommand}"
+                        Content="Cancel"/>
             </Grid>
 
         </Grid>
@@ -54,7 +64,7 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="3*"/>
             </Grid.RowDefinitions>
-            
+
             <TextBlock Grid.Row="0"
                        Text="Error Message"
                        FontWeight="Bold"
