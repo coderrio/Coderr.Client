@@ -19,7 +19,7 @@ namespace OneTrueError.Client
         ///     Catch all uncaught wpf exceptions.
         /// </summary>
         /// <param name="configurator">OneTrueError configurator (accessed through <see cref="OneTrue.Configuration" />).</param>
-        public static void CatchWinFormsExceptions(this OneTrueConfiguration configurator)
+        public static void CatchWpfExceptions(this OneTrueConfiguration configurator)
         {
             if (configurator == null) throw new ArgumentNullException("configurator");
             WpfErrorReporter.Activate();

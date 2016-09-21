@@ -15,14 +15,15 @@ namespace OneTrueError.Client.Wpf
     {
         private readonly ErrorReportDTO _dto;
 
-        public ErrorReportDialogPresenter(ErrorReportDTO dto)
+        public ErrorReportDialogPresenter()
         {
-            _dto = dto;
-        
+            _dto = ErrorReportDetailsProvider.DtoReport;
             SubmitCommand = new DelegateCommand(SubmitReport);
             CancelCommand = new DelegateCommand(CancelReport);
+            ErrorMessage = new ErrorMessagePresenter(ErrorReportDetailsProvider.ExceptionMessage);
+            UserErrorDescription = new UserErrorDescriptionPresenter();
+            NotificationControl = new NotificationControlPresenter();
         }
-
 
         public Bitmap SideBarImage
         {
@@ -58,7 +59,7 @@ namespace OneTrueError.Client.Wpf
 
         private void SubmitReport()
         {
-            var info = UserErrorDescription.UserInfo;
+            var info = UserErrorDescription.UserDescription;
             var email = NotificationControl.Email;
 
             // only upload it if the flag is set, it have already been uploaded otherwise.

@@ -2,6 +2,6 @@
 {
     public class UserErrorDescriptionPresenter
     {
-        public string UserInfo { get; set; }
+        public string UserDescription { get; set; }
     }
 }

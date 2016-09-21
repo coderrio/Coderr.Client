@@ -1,12 +1,31 @@
-﻿namespace OneTrueError.Client.Wpf
+﻿using System.ComponentModel;
+
+namespace OneTrueError.Client.Wpf
 {
-    public class ErrorMessagePresenter
+    public class ErrorMessagePresenter : INotifyPropertyChanged
     {
-        public string ExceptionMessage { get; set; }
+        private string _exceptionMessage;
+
+        public string ExceptionMessage
+        {
+            get { return _exceptionMessage; }
+            set
+            {
+                _exceptionMessage = value; 
+                OnPropertyChanged("ExceptionMessage");
+            }
+        }
 
         public ErrorMessagePresenter(string exceptionMessage)
         {
             ExceptionMessage = exceptionMessage;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

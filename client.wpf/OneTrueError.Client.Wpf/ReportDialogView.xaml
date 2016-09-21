@@ -4,7 +4,7 @@
     <DataTemplate DataType="{x:Type local:ErrorReportDialogPresenter}">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="298"/>
+                <ColumnDefinition Width="300"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
@@ -16,8 +16,9 @@
             </Grid.RowDefinitions>
 
             <Image Grid.Column="0"
+                   Grid.Row="0"
                Grid.RowSpan="4"
-               Source="{Binding SideBarImage}"
+               Source="Resources/bigstock-Log-Output-45918232.jpg"
                />
 
             <ContentControl Grid.Column="1"
@@ -46,4 +47,62 @@
 
         </Grid>
     </DataTemplate>
+
+    <DataTemplate DataType="{x:Type local:ErrorMessagePresenter}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="3*"/>
+            </Grid.RowDefinitions>
+            
+            <TextBlock Grid.Row="0"
+                       Text="Error Message"
+                       FontWeight="Bold"
+                       />
+            <TextBlock Grid.Row="1"
+                       Text="{Binding ExceptionMessage}"
+                       />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type local:UserErrorDescriptionPresenter}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="6*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0"
+                       Text="Feedback"
+                       FontWeight="Bold"
+                       />
+            <TextBlock Grid.Row="1"
+                       Text="Could you please let us know how to reproduce it?"
+                       />
+            <TextBox Grid.Row="2"
+                     Text="{Binding UserDescription}"/>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type local:NotificationControlPresenter}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0"
+                       Text="Status updates"
+                       FontWeight="Bold"
+                       />
+            <TextBlock Grid.Row="1"
+                       Text="Enter your email address if you would like to receive status updates about this error."
+                       />
+            <TextBox Grid.Row="2"
+                     Text="{Binding Email}"/>
+        </Grid>
+    </DataTemplate>
+
 </ResourceDictionary>

@@ -11,12 +11,15 @@ namespace OneTrueError.Client.Wpf
 
         static WpfErrorReporter()
         {
-            FormFactory =
+            WindowFactory =
                 model =>
-                    new ReportDialog(model.Report) { ExceptionMessage = model.Context.Exception.Message };
+                {
+                    var exceptionMessage = model.Context.Exception.Message;
+                    return new ReportDialog(model.Report, exceptionMessage);
+                };
         }
 
-        internal static Func<WindowFactoryContext, Window> FormFactory { get; set; }
+        internal static Func<WindowFactoryContext, Window> WindowFactory { get; set; }
 
         /// <summary>
         ///     Activate this library.
@@ -41,7 +44,7 @@ namespace OneTrueError.Client.Wpf
                 OneTrue.UploadReport(dto);
 
             var ctx = new WindowFactoryContext { Context = context, Report = dto };
-            var dialog = FormFactory(ctx);
+            var dialog = WindowFactory(ctx);
             dialog.ShowDialog();
         }
 

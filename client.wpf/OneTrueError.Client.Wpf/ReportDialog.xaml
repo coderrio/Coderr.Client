@@ -6,8 +6,17 @@
         xmlns:local="clr-namespace:OneTrueError.Client.Wpf"
         mc:Ignorable="d"
         Title="Application error" Height="570" Width="937">
+    
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ReportDialogView.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    
     <Grid>
-        <Grid.ColumnDefinitions>
+        <!--<Grid.ColumnDefinitions>
             <ColumnDefinition Width="298"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
@@ -31,7 +40,11 @@
         <ContentControl Grid.Column="1"
                         Grid.Row="2">
             <local:NotificationControlPresenter/>
+        </ContentControl>-->
+<!--        Content="{Binding Source={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=DialogPresenter}"-->
+        <ContentControl >
+            <local:ErrorReportDialogPresenter FinishedReporting="DialogPresenterFinishedReporting"/>
         </ContentControl>
-        
+
     </Grid>
 </Window>

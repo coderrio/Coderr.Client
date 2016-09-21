@@ -11,12 +11,12 @@ using OneTrueError.Client.Reporters;
 namespace OneTrueError.Client.Wpf.ContextProviders
 {
     /// <summary>
-    ///     Serializes all open forms into the context collection named <c>"OpenForms"</c>
+    ///     Serializes all open windows into the context collection named <c>"OpenWindows"</c>
     /// </summary>
     public class OpenWindowsCollector : IContextInfoProvider
     {
         /// <summary>
-        ///     Returns <c>OpenForms</c>.
+        ///     Returns <c>OpenWindows</c>.
         /// </summary>
         public string Name
         {
