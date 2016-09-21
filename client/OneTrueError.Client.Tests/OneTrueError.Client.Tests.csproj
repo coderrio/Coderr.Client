@@ -58,13 +58,14 @@
     <Compile Include="ContextCollections\UserCredentialsTests.cs" />
     <Compile Include="ContextCollections\UserSuppliedInformationTests.cs" />
     <Compile Include="ContextInfoTests.cs" />
-    <Compile Include="CustomDictionary.cs" />
+    <Compile Include="TestObjects\CustomDictionary.cs" />
     <Compile Include="ObjectToContextCollectionTests.cs" />
     <Compile Include="PartialTrustRunnerAttribute.cs" />
     <Compile Include="PartialTrustTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportToOneTrueErrorTests.cs" />
     <Compile Include="Sandboxer.cs" />
+    <Compile Include="TestObjects\GotParentReference.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OneTrueError.Client\OneTrueError.Client.csproj">

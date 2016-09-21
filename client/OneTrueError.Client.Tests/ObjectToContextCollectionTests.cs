@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web.UI.WebControls;
 using FluentAssertions;
 using OneTrueError.Client.Converters;
+using OneTrueError.Client.Tests.TestObjects;
 using Xunit;
 using Xunit.Sdk;
 
@@ -24,14 +25,15 @@ namespace OneTrueError.Client.Tests
         }
 
         [Fact]
-        public void should_be_able_to_process_type_with_parent_reference()
+        public void should_be_able_to_process_type_with_circular_reference()
         {
-            var obj = new CreateUserWizard();
+            var obj = new GotParentReference {Child = new GotParentReferenceChild {Title = "chld"}, Name = "prnt"};
+            obj.Child.Parent = obj;
 
             var sut = new ObjectToContextCollectionConverter();
             var actual = sut.Convert(obj);
 
-            actual.Properties.Count.Should().BeLessThan(sut.MaxPropertyCount);
+            actual.Properties.ContainsKey("Child.Parent._error").Should().BeTrue();
         }
 
         [Fact]
@@ -56,7 +58,8 @@ namespace OneTrueError.Client.Tests
             var sut = new ObjectToContextCollectionConverter();
             var actual = sut.Convert(new {brainiac=obj});
 
-            actual.Properties["brainiac.Ada"].Should().Be("Lovelace");
+            actual.Properties["brainiac[0].Key"].Should().Be("Ada");
+            actual.Properties["brainiac[0].Value"].Should().Be("Lovelace");
         }
 
         [Fact]
@@ -64,7 +67,7 @@ namespace OneTrueError.Client.Tests
         {
             var obj = new
             {
-                mofo = new Dictionary<object, string>()
+                mofo = new Dictionary<object, string>
                 {
                     {"ada", "hello"},
                     {1, "world"}
