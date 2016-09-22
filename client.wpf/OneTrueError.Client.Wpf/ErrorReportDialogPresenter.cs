@@ -57,7 +57,7 @@ namespace OneTrueError.Client.Wpf
             var email = NotificationControl.Email;
 
             // only upload it if the flag is set, it have already been uploaded otherwise.
-            if (OneTrue.Configuration.UserInteraction.AskUserForPermission)
+            if (AskForUserPermission)
                 OneTrue.UploadReport(_dto);
 
             if (!string.IsNullOrEmpty(info) || !string.IsNullOrEmpty(email))
