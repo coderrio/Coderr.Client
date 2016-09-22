@@ -16,7 +16,6 @@ namespace OneTrueError.Client.Wpf.Demo
             OneTrue.Configuration.UserInteraction.AskUserForDetails = true;
             OneTrue.Configuration.UserInteraction.AskUserForPermission = true;
             OneTrue.Configuration.UserInteraction.AskForEmailAddress = true;
-//            Application.Current.DispatcherUnhandledException += CurrentOnDispatcherUnhandledException;
             InitializeComponent();
         }
 
