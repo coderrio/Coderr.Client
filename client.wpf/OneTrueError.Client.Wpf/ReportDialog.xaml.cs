@@ -13,9 +13,9 @@ namespace OneTrueError.Client.Wpf
         public ReportDialog(ErrorReportDTO dto, string exceptionMessage)
         {
             if (dto == null) throw new ArgumentNullException(nameof(dto));
-            InitializeComponent();
             ErrorReportDetailsProvider.DtoReport = dto;
             ErrorReportDetailsProvider.ExceptionMessage = exceptionMessage;
+            InitializeComponent();
 //            var height = CalculateFormHeight();
 //            Height = height;
 //            if (controlsPanel.Controls.Count == 2)
