@@ -3,6 +3,7 @@ using System.Windows.Input;
 using Microsoft.Practices.Prism.Commands;
 using OneTrueError.Client.ContextCollections;
 using OneTrueError.Client.Contracts;
+using OneTrueError.Client.Wpf.Utils;
 
 // ReSharper disable UseNullPropagation
 
@@ -53,18 +54,25 @@ namespace OneTrueError.Client.Wpf.Presenters
 
         private void SubmitReport()
         {
+            ActionWrapper.SafeActionExecution(ReportToOneTrue);
+            PublishFinishedReporting();
+        }
+
+        private void ReportToOneTrue()
+        {
             var info = UserErrorDescription.UserDescription;
             var email = NotificationControl.Email;
 
             // only upload it if the flag is set, it have already been uploaded otherwise.
             if (AskForUserPermission)
+            {
                 OneTrue.UploadReport(_dto);
+            }
 
             if (!string.IsNullOrEmpty(info) || !string.IsNullOrEmpty(email))
             {
                 OneTrue.LeaveFeedback(_dto.ReportId, new UserSuppliedInformation(info, email));
             }
-            PublishFinishedReporting();
         }
 
         private void CancelReport()

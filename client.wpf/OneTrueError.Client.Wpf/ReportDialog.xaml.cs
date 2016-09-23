@@ -19,8 +19,6 @@ namespace OneTrueError.Client.Wpf
             InitializeComponent();
             var height = CalculateFormHeight();
             Height = height;
-//            if (controlsPanel.Controls.Count == 2)
-//                Width = 550;
         }
 
         private void DialogPresenterFinishedReporting(object sender, EventArgs eventArgs)

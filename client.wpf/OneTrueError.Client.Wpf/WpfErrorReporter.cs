@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Threading;
-using OneTrueError.Client.Contracts;
+using OneTrueError.Client.Wpf.Utils;
+
+// ReSharper disable UseStringInterpolation
 
 namespace OneTrueError.Client.Wpf
 {
@@ -43,7 +45,7 @@ namespace OneTrueError.Client.Wpf
             var dto = OneTrue.GenerateReport(context);
             if (!OneTrue.Configuration.UserInteraction.AskUserForPermission)
             {
-                TryUploadReport(dto);
+                ActionWrapper.SafeActionExecution(() => OneTrue.UploadReport(dto));
             }
 
             var ctx = new WindowFactoryContext {Context = context, Report = dto};
@@ -51,16 +53,5 @@ namespace OneTrueError.Client.Wpf
             dialog.ShowDialog();
         }
 
-        private static void TryUploadReport(ErrorReportDTO dto)
-        {
-            try
-            {
-                OneTrue.UploadReport(dto);
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-        }
     }
 }
