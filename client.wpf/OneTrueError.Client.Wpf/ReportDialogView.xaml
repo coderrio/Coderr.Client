@@ -58,11 +58,11 @@
                 
                 <Button Grid.Column="1"
                         Command="{Binding SubmitCommand}"
-                        Content="Submit"
+                        Content="Send error report"
                         Margin="3"/>
                 <Button Grid.Column="2"
                         Command="{Binding CancelCommand}"
-                        Content="Cancel"
+                        Content="Don't send"
                         Margin="3"
                         Visibility="{Binding AskForUserPermission, Converter={StaticResource BooleanToVisibilityConverter}}"
                         />
