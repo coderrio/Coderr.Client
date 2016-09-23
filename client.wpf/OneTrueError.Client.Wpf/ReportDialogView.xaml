@@ -3,6 +3,7 @@
                     xmlns:local="clr-namespace:OneTrueError.Client.Wpf">
     
     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    <local:BooleanToGridLengthConverter x:Key="BooleanToGridLengthConverter"/>
     
     <DataTemplate DataType="{x:Type local:ErrorReportDialogPresenter}">
         <Grid>
@@ -13,18 +14,18 @@
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="{Binding AskForUserDetails, Converter={StaticResource BooleanToGridLengthConverter}, ConverterParameter=3}"/>
+                <RowDefinition Height="{Binding AskForEmailAddress, Converter={StaticResource BooleanToGridLengthConverter}, ConverterParameter=1}"/>
                 <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
 
             <Image Grid.Column="0"
                    Grid.Row="0"
                    Grid.RowSpan="4"
-                   Stretch="Fill"
+                   Stretch="UniformToFill"
                    StretchDirection="Both"
                    Source="Resources/bigstock-Output.jpg"
-                   Margin="10"
+                   Margin="1"
                />
 
             <ContentControl Grid.Column="1"
@@ -50,18 +51,19 @@
                   Grid.Row="3"
                   Margin="10">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 
-                <Button Grid.Column="0"
+                <Button Grid.Column="1"
                         Command="{Binding SubmitCommand}"
                         Content="Submit"
-                        Margin="5"/>
-                <Button Grid.Column="1"
+                        Margin="3"/>
+                <Button Grid.Column="2"
                         Command="{Binding CancelCommand}"
                         Content="Cancel"
-                        Margin="5"
+                        Margin="3"
                         Visibility="{Binding AskForUserPermission, Converter={StaticResource BooleanToVisibilityConverter}}"
                         />
             </Grid>
@@ -79,9 +81,12 @@
             <TextBlock Grid.Row="0"
                        Text="Error Message"
                        FontWeight="Bold"
+                       FontSize="14"
                        />
             <TextBlock Grid.Row="1"
                        Text="{Binding ExceptionMessage}"
+                       FontWeight="Bold"
+                       Foreground="#33A8F7"
                        />
         </Grid>
     </DataTemplate>
@@ -91,12 +96,13 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="6*"/>
+                <RowDefinition Height="7*"/>
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0"
                        Text="Feedback"
                        FontWeight="Bold"
+                       FontSize="14"
                        />
             <TextBlock Grid.Row="1"
                        Text="Could you please let us know how to reproduce it?"
@@ -117,6 +123,7 @@
             <TextBlock Grid.Row="0"
                        Text="Status updates"
                        FontWeight="Bold"
+                       FontSize="14"
                        />
             <TextBlock Grid.Row="1"
                        Text="Enter your email address if you would like to receive status updates about this error."

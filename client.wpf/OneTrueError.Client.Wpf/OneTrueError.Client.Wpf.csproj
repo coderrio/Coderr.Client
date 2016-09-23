@@ -76,6 +76,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BooleanToGridLengthConverter.cs" />
     <Compile Include="ConfigExtensions.cs" />
     <Compile Include="ContextProviders\OpenWindowsCollector.cs" />
     <Compile Include="ErrorReportDetailsProvider.cs" />
