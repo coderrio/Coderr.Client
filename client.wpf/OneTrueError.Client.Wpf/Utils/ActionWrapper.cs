@@ -10,7 +10,7 @@ namespace OneTrueError.Client.Wpf.Utils
         {
             try
             {
-
+                action();
             }
             catch (Exception e)
             {
