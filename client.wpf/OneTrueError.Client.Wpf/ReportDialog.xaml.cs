@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Controls;
 using OneTrueError.Client.Contracts;
 
 namespace OneTrueError.Client.Wpf
@@ -16,8 +17,8 @@ namespace OneTrueError.Client.Wpf
             ErrorReportDetailsProvider.DtoReport = dto;
             ErrorReportDetailsProvider.ExceptionMessage = exceptionMessage;
             InitializeComponent();
-//            var height = CalculateFormHeight();
-//            Height = height;
+            var height = CalculateFormHeight();
+            Height = height;
 //            if (controlsPanel.Controls.Count == 2)
 //                Width = 550;
         }
@@ -25,6 +26,22 @@ namespace OneTrueError.Client.Wpf
         private void DialogPresenterFinishedReporting(object sender, EventArgs eventArgs)
         {
             Close();
+        }
+
+        private int CalculateFormHeight()
+        {
+            var height = 0;
+            if (OneTrue.Configuration.UserInteraction.AskUserForDetails)
+            {
+                height += 200;
+            }
+            if (OneTrue.Configuration.UserInteraction.AskForEmailAddress)
+            {
+                height += 100;
+            }
+            height += 100;
+            height += 100;
+            return height;
         }
     }
 }

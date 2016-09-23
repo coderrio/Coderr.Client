@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OneTrueError.Client.Wpf"
         mc:Ignorable="d"
-        Title="Application error" Height="570" Width="937">
+        Title="Application error" SizeToContent="Width"
+        Background="#F0F0F0"
+        >
     
     <Window.Resources>
         <ResourceDictionary>
@@ -14,37 +16,10 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-    
+
     <Grid>
-        <!--<Grid.ColumnDefinitions>
-            <ColumnDefinition Width="298"/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
-        
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        
-        <Image Grid.Column="0"
-               Grid.RowSpan="3"
-               Source="{Binding  Source={RelativeSource Mode=FindAncestor, AncestorType=local:ReportDialog}, Path=SideBar}"
-               />
-        
-        <ContentControl Grid.Column="1"
-                        Grid.Row="1">
-            <local:UserErrorDescriptionPresenter/>
-        </ContentControl>
-        
-        <ContentControl Grid.Column="1"
-                        Grid.Row="2">
-            <local:NotificationControlPresenter/>
-        </ContentControl>-->
-<!--        Content="{Binding Source={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=DialogPresenter}"-->
         <ContentControl >
             <local:ErrorReportDialogPresenter FinishedReporting="DialogPresenterFinishedReporting"/>
         </ContentControl>
-
     </Grid>
 </Window>
