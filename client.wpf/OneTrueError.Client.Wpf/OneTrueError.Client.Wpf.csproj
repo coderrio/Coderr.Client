@@ -76,14 +76,14 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BooleanToGridLengthConverter.cs" />
+    <Compile Include="Converters\BooleanToGridLengthConverter.cs" />
     <Compile Include="ConfigExtensions.cs" />
     <Compile Include="ContextProviders\OpenWindowsCollector.cs" />
     <Compile Include="ErrorReportDetailsProvider.cs" />
-    <Compile Include="ErrorMessagePresenter.cs" />
-    <Compile Include="UserErrorDescriptionPresenter.cs" />
-    <Compile Include="ErrorReportDialogPresenter.cs" />
-    <Compile Include="NotificationControlPresenter.cs" />
+    <Compile Include="Presenters\ErrorMessagePresenter.cs" />
+    <Compile Include="Presenters\UserErrorDescriptionPresenter.cs" />
+    <Compile Include="Presenters\ErrorReportDialogPresenter.cs" />
+    <Compile Include="Presenters\NotificationControlPresenter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -126,7 +126,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ReportDialogView.xaml">
+    <Page Include="Views\ErrorMessageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\NotificationControlView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ReportDialogView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserErrorDescriptionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

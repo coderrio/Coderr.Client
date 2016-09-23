@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace OneTrueError.Client.Wpf
+namespace OneTrueError.Client.Wpf.Presenters
 {
     public class ErrorMessagePresenter : INotifyPropertyChanged
     {

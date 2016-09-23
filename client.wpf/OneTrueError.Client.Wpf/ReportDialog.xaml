@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OneTrueError.Client.Wpf"
+        xmlns:presenters="clr-namespace:OneTrueError.Client.Wpf.Presenters"
         mc:Ignorable="d"
         Title="Application error" SizeToContent="Width"
         Background="#F0F0F0"
@@ -12,14 +13,14 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="ReportDialogView.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="Views/ReportDialogView.xaml"></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
 
     <Grid>
         <ContentControl >
-            <local:ErrorReportDialogPresenter FinishedReporting="DialogPresenterFinishedReporting"/>
+            <presenters:ErrorReportDialogPresenter FinishedReporting="DialogPresenterFinishedReporting"/>
         </ContentControl>
     </Grid>
 </Window>

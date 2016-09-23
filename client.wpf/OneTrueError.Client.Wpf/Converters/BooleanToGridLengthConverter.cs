@@ -2,9 +2,10 @@
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
+
 // ReSharper disable CompareOfFloatsByEqualityOperator
 
-namespace OneTrueError.Client.Wpf
+namespace OneTrueError.Client.Wpf.Converters
 {
     [ValueConversion(typeof(bool), typeof(GridLength))]
     public class BooleanToGridLengthConverter : IValueConverter

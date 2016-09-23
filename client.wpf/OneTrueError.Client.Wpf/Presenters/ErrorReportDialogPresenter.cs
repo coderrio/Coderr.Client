@@ -8,7 +8,7 @@ using OneTrueError.Client.Contracts;
 
 // ReSharper disable ConvertPropertyToExpressionBody
 
-namespace OneTrueError.Client.Wpf
+namespace OneTrueError.Client.Wpf.Presenters
 {
     public class ErrorReportDialogPresenter
     {
