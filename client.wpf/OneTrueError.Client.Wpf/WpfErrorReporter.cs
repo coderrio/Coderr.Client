@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Threading;
+using OneTrueError.Client.Contracts;
 
 namespace OneTrueError.Client.Wpf
 {
@@ -41,12 +42,25 @@ namespace OneTrueError.Client.Wpf
 
             var dto = OneTrue.GenerateReport(context);
             if (!OneTrue.Configuration.UserInteraction.AskUserForPermission)
-                OneTrue.UploadReport(dto);
+            {
+                TryUploadReport(dto);
+            }
 
-            var ctx = new WindowFactoryContext { Context = context, Report = dto };
+            var ctx = new WindowFactoryContext {Context = context, Report = dto};
             var dialog = WindowFactory(ctx);
             dialog.ShowDialog();
         }
 
+        private static void TryUploadReport(ErrorReportDTO dto)
+        {
+            try
+            {
+                OneTrue.UploadReport(dto);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
     }
 }
