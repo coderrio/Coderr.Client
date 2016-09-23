@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Controls;
 using OneTrueError.Client.Contracts;
+using OneTrueError.Client.Wpf.Utils;
 
 namespace OneTrueError.Client.Wpf
 {

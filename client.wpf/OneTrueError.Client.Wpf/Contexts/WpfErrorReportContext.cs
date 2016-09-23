@@ -1,7 +1,7 @@
 ﻿using System;
 using OneTrueError.Client.Reporters;
 
-namespace OneTrueError.Client.Wpf
+namespace OneTrueError.Client.Wpf.Contexts
 {
     /// <summary>
     ///     Customization for WPF applications

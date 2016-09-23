@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Threading;
+using OneTrueError.Client.Wpf.Contexts;
 using OneTrueError.Client.Wpf.Utils;
 
 // ReSharper disable UseStringInterpolation

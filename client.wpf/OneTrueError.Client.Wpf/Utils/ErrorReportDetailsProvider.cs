@@ -1,6 +1,6 @@
 ﻿using OneTrueError.Client.Contracts;
 
-namespace OneTrueError.Client.Wpf
+namespace OneTrueError.Client.Wpf.Utils
 {
     public static class ErrorReportDetailsProvider
     {

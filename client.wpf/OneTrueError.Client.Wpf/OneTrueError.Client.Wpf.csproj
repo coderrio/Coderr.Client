@@ -79,7 +79,7 @@
     <Compile Include="Converters\BooleanToGridLengthConverter.cs" />
     <Compile Include="ConfigExtensions.cs" />
     <Compile Include="ContextProviders\OpenWindowsCollector.cs" />
-    <Compile Include="ErrorReportDetailsProvider.cs" />
+    <Compile Include="Utils\ErrorReportDetailsProvider.cs" />
     <Compile Include="Presenters\ErrorMessagePresenter.cs" />
     <Compile Include="Presenters\UserErrorDescriptionPresenter.cs" />
     <Compile Include="Presenters\ErrorReportDialogPresenter.cs" />
@@ -101,8 +101,8 @@
       <DependentUpon>ReportDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils\ActionWrapper.cs" />
-    <Compile Include="WindowFactoryContext.cs" />
-    <Compile Include="WpfErrorReportContext.cs" />
+    <Compile Include="Contexts\WindowFactoryContext.cs" />
+    <Compile Include="Contexts\WpfErrorReportContext.cs" />
     <Compile Include="WpfErrorReporter.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

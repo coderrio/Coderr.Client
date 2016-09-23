@@ -1,6 +1,6 @@
 ﻿using OneTrueError.Client.Contracts;
 
-namespace OneTrueError.Client.Wpf
+namespace OneTrueError.Client.Wpf.Contexts
 {
     /// <summary>
     ///     Allows us to pass information to the delegate that is used to create a new error reporting dialog
