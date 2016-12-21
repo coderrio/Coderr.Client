@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Threading;
 
 namespace OneTrueError.Client.Uploaders
@@ -10,10 +10,13 @@ namespace OneTrueError.Client.Uploaders
     /// <typeparam name="T">Type of entity to queue</typeparam>
     public class UploadQueue<T> : IDisposable where T : class
     {
-        private readonly Queue<T> _queue = new Queue<T>();
+        private readonly ConcurrentQueue<T> _queue = new ConcurrentQueue<T>();
         private readonly ManualResetEvent _quitEvent = new ManualResetEvent(false);
         private readonly Action<T> _uploadAction;
+        private readonly ManualResetEventSlim _waitForCompletion = new ManualResetEventSlim(false);
         private int _attemptNumber;
+        private int _queueTasks;
+        private Func<bool> _preConditionAction;
 
         /// <summary>
         ///     Create a new instance of <see cref="UploadQueue{T}" />.
@@ -29,7 +32,9 @@ namespace OneTrueError.Client.Uploaders
             MaxQueueSize = 10;
             MaxAttempts = 3;
             RetryInterval = TimeSpan.FromSeconds(5);
+            PreConditionAction = () => true;
         }
+
 
         /// <summary>
         ///     Max number of upload attempts per report.
@@ -46,12 +51,16 @@ namespace OneTrueError.Client.Uploaders
         public int MaxQueueSize { get; set; }
 
         /// <summary>
-        ///     An action to run in the background thread to check wether an upload can be made.
+        ///     An action to run in the background thread to check whether an upload can be made.
         /// </summary>
         /// <remarks>
         ///     Typically used to check for connectivity.
         /// </remarks>
-        public Func<bool> PreConditionAction { get; set; }
+        public Func<bool> PreConditionAction
+        {
+            get { return _preConditionAction; }
+            set { _preConditionAction = value ?? (() => true); }
+        }
 
         /// <summary>
         ///     Amount of time to wait between each attempt.
@@ -60,6 +69,10 @@ namespace OneTrueError.Client.Uploaders
         ///     Default is 5 seconds.
         /// </value>
         public TimeSpan RetryInterval { get; set; }
+
+        internal bool ActivateSync { get; set; }
+
+        internal bool TaskWasInvoked { get; set; }
 
         /// <summary>
         ///     Dispose queue
@@ -85,33 +98,34 @@ namespace OneTrueError.Client.Uploaders
                 return;
             }
 
-
-            lock (_queue)
+            _queue.Enqueue(item);
+            if (Interlocked.CompareExchange(ref _queueTasks, 1, 0) == 0)
             {
-                _queue.Enqueue(item);
-                if (_queue.Count == 1)
-                    ThreadPool.QueueUserWorkItem(TryUploadItem);
+                if (ActivateSync)
+                    _quitEvent.Reset();
+                ThreadPool.QueueUserWorkItem(TryUploadItem);
             }
         }
 
         /// <summary>
-        ///     Thread safe conditional add
+        ///     Add report queue if the queue is empty; otherwise invoke the delegate.
         /// </summary>
         /// <param name="dto">DTO to add to the queue</param>
+        /// <param name="uploadTask">Task to invoke if queue is empty</param>
         /// <returns><c>true</c> if item was added to the queue; otherwise <c>false</c></returns>
-        public bool AddIfNotEmpty(T dto)
+        public bool AddIfNotEmpty(T dto, Action uploadTask)
         {
             if (dto == null) throw new ArgumentNullException("dto");
 
-            lock (_queue)
-            {
-                if (_queue.Count == 0)
-                    return false;
 
+            if (Interlocked.CompareExchange(ref _queueTasks, 1, 1) == 1)
+            {
                 _queue.Enqueue(dto);
+                return true;
             }
 
-            return true;
+            uploadTask();
+            return false;
         }
 
         /// <summary>
@@ -130,8 +144,16 @@ namespace OneTrueError.Client.Uploaders
             _quitEvent.Set();
         }
 
+        internal void Wait(int ms)
+        {
+            _waitForCompletion.Wait(ms);
+        }
+
         private void TryUploadItem(object state)
         {
+            if (ActivateSync)
+                TaskWasInvoked = true;
+
             while (true)
             {
                 try
@@ -139,33 +161,28 @@ namespace OneTrueError.Client.Uploaders
                     if (!PreConditionAction())
                     {
                         if (_quitEvent.WaitOne(RetryInterval))
-                            return;
+                            break;
                         continue;
                     }
 
                     T item;
-                    lock (_queue)
+                    if (!_queue.TryPeek(out item))
                     {
-                        item = _queue.Peek();
+                        break;
                     }
+
 
                     _uploadAction(item);
                     _attemptNumber = 0;
-                    lock (_queue)
-                    {
-                        _queue.Dequeue();
-                    }
+                    _queue.TryDequeue(out item);
                 }
                 catch (Exception ex)
                 {
                     _attemptNumber++;
                     if (_attemptNumber >= MaxAttempts)
                     {
-                        object failedItem;
-                        lock (_queue)
-                        {
-                            failedItem = _queue.Dequeue();
-                        }
+                        T failedItem;
+                        _queue.TryDequeue(out failedItem);
                         _attemptNumber = 0;
                         if (UploadFailed != null)
                             UploadFailed(this, new UploadReportFailedEventArgs(ex, failedItem));
@@ -173,10 +190,15 @@ namespace OneTrueError.Client.Uploaders
                     else
                     {
                         if (_quitEvent.WaitOne(RetryInterval))
-                            return;
+                            break;
                     }
                 }
             }
+            Interlocked.Exchange(ref _queueTasks, 0);
+
+            if (ActivateSync)
+                _waitForCompletion.Set();
+
         }
     }
 }

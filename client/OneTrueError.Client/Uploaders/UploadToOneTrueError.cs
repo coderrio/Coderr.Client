@@ -56,6 +56,7 @@ namespace OneTrueError.Client.Uploaders
         private readonly Uri _reportUri, _feedbackUri;
         private readonly string _sharedSecret;
         private UploadQueue<FeedbackDTO> _feedbackQueue;
+        private readonly Func<bool> _queueReportsAccessor = () => OneTrue.Configuration.QueueReports;
         private UploadQueue<ErrorReportDTO> _reportQueue;
 
 
@@ -76,7 +77,9 @@ namespace OneTrueError.Client.Uploaders
 
             if (oneTrueHost.AbsolutePath.Contains("/receiver/"))
                 throw new ArgumentException(
-                    "The OneTrueError URI should not contain the reporting area '/receiver', but should point at the site root.");
+                    "The OneTrueError URI should not contain the reporting area '/receiver/', but should point at the site root.");
+            if (!oneTrueHost.AbsolutePath.EndsWith("/"))
+                oneTrueHost = new Uri(oneTrueHost + "/");
 
             _reportUri = new Uri(oneTrueHost, "receiver/report/" + apiKey + "/");
             _feedbackUri = new Uri(oneTrueHost, "receiver/report/" + apiKey + "/feedback/");
@@ -86,6 +89,24 @@ namespace OneTrueError.Client.Uploaders
             _feedbackQueue.UploadFailed += OnUploadFailed;
             _reportQueue = new UploadQueue<ErrorReportDTO>(TryUploadReportNow);
             _reportQueue.UploadFailed += OnUploadFailed;
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="UploadToOneTrueError" /> class.
+        /// </summary>
+        /// <param name="oneTrueHost">
+        ///     Uri to the root of the OneTrueError web. Example.
+        ///     <code>http://yourWebServer/OneTrueError/</code>
+        /// </param>
+        /// <param name="apiKey">The API key.</param>
+        /// <param name="sharedSecret">The shared secret.</param>
+        /// <param name="queueReportsAccessor">Used to access the property that determines if the reports should be queued or not.</param>
+        /// <exception cref="System.ArgumentNullException">apiKey</exception>
+        public UploadToOneTrueError(Uri oneTrueHost, string apiKey, string sharedSecret, Func<bool> queueReportsAccessor)
+            : this(oneTrueHost, apiKey, sharedSecret)
+        {
+            if (queueReportsAccessor == null) throw new ArgumentNullException("queueReportsAccessor");
+            _queueReportsAccessor = queueReportsAccessor;
         }
 
         /// <summary>
@@ -145,15 +166,10 @@ namespace OneTrueError.Client.Uploaders
         {
             if (report == null) throw new ArgumentNullException("report");
 
-            if (!NetworkInterface.GetIsNetworkAvailable())
-            {
+            if (!NetworkInterface.GetIsNetworkAvailable() || _queueReportsAccessor())
                 _reportQueue.Add(report);
-            }
             else
-            {
-                if (!_reportQueue.AddIfNotEmpty(report))
-                    TryUploadReportNow(report);
-            }
+                TryUploadReportNow(report);
         }
 
         /// <summary>
@@ -170,36 +186,29 @@ namespace OneTrueError.Client.Uploaders
         /// <param name="feedback">Feedback to send</param>
         /// <remarks>
         ///     <para>
-        ///         Will be queued internally (in memory) if the OS reports that there are no internet connection available.
+        ///         Will be queued internally (in memory) if the OS reports that there are no Internet connection available.
         ///     </para>
         /// </remarks>
         public void UploadFeedback(FeedbackDTO feedback)
         {
             if (feedback == null) throw new ArgumentNullException("feedback");
 
-            if (!NetworkInterface.GetIsNetworkAvailable())
-            {
+            if (!NetworkInterface.GetIsNetworkAvailable() || _queueReportsAccessor())
                 _feedbackQueue.Add(feedback);
-            }
             else
-            {
-                if (!_feedbackQueue.AddIfNotEmpty(feedback))
-                    TryUploadFeedbackNow(feedback);
-            }
+                TryUploadFeedbackNow(feedback);
         }
 
         /// <summary>
         ///     Try to upload a report directly
         /// </summary>
         /// <param name="feedback">Report to upload</param>
-        /// <exception cref="WebException">No internet connection is available; Destination server did not accept the report.</exception>
+        /// <exception cref="WebException">No Internet connection is available; Destination server did not accept the report.</exception>
         public void TryUploadFeedbackNow(FeedbackDTO feedback)
         {
             if (feedback == null) throw new ArgumentNullException("feedback");
             if (!NetworkInterface.GetIsNetworkAvailable())
-            {
                 throw new InvalidOperationException("Not connected, try again later.");
-            }
 
             var reportJson = JsonConvert.SerializeObject(feedback, Formatting.None,
                 new JsonSerializerSettings
@@ -243,9 +252,7 @@ namespace OneTrueError.Client.Uploaders
         public void TryUploadReportNow(ErrorReportDTO report)
         {
             if (!NetworkInterface.GetIsNetworkAvailable())
-            {
                 throw new WebException("Not connected, try again later.", WebExceptionStatus.ConnectFailure);
-            }
 
             var buffer = CompressErrorReport(report);
             var version = Assembly.GetExecutingAssembly().GetName().Version.ToString(2);
@@ -354,7 +361,7 @@ namespace OneTrueError.Client.Uploaders
         private static void AddProxyIfRequired(HttpWebRequest request, string uri)
         {
             var proxy = request.Proxy;
-            if (proxy != null && !proxy.IsBypassed(new Uri(uri)))
+            if ((proxy != null) && !proxy.IsBypassed(new Uri(uri)))
             {
                 var proxyuri = proxy.GetProxy(request.RequestUri).ToString();
                 request.UseDefaultCredentials = true;
@@ -397,8 +404,15 @@ namespace OneTrueError.Client.Uploaders
                 case HttpStatusCode.Unauthorized:
                     throw new UnauthorizedAccessException(title + "\r\n" + description, err);
                 case HttpStatusCode.NotFound:
-                    throw new InvalidApplicationKeyException(title + "\r\n" + description, err);
+                    //legacy handling of 404. Misconfigured web servers will report 404,
+                    //so remove the usage to avoid ambiguity
+                    if (title.IndexOf("key", StringComparison.OrdinalIgnoreCase) != -1)
+                        throw new InvalidApplicationKeyException(title + "\r\n" + description, err);
+                    throw new InvalidOperationException("Server returned an error.\r\n" + description, err);
                 default:
+                    if ((resp.StatusCode == HttpStatusCode.BadRequest) && title.Contains("APP_KEY"))
+                        throw new InvalidApplicationKeyException(title + "\r\n" + description, err);
+
                     throw new InvalidOperationException("Server returned an error.\r\n" + description, err);
             }
         }

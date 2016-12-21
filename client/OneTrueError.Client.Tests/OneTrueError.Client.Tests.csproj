@@ -66,6 +66,7 @@
     <Compile Include="ReportToOneTrueErrorTests.cs" />
     <Compile Include="Sandboxer.cs" />
     <Compile Include="TestObjects\GotParentReference.cs" />
+    <Compile Include="Uploaders\UploadQueueTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OneTrueError.Client\OneTrueError.Client.csproj">
