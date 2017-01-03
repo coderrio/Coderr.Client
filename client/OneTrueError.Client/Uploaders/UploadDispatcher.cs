@@ -8,21 +8,29 @@ namespace OneTrueError.Client.Uploaders
     /// <summary>
     ///     Invokes all uploaders for every report.
     /// </summary>
+    /// <remarks>
+    ///     <para>
+    ///         This class uses the <see cref="OneTrueConfiguration.QueueReports" /> to determine if uploads should be done in
+    ///         the background (i.e. don't fail on errors, attempt again late).
+    ///     </para>
+    /// </remarks>
     public class UploadDispatcher : IDisposable
     {
         private readonly OneTrueConfiguration _configuration;
+        private readonly UploadQueue<FeedbackDTO> _feedbackQueue;
         private readonly List<IReportUploader> _uploaders = new List<IReportUploader>();
         private UploadQueue<ErrorReportDTO> _reportQueue;
 
 
         /// <summary>
-        ///     Creates a new instanxe of <see cref="UploadDispatcher" />.
+        ///     Creates a new instance of <see cref="UploadDispatcher" />.
         /// </summary>
-        /// <param name="configuration">Used to check at runtime of queing is enabled or not.</param>
+        /// <param name="configuration">Used to check at runtime of queuing is enabled or not.</param>
         public UploadDispatcher(OneTrueConfiguration configuration)
         {
             _configuration = configuration;
-            _reportQueue = new UploadQueue<ErrorReportDTO>(UploadNow);
+            _reportQueue = new UploadQueue<ErrorReportDTO>(UploadReportNow);
+            _feedbackQueue = new UploadQueue<FeedbackDTO>(UploadFeedbackNow);
         }
 
 
@@ -68,23 +76,24 @@ namespace OneTrueError.Client.Uploaders
         /// </remarks>
         public void Upload(ErrorReportDTO dto)
         {
+            if (dto == null) throw new ArgumentNullException("dto");
             if (_configuration.QueueReports)
                 _reportQueue.Add(dto);
             else
-                UploadNow(dto);
+                UploadReportNow(dto);
         }
 
         /// <summary>
         ///     Upload feedback.
         /// </summary>
-        /// <param name="feedback">Feedback provided  by the user.</param>
-        public void Upload(FeedbackDTO feedback)
+        /// <param name="dto">Feedback provided  by the user.</param>
+        public void Upload(FeedbackDTO dto)
         {
-            if (feedback == null) throw new ArgumentNullException("feedback");
-            foreach (var uploader in _uploaders)
-            {
-                uploader.UploadFeedback(feedback);
-            }
+            if (dto == null) throw new ArgumentNullException("dto");
+            if (_configuration.QueueReports)
+                _feedbackQueue.Add(dto);
+            else
+                UploadFeedbackNow(dto);
         }
 
         /// <summary>
@@ -114,12 +123,16 @@ namespace OneTrueError.Client.Uploaders
         /// </remarks>
         private event EventHandler<UploadReportFailedEventArgs> UploadFailed;
 
-        private void UploadNow(ErrorReportDTO dto)
+        private void UploadFeedbackNow(FeedbackDTO dto)
         {
             foreach (var uploader in _uploaders)
-            {
+                uploader.UploadFeedback(dto);
+        }
+
+        private void UploadReportNow(ErrorReportDTO dto)
+        {
+            foreach (var uploader in _uploaders)
                 uploader.UploadReport(dto);
-            }
         }
     }
 }
