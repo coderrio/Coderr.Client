@@ -3,6 +3,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using OneTrueError.Client.AspNet.Mvc5.Handlers;
 using OneTrueError.Client.Contracts;
 
 namespace OneTrueError.Client.AspNet.Mvc5.Implementation

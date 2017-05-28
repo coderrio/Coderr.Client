@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Compilation;
 using System.Web.Hosting;
 using System.Web.UI;
+using OneTrueError.Client.AspNet.Mvc5.Handlers;
 
 namespace OneTrueError.Client.AspNet.Mvc5.Implementation
 {
@@ -143,7 +144,7 @@ namespace OneTrueError.Client.AspNet.Mvc5.Implementation
         private static string LoadDefaultErrorPage(string httpCodeName)
         {
             var asm = Assembly.GetExecutingAssembly();
-            var fileNameSpace = typeof(ErrorHttpModule).Namespace + ".Views";
+            var fileNameSpace = typeof(AspNetMvcContext).Namespace + ".Views";
             var file = asm.GetManifestResourceStream(string.Format("{0}.{1}.html", fileNameSpace, httpCodeName))
                        ?? asm.GetManifestResourceStream(string.Format("{0}.Error.html", fileNameSpace));
 

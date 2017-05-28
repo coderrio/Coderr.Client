@@ -1,6 +1,7 @@
 ﻿using System.Web.Mvc;
 using OneTrueError.Client.AspNet.Mvc5;
 using OneTrueError.Client.AspNet.Mvc5.ContextProviders;
+using OneTrueError.Client.AspNet.Mvc5.Handlers;
 using OneTrueError.Client.Config;
 
 // ReSharper disable once CheckNamespace
@@ -27,9 +28,19 @@ namespace OneTrueError.Client
         public static void CatchMvcExceptions(this OneTrueConfiguration configurator)
         {
             configurator.ContextProviders.Add(new FormProvider());
+            configurator.ContextProviders.Add(new FileProvider());
             configurator.ContextProviders.Add(new QueryStringProvider());
             configurator.ContextProviders.Add(new SessionProvider());
             configurator.ContextProviders.Add(new HttpHeadersProvider());
+            configurator.ContextProviders.Add(new HttpApplicationItemsProvider());
+
+            configurator.ContextProviders.Add(new ViewDataProvider());
+            configurator.ContextProviders.Add(new ViewBagProvider());
+            configurator.ContextProviders.Add(new RouteDataProvider());
+            configurator.ContextProviders.Add(new TempDataProvider());
+            configurator.ContextProviders.Add(new ModelStateProvider());
+
+
             GlobalFilters.Filters.Add(new OneTrueErrorFilter());
             ErrorHttpModule.Activate();
         }

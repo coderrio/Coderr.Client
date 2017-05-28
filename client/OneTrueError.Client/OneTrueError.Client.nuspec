@@ -3,35 +3,35 @@
 <package>
   <metadata>
     <id>OneTrueError.Client</id>
-    <version>1.0.0</version>
-    <authors>Gauffin Interactive AB</authors>
-    <owners>Gauffin Interactive AB</owners>
+    <version>1.0.3</version>
+    <authors>1TCompany AB</authors>
+    <owners>1TCompany AB</owners>
     <licenseUrl>https://github.com/gauffininteractive/onetrueerror.client/blob/master/LICENSE.md</licenseUrl>
-    <projectUrl>http://onetrueerror.com</projectUrl>
+    <projectUrl>https://onetrueerror.com</projectUrl>
     <iconUrl>http://onetrueerror.com/images/ote_50x50.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <summary>
-      Open source exception handling for .NET. Detects, uploads and analyses exceptions in real time.
+      Automated exception handling for .NET. Detects, uploads and analyses exceptions in real time.
       
       OneTrueError automatically includes the context information that you forgot to add in your log. Use it to
-      make it a lot easier to identify and correct the root cause of exceptions.
+      make it a easier to identify and correct exceptions.
     </summary>
     <description>
-      Open source exception handling for .NET. Detects, uploads and analyses exceptions in real time.
+      Automated exception handling for .NET. Detects, uploads and analyses exceptions in real time.
 
       OneTrueError automatically includes the context information that you forgot to add in your log. Use it to
       make it a lot easier to identify and correct the root cause of exceptions.
       
       This package allows you to manually report exceptions to OnetrueError (with one line of code).
     </description>
-    <releaseNotes>Beta version.</releaseNotes>
-    <copyright>Copyright 2016</copyright>
+    <releaseNotes>Fixed nuget versioing</releaseNotes>
+    <copyright>Copyright 2017 1TCompany AB</copyright>
     <tags>exception error reporting analysis </tags>
     <dependencies>
-      <dependency id="Newtonsoft.json" version="8.0.0" />
+      <dependency id="Newtonsoft.json" version="9.0.1" />
     </dependencies>
   </metadata>
   <files>
-    <file src="Nuget/ReadMe.txt" target="readme.txt" />
+    <file src="Nuget/ReadMe.txt" target="" />
   </files>
 </package>

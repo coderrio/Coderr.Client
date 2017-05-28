@@ -31,7 +31,9 @@ namespace OneTrueError.Client.AspNet.Mvc5.ContextProviders
             {
                 var item = HttpContext.Current.Session[key];
                 if (item is string)
+                {
                     items.Add(key, (string) item);
+                }
                 else
                 {
                     var json = JsonConvert.SerializeObject(item);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Web.Mvc;
 using OneTrueError.Client.Contracts;
 
@@ -41,9 +42,14 @@ namespace OneTrueError.Client.AspNet.Mvc5.Demo.Controllers
                 var col2 = new ContextCollectionDTO("ViewModel");
                 col2.Properties.Add("Fake", "Make");
 
-                OneTrue.Report(ex, new [] {collection, col2});
+                this.ReportException(ex, new [] {collection, col2});
             }
             return View();
+        }
+
+        public ActionResult Return()
+        {
+            throw new InvalidDataException("Unhandled data ex!");
         }
     }
 }

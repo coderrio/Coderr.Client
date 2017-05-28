@@ -1,31 +1,10 @@
 ﻿OneTrueError.Client installation
 =================================
 
-You've just installed the OneTrueError client. 
+Congratulations on taking the first step toward a more efficient exception handling.
 
-To get started add the following code to your application:
+Now you need to either download and install the open source server: https://github.com/gauffininteractive/OneTrueError.Server/
+.. or create an account at https://onetrueerror.com.
 
-	var url = new Uri("http://yourServer/onetrueerror/");
-	OneTrue.Configuration.Credentials(url, "yourAppKey", "yourSharedSecret");
-
-Once done you can report exceptions like this:
-
-	try
-	{
-		somelogic();
-	}
-	catch(SomeException ex)
-	{
-		OneTrue.Report(ex);
-	}
-
-
-More information
-=================
-
-* http://onetrueerror.com/ - About the service
-* http://onetrueerror.com/documentation/client/index.md - Client documentation
-* http://onetrueerror.com/documentation/server/index.md - Server documentation (to extend/change the OnTrueError server source code)
-
-
-*this library requires that you have installed a OneTrueError server somewhere*
+Once done, log into the server and find the configuration instructions.
+(Or read the articles in our documentation: https://onetrueerror.com/documentation)

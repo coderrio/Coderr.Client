@@ -1,20 +1,35 @@
-﻿ASP.NET MVC5 client for OneTrueError
-================================
+﻿OneTrueError - ASP.NET MVC5 integration
+=======================================
 
-You've just installed the ASP.NET MVC5 integration library for OneTrueError. 
-All unhandled exceptions will automatically be uploaded to OneTrueError (http://onetrueerror.com).
+Congratulations on taking the first step toward a more efficient exception handling.
 
-To get started add the following code to your application:
+Now you need to either download and install the open source server: https://github.com/gauffininteractive/OneTrueError.Server/
+.. or create an account at https://onetrueerror.com.
 
-	var url = new Uri("http://yourServer/onetrueerror/");
-	OneTrue.Configuration.Credentials(url, "yourAppKey", "yourSharedSecret");
-	OneTrue.Configuration.CatchMvcExceptions();
-
-(this library requires that you have installed a OneTrueError server somewhere)
-
-More information
-===================
-
-http://onetrueerror.com/documentation/client/libraries/aspnet/mvc5/install.md
+Once done, log into the server and find the configuration instructions.
+(Or read the articles in our documentation: https://onetrueerror.com/documentation)
 
 
+Reporting exceptions
+===========================
+
+All unhandled exceptions are reported by default. 
+
+However, you might want to report exceptions manually.
+If you want MVC5 specific information to be included, you need to use an controller exception method:
+
+```csharp
+public ActionResult YourMethod(int userId, int postId)
+{
+  try
+  {
+     // [...some code...]
+  }
+  catch (Exception ex)
+  {
+    //userId and postId will automatically be
+    //attached as routeData values.
+    this.ReportException(ex);
+  }
+}
+```

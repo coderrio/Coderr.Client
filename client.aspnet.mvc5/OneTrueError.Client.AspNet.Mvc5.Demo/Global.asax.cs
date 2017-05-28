@@ -10,11 +10,13 @@ namespace OneTrueError.Client.AspNet.Mvc5.Demo
         protected void Application_Start()
         {
             var uri = new Uri("http://localhost:50473/");
-            //OneTrue.Configuration.DisplayErrorPages();
             OneTrue.Configuration.Credentials(uri,
-                "13d82df603a845c7a27164c4fec19dd6",
-                "6f0a0a7fac6d42caa7cc47bb34a6520b");
+                "a8bf3b6ad3644068adf809dc12908c3a",
+                "86aede6dc3d74f0ab11df444522d780d");
 
+
+            OneTrue.Configuration.UserInteraction.AskUserForDetails = true;
+            OneTrue.Configuration.UserInteraction.AskForEmailAddress = true;
             OneTrue.Configuration.CatchMvcExceptions();
             OneTrue.Configuration.DisplayErrorPages();
 

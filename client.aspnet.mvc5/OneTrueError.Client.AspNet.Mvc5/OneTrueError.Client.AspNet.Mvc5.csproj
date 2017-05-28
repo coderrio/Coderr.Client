@@ -81,27 +81,37 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AspNetContext.cs" />
+    <Compile Include="AspNetMvcContext.cs" />
     <Compile Include="ConfigurationExtensions.cs" />
     <Compile Include="ContextProviders\FileProvider.cs" />
     <Compile Include="ContextProviders\FormProvider.cs" />
+    <Compile Include="ContextProviders\ViewBagProvider.cs" />
+    <Compile Include="ContextProviders\ViewDataProvider.cs" />
+    <Compile Include="ContextProviders\TempDataProvider.cs" />
+    <Compile Include="ContextProviders\ModelStateProvider.cs" />
+    <Compile Include="ContextProviders\HttpApplicationItemsProvider.cs" />
     <Compile Include="ContextProviders\HttpHeadersProvider.cs" />
     <Compile Include="ContextProviders\NamespaceDoc.cs" />
     <Compile Include="ContextProviders\QuerystringProvider.cs" />
+    <Compile Include="ContextProviders\RouteDataProvider.cs" />
     <Compile Include="ContextProviders\SessionProvider.cs" />
-    <Compile Include="HttpCodeIdentifier.cs" />
-    <Compile Include="ErrorHttpModule.cs" />
+    <Compile Include="ControllerExtension.cs" />
+    <Compile Include="Handlers\HttpCodeIdentifier.cs" />
+    <Compile Include="Handlers\ErrorHttpModule.cs" />
     <Compile Include="Implementation\BuiltInViewRender.cs" />
     <Compile Include="Implementation\HttpErrorReporterContext.cs" />
     <Compile Include="NamespaceDoc.cs" />
-    <Compile Include="OneTrueErrorFilter.cs" />
+    <Compile Include="Handlers\OneTrueErrorFilter.cs" />
     <Compile Include="OneTrueViewModel.cs" />
     <Compile Include="Implementation\CustomControllerContext.cs" />
-    <Compile Include="OneTrueErrorController.cs" />
+    <Compile Include="Handlers\OneTrueErrorController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="OneTrueError.Client.AspNet.Mvc5.nuspec" />
+    <None Include="OneTrueError.Client.AspNet.Mvc5.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

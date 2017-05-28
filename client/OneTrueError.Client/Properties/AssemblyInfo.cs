@@ -13,5 +13,5 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("OneTrueError.Client.Tests")]
 [assembly: ComVisible(false)]
 [assembly: Guid("5009a3de-ab2f-4553-b242-5627c07b8688")]
-[assembly: AssemblyVersion("1.1.1.0")]
-[assembly: AssemblyFileVersion("1.1.1.0")]
+[assembly: AssemblyVersion("1.0.3.0")]
+[assembly: AssemblyFileVersion("1.0.3.0")]

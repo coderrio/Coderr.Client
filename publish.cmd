@@ -7,9 +7,9 @@ rem Here is the publish section
 if "%OTE_KEY%"=="" goto nokey
 set nugetKey=%OTE_KEY%
 
-if "%1"=="" goto blank
-set packageName=.%1
-if "%1"=="core" set packageName=
+if "%2"=="" goto blank
+set packageName=.%2
+if "%2"=="core" set packageName=
 
 FOR /F "delims=|" %%I IN ('DIR "NugetPackages\OneTrueError.Client%packageName%*.nupkg" /B /O:D') DO SET packageName=%%I
 client\.nuget\nuget push NugetPackages\%packageName% %nugetKey%
