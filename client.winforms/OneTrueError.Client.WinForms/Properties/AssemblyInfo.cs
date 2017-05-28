@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("OneTrueError.AspNet")]
-[assembly: AssemblyDescription("Captures all unhandled exceptions in WinForms/WPF applications")]
+[assembly: AssemblyTitle("OneTrueError.Client.WinForms")]
+[assembly: AssemblyDescription("Captures all unhandled exceptions in WinForms applications")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Gauffin Interactive AB")]
-[assembly: AssemblyProduct("OneTrueError.com")]
-[assembly: AssemblyCopyright("Copyright © Gauffin Interactive AB 2013")]
+[assembly: AssemblyCompany("1TCompany AB")]
+[assembly: AssemblyProduct("https://onetrueerror.com")]
+[assembly: AssemblyCopyright("Copyright © 2017 1TCompany AB. All rights reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -35,5 +35,5 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("1.1.0.0")]
-[assembly: AssemblyFileVersion("1.1.0.0")]
+[assembly: AssemblyVersion("1.0.4.0")]
+[assembly: AssemblyFileVersion("1.0.4.0")]

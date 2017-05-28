@@ -5,8 +5,9 @@ Client libraries are used to detect exceptions, collect context information and 
 
 The libraries are installed through nuget. 
 
-* [Documentation](http://onetrueerror.com/documentation/client) - Including how to extend or build a new library.
+* [Documentation](https://onetrueerror.com/documentation/client) - Including how to extend or build a new library.
 
+https://onetrueerror.com
 
 ## Core features
 

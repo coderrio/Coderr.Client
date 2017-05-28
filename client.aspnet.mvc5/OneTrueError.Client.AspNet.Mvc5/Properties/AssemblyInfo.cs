@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("OneTrueError.AspNet.Mvc5")]
-[assembly: AssemblyDescription("OneTrueError integration package for OneTrueError")]
+[assembly: AssemblyTitle("OneTrueError.Client.AspNet.Mvc5")]
+[assembly: AssemblyDescription("ASP.NET MVC support for OneTrueError")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Gauffin Interactive AB")]
-[assembly: AssemblyProduct("OneTrueError.AspNet.Mvc5")]
-[assembly: AssemblyCopyright("Copyright ©  2014 Gauffin Interactive AB")]
+[assembly: AssemblyProduct("https://onetrueerror.com")]
+[assembly: AssemblyCopyright("Copyright © 2017 1TCompany AB. All rights reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

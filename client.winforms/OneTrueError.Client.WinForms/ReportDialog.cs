@@ -17,7 +17,7 @@ namespace OneTrueError.Client.WinForms
         /// </summary>
         public ReportDialog(ErrorReportDTO dto)
         {
-            if (dto == null) throw new ArgumentNullException(nameof(dto));
+            if (dto == null) throw new ArgumentNullException("dto");
             _dto = dto;
 
             InitializeComponent();

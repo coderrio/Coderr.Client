@@ -1,20 +1,38 @@
-﻿WinForms client for OneTrueError
-================================
+﻿OneTrueError - WinForms integration
+===================================
 
-You've just installed the WinForms integration library for OneTrueError. 
-All unhandled exceptions will automatically be uploaded to OneTrueError (http://onetrueerror.com).
+Congratulations on taking the first step toward a more efficient exception handling.
 
-To get started add the following code to your application:
+Now you need to either download and install the open source server: https://github.com/gauffininteractive/OneTrueError.Server/
+.. or create an account at https://onetrueerror.com.
 
-	var url = new Uri("http://yourServer/onetrueerror/");
-	OneTrue.Configuration.Credentials(url, "yourAppKey", "yourSharedSecret");
-	OneTrue.Configuration.CatchWinFormsExceptions();
-
-(this library requires that you have installed a OneTrueError server somewhere)
-
-More information
-===================
-
-http://onetrueerror.com/documentation/client/libraries/winforms/index.md
+Once done, log into the server and find the configuration instructions.
+(Or read the articles in our documentation: https://onetrueerror.com/documentation)
 
 
+Configuration example
+=====================
+
+internal static class Program
+{
+    [STAThread]
+    private static void Main()
+    {
+        var url = new Uri("https://report.onetrueerror.com");
+        OneTrue.Configuration.Credentials(url, "yourAppKey", "yourSharedSecret");
+        OneTrue.Configuration.CatchWinFormsExceptions();
+
+        // take screen shot every time an exception is reported.
+        OneTrue.Configuration.TakeScreenshotOfActiveFormOnly();
+        OneTrue.Configuration.TakeScreenshots();
+
+        //control the design of the built in error form
+        OneTrue.Configuration.UserInteraction.AskUserForDetails = true;
+        OneTrue.Configuration.UserInteraction.AskUserForPermission = true;
+        OneTrue.Configuration.UserInteraction.AskForEmailAddress = true;
+
+        Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
+        Application.Run(new CreateUserForm());
+    }
+}

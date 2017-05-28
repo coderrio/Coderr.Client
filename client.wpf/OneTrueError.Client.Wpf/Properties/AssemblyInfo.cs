@@ -8,11 +8,11 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("OneTrueError.Client.Wpf")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Tracks exceptions in WPF applications")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("OneTrueError.Client.Wpf")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
+[assembly: AssemblyCompany("1TCompany AB")]
+[assembly: AssemblyProduct("https://onetrueerror.com")]
+[assembly: AssemblyCopyright("Copyright © 2017 1TCompany AB. All rights reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
