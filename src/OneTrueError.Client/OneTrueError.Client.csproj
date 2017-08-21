@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net451</TargetFramework>
+    <PackageId>OneTrueError.Client</PackageId>
+    <Authors>1TCompany AB</Authors>
+    <Description>Automates exception handling for .NET applications</Description>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes>Converted to vstudio 2017 csproj format</PackageReleaseNotes>
+    <Copyright>Copyright 2017 (c) 1TCompany AB. All rights reserved.</Copyright>
+    <PackageTags>logger exceptions analysis</PackageTags>
+    <PackageIconUrl>http://onetrueerror.com/images/nuget_icon.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/onetrueerror/onetrueerror.client</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseUrl>https://github.com/onetrueerror/onetrueerror.client/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://onetrueerror.com</PackageProjectUrl>
+    <Version>1.0.4.0</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="README.txt">
+      <Pack>true</Pack>
+      <PackagePath>README.txt</PackagePath>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Management" />
+  </ItemGroup>
+</Project>

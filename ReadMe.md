@@ -1,21 +1,27 @@
-Client libraries
+Base client library
 ================
 
-Client libraries are used to detect exceptions, collect context information and finally upload everything to the server for analysis. There are one per library/framework that OneTrueError integrates with.
+This client library is used to manually report exceptions to OneTrueError (`OneTrue.Report(exception)`).
 
-The libraries are installed through nuget. 
+For automated handling, use one of the integration libraries:
 
-* [Documentation](https://onetrueerror.com/documentation/client) - Including how to extend or build a new library.
+Regular .NET
 
-https://onetrueerror.com
+* [ASP.NET](https://github.com/onetrueerror/onetrueerror.client.aspnet)
+* [ASP.NET MVC5](https://github.com/onetrueerror/onetrueerror.client.aspnet.mvc5)
+* [ASP.NET WebApi2](https://github.com/onetrueerror/onetrueerror.client.aspnet.webapi2)
+* [log4net](https://github.com/onetrueerror/onetrueerror.client.log4net)
+* [WinForms](https://github.com/onetrueerror/onetrueerror.client.winforms)
+* [WPF](https://github.com/onetrueerror/onetrueerror.client.wpf)
 
-## Core features
+.NET Standard
 
-All features in the core library are also included in all other client libraries.
+* [NetStd](https://github.com/onetrueerror/OneTrueError.Client.NetStandard)
 
-The core library have support for the following features:
 
-* HTTP proxy detection and usage
+#  Features in this library
+
+* HTTP proxy detection and usage when error reports are uploaded.
 * Queued uploads (to allow the application to still be responsive, even if uploading are done over a slow connection)
 * Compressed upload to minimize bandwidth usage.
 * Context data collection
@@ -24,44 +30,4 @@ The core library have support for the following features:
  * View models etc
 * Adding tags to errors
 * Allow user to leave feedback
-* Allow user to get status updates through email
- 
-## ASP.NET features
-
-The ASP.NET library have support for the following features:
-
-* Context information for:
- * Session contents
- * Form (if posted)
- * Files (names + size if uploaded)
- * Request headers (including URL)
-* Custom error pages
-
-## ASP.NET MVC5 features
-
-All features for ASP.NET plus:
-
-* Context information for:
- * ViewBag / ViewData
- * TempData
- * RouteData
- * ModelState
-* A much easier (conventional) way to display error pages
-
-## log4net features
-
-Allows you to start reporting all exceptions that you are logging by just adding one line of code. Great for legacy applications.
-
-The log4net library have support for the following features:
-
-* Context information for:
- * Log message which had an exception included
- * Type that threw the exception
-
-## WinForms features
-
-The WinForms library have support for the following features:
-
-* Context information for:
-  * State of all open forms (i.e. text content of controls and properties)
-  * Screen shot of all open forms (if configured)
+* Automated information collection from windows, the process and the current thread.
