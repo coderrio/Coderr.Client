@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Reflection;
+using System.Threading;
 using FluentAssertions;
 using OneTrueError.Client.Converters;
 using OneTrueError.Client.Tests.TestObjects;
@@ -11,6 +14,11 @@ namespace OneTrueError.Client.Tests
 {
     public class ObjectToContextCollectionTests
     {
+        public ObjectToContextCollectionTests()
+        {
+            Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture = new CultureInfo(1053);
+        }
+
         [Fact]
         public void should_be_able_To_convert_dictionaries_using_the_key_as_index()
         {
@@ -26,7 +34,7 @@ namespace OneTrueError.Client.Tests
         [Fact]
         public void should_be_able_to_process_type_with_circular_reference()
         {
-            var obj = new GotParentReference {Child = new GotParentReferenceChild {Title = "chld"}, Name = "prnt"};
+            var obj = new GotParentReference { Child = new GotParentReferenceChild { Title = "chld" }, Name = "prnt" };
             obj.Child.Parent = obj;
 
             var sut = new ObjectToContextCollectionConverter();
@@ -55,7 +63,7 @@ namespace OneTrueError.Client.Tests
             obj.Dictionary["Ada"] = "Lovelace";
 
             var sut = new ObjectToContextCollectionConverter();
-            var actual = sut.Convert(new {brainiac=obj});
+            var actual = sut.Convert(new { brainiac = obj });
 
             actual.Properties["brainiac[0].Key"].Should().Be("Ada");
             actual.Properties["brainiac[0].Value"].Should().Be("Lovelace");
@@ -105,7 +113,7 @@ namespace OneTrueError.Client.Tests
                 Amount = 20000,
                 Expires = DateTime.UtcNow.AddMinutes(5)
             };
-            var dict = new Dictionary<string, object> {["DemoKey"] = item};
+            var dict = new Dictionary<string, object> { ["DemoKey"] = item };
 
             var sut = new ObjectToContextCollectionConverter();
             var actual = sut.Convert(dict);
@@ -117,6 +125,7 @@ namespace OneTrueError.Client.Tests
         [Fact]
         public void should_be_able_to_serialize_all_types_of_exceptions()
         {
+            var types = LoadAllTypes().Where(y => typeof(Exception).IsAssignableFrom(y)).ToList();
             string[] ignoredExceptions = new string[]
             {
                 /*"UpaException", "EventLogException", "EventLogNotFoundException", "PrivilegeNotHeldException",
@@ -127,11 +136,7 @@ namespace OneTrueError.Client.Tests
             var sut = new ObjectToContextCollectionConverter();
 
             var inner = new Exception("hello");
-            var exceptionTypes =
-                AppDomain.CurrentDomain.GetAssemblies()
-                    .SelectMany(assembly => assembly.GetTypes().Where(y => typeof(Exception).IsAssignableFrom(y)));
-
-            foreach (var exceptionType in exceptionTypes)
+            foreach (var exceptionType in types)
             {
                 if (exceptionType.Namespace == null)
                     continue;
@@ -171,13 +176,9 @@ namespace OneTrueError.Client.Tests
         [Fact]
         public void TestEveryTypeWithDefaultConstructor()
         {
+            var types = LoadAllTypes();
 
             var sut = new ObjectToContextCollectionConverter();
-
-            var inner = new Exception("hello");
-            var types =
-                AppDomain.CurrentDomain.GetAssemblies()
-                    .SelectMany(assembly => assembly.GetTypes());
 
             foreach (var type in types)
             {
@@ -193,12 +194,28 @@ namespace OneTrueError.Client.Tests
                     {
                         var e = Activator.CreateInstance(type, null);
                         var t = sut.Convert(e);
-                        Console.WriteLine(t);
                     }
                     catch { }
 
                 }
             }
+        }
+
+        private static List<Type> LoadAllTypes()
+        {
+            List<Type> types = new List<Type>();
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                try
+                {
+                    types.AddRange(assembly.GetTypes());
+                }
+                catch (ReflectionTypeLoadException ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
+            return types;
         }
 
         [Fact]

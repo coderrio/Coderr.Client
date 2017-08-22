@@ -99,13 +99,12 @@ namespace OneTrueError.Client.Uploaders
         /// <param name="apiKey">The API key.</param>
         /// <param name="sharedSecret">The shared secret.</param>
         /// <param name="queueReportsAccessor">Used to access the property that determines if the reports should be queued or not.</param>
-        /// <exception cref="System.ArgumentNullException">apiKey</exception>
+        /// <exception cref="ArgumentNullException">queueReportsAccessor</exception>
         public UploadToOneTrueError(Uri oneTrueHost, string apiKey, string sharedSecret,
             Func<bool> queueReportsAccessor)
             : this(oneTrueHost, apiKey, sharedSecret)
         {
-            if (queueReportsAccessor == null) throw new ArgumentNullException("queueReportsAccessor");
-            _queueReportsAccessor = queueReportsAccessor;
+            _queueReportsAccessor = queueReportsAccessor ?? throw new ArgumentNullException(nameof(queueReportsAccessor));
         }
 
         public string ApiKey { get; set; }
@@ -368,18 +367,17 @@ namespace OneTrueError.Client.Uploaders
             {
                 var proxyuri = proxy.GetProxy(request.RequestUri).ToString();
                 request.UseDefaultCredentials = true;
-                request.Proxy = new WebProxy(proxyuri, false);
-                request.Proxy.Credentials = CredentialCache.DefaultCredentials;
+                request.Proxy = new WebProxy(proxyuri, false)
+                {
+                    Credentials = CredentialCache.DefaultCredentials
+                };
             }
         }
 
         private static void AnalyzeException(Exception err)
         {
             var exception = err as WebException;
-            if (exception == null)
-                return;
-
-            if (exception.Response == null)
+            if (exception?.Response == null)
                 return;
 
             var title = "Failed to execute";
@@ -422,8 +420,7 @@ namespace OneTrueError.Client.Uploaders
 
         private void OnUploadFailed(object sender, UploadReportFailedEventArgs args)
         {
-            if (UploadFailed != null)
-                UploadFailed(this, args);
+            UploadFailed?.Invoke(this, args);
         }
     }
 }
