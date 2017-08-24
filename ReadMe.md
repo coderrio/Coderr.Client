@@ -1,5 +1,7 @@
-Base client library
+Core client for OneTrueError
 ================
+
+![](https://onetrueerror.visualstudio.com/_apis/public/build/definitions/75570083-b1ef-4e78-88e2-5db4982f756c/4/badge)
 
 This client library is used to manually report exceptions to OneTrueError (`OneTrue.Report(exception)`).
 
