@@ -5,7 +5,7 @@
     <Authors>1TCompany AB</Authors>
     <Description>Automated exception handling for .NET applications</Description>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>Converted to vstudio 2017 csproj format</PackageReleaseNotes>
+    <PackageReleaseNotes>Corrected namespace issues during re-branding</PackageReleaseNotes>
     <Copyright>Copyright 2017 (c) 1TCompany AB. All rights reserved.</Copyright>
     <PackageTags>logger exceptions analysis</PackageTags>
     <PackageIconUrl>https://coderrapp.com/images/nuget_icon.png</PackageIconUrl>
@@ -13,7 +13,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageLicenseUrl>https://raw.githubusercontent.com/coderrapp/coderr.client/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://coderrapp.com</PackageProjectUrl>
-    <Version>1.0.4.0</Version>
+    <Version>1.0.5</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
