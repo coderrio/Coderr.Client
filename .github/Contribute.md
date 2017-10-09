@@ -1,7 +1,7 @@
 Contribution guidelines
 =======================
 
-First of all: Thank you for contributing to OneTrueError. 
+First of all: Thank you for contributing to codeRR. 
 
 We have a checklist that you need to go through before getting your pullrequest accepted:
 
