@@ -3,7 +3,7 @@
 
 Welcome to codeRR! 
 
-We try to answer questions as fast as we can at our forum: http://discuss.coderapp.com. 
+We try to answer questions as fast as we can at our forum: http://discuss.coderrapp.com. 
 If you have any trouble at all, don't hesitate to post a message there.
 
 This library is the client library of codeRR. What it does is to report exceptions to codeRR.
