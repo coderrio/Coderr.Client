@@ -1,7 +1,7 @@
 Core client for codeRR
 ======================
 
-![](https://1tcompany.visualstudio.com/_apis/public/build/definitions/75570083-b1ef-4e78-88e2-5db4982f756c/4/badge)
+![](https://1tcompany.visualstudio.com/_apis/public/build/definitions/75570083-b1ef-4e78-88e2-5db4982f756c/4/badge) [![NuGet](https://img.shields.io/nuget/dt/codeRR.Client.svg?style=flat-square)]()
 
 This client library is used to manually report exceptions to codeRR (`Err.Report(exception)`).
 
@@ -73,3 +73,8 @@ Regular .NET
 # Requirements
 
 You need to either install [codeRR Community Server](https://github.com/coderrapp/coderr.server) or use [codeRR Live](https://coderrapp.com/live).
+
+# More information
+
+* [Documentation](https://coderrapp.com/documentation/client/libraries/)
+* [Forum](http://discuss.coderrapp.com)
