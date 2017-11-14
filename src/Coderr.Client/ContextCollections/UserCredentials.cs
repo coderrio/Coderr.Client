@@ -41,17 +41,14 @@ namespace codeRR.Client.ContextCollections
         /// <param name="domainName">Domain name</param>
         public UserCredentials(string domainName, string userName)
         {
-            if (userName == null) throw new ArgumentNullException("userName");
-            if (domainName == null) throw new ArgumentNullException("domainName");
-
-            _userName = userName;
-            _domainName = domainName;
+            _userName = userName ?? throw new ArgumentNullException(nameof(userName));
+            _domainName = domainName ?? throw new ArgumentNullException(nameof(domainName));
         }
 
         /// <summary>
         ///     Creates a new instance of <see cref="UserCredentials" />.
         /// </summary>
-        /// <param name="userName">Username without domain (i.e. should not include "domainName\")</param>
+        /// <param name="userName">User name without domain (i.e. should not include "domainName\")</param>
         public UserCredentials(string userName)
         {
             SplitAccountName(userName);
@@ -76,7 +73,7 @@ namespace codeRR.Client.ContextCollections
 
         private void SplitAccountName(string accountName)
         {
-            var pos = accountName.IndexOf("\\");
+            var pos = accountName.IndexOf("\\", StringComparison.Ordinal);
             if (pos != -1)
             {
                 _domainName = accountName.Substring(0, pos);

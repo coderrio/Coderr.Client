@@ -232,25 +232,25 @@ namespace codeRR.Client.Tests
             }
         }
 
-        public void TestOne(Action x)
+        private void TestOne(Action x)
         {
             TestOne2(x);
         }
 
-        public void TestOne2(Action x)
+        private void TestOne2(Action x)
         {
             TestOne3(x);
         }
 
 
 
-        public void TestOne3(Action x)
+        private void TestOne3(Action x)
         {
             TestOne4(x);
         }
 
 
-        public void TestOne4(Action x)
+        private void TestOne4(Action x)
         {
             x();
         }

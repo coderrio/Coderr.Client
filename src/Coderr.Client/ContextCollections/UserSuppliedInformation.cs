@@ -31,12 +31,18 @@ namespace codeRR.Client.ContextCollections
         /// </summary>
         public string EmailAddress { get; set; }
 
+        /// <summary>
+        ///     Specify the identity if you want to track which users are affected by an exception.
+        /// </summary>
+        public string UserIdentity { get; set; }
+
         string IContextCollection.CollectionName => "UserSuppliedInformation";
 
         IDictionary<string, string> IContextCollection.Properties => new Dictionary<string, string>
         {
             {"EmailAddress", EmailAddress},
-            {"Description", Description}
+            {"Description", Description},
+            {"UserIdentity", UserIdentity}
         };
     }
 }

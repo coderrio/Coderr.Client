@@ -1,11 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net451</TargetFramework>
+    <PackageReleaseNotes>Added support for partitioning</PackageReleaseNotes>
+    <Version>1.0.7</Version>
+  </PropertyGroup>
+  
+  <PropertyGroup>
     <PackageId>Coderr.Client</PackageId>
     <Authors>1TCompany AB</Authors>
     <Description>Automated exception handling for .NET applications</Description>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>Corrected namespace issues during re-branding</PackageReleaseNotes>
     <Copyright>Copyright 2017 (c) 1TCompany AB. All rights reserved.</Copyright>
     <PackageTags>logger exceptions analysis</PackageTags>
     <PackageIconUrl>https://coderrapp.com/images/nuget_icon.png</PackageIconUrl>
@@ -13,18 +17,20 @@
     <RepositoryType>git</RepositoryType>
     <PackageLicenseUrl>https://raw.githubusercontent.com/coderrapp/coderr.client/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://coderrapp.com</PackageProjectUrl>
-    <Version>1.0.6</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
+  
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
   </ItemGroup>
+  
   <ItemGroup>
     <Content Include="README.txt">
       <Pack>true</Pack>
       <PackagePath>README.txt</PackagePath>
     </Content>
   </ItemGroup>
+  
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Management" />
