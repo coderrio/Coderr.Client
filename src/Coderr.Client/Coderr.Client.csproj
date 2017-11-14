@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net451</TargetFramework>
-    <PackageReleaseNotes>Added support for partitioning</PackageReleaseNotes>
-    <Version>1.0.7</Version>
+    <PackageReleaseNotes>Will not try to upload internal exceptions</PackageReleaseNotes>
+    <Version>1.0.8</Version>
   </PropertyGroup>
   
   <PropertyGroup>

@@ -9,6 +9,7 @@ using System.Text;
 using Newtonsoft.Json;
 using codeRR.Client.Contracts;
 using codeRR.Client.Converters;
+using Coderr.Client.Uploaders;
 
 namespace codeRR.Client.Uploaders
 {
@@ -210,7 +211,7 @@ namespace codeRR.Client.Uploaders
         {
             if (feedback == null) throw new ArgumentNullException("feedback");
             if (!NetworkInterface.GetIsNetworkAvailable())
-                throw new InvalidOperationException("Not connected, try again later.");
+                throw new UploadFailedException("Not connected, try again later.");
 
             var reportJson = JsonConvert.SerializeObject(feedback, Formatting.None,
                 new JsonSerializerSettings
@@ -241,7 +242,7 @@ namespace codeRR.Client.Uploaders
             catch (Exception err)
             {
                 AnalyzeException(err);
-                throw new InvalidOperationException(
+                throw new UploadFailedException(
                     "The actual upload failed (probably network error). We'll try again later..", err);
             }
         }
@@ -254,7 +255,7 @@ namespace codeRR.Client.Uploaders
         public void TryUploadReportNow(ErrorReportDTO report)
         {
             if (!NetworkInterface.GetIsNetworkAvailable())
-                throw new WebException("Not connected, try again later.", WebExceptionStatus.ConnectFailure);
+                throw new UploadFailedException("Not connected, try again later.");
 
             var buffer = CompressErrorReport(report);
             var version = Assembly.GetExecutingAssembly().GetName().Version.ToString(2);
@@ -283,7 +284,7 @@ namespace codeRR.Client.Uploaders
             catch (Exception err)
             {
                 AnalyzeException(err);
-                throw new WebException(
+                throw new UploadFailedException(
                     "The actual upload failed (probably network error). We'll try again later..", err);
             }
         }
@@ -405,16 +406,16 @@ namespace codeRR.Client.Uploaders
                 case HttpStatusCode.Unauthorized:
                     throw new UnauthorizedAccessException(title + "\r\n" + description, err);
                 case HttpStatusCode.NotFound:
-                    //legacy handling of 404. Misconfigured web servers will report 404,
+                    //legacy handling of 404. Mal-configured web servers will report 404,
                     //so remove the usage to avoid ambiguity
                     if (title.IndexOf("key", StringComparison.OrdinalIgnoreCase) != -1)
                         throw new InvalidApplicationKeyException(title + "\r\n" + description, err);
-                    throw new InvalidOperationException("Server returned an error.\r\n" + description, err);
+                    throw new UploadFailedException("Server returned an error.\r\n" + description, err);
                 default:
                     if (resp.StatusCode == HttpStatusCode.BadRequest && title.Contains("APP_KEY"))
                         throw new InvalidApplicationKeyException(title + "\r\n" + description, err);
 
-                    throw new InvalidOperationException("Server returned an error.\r\n" + description, err);
+                    throw new UploadFailedException("Server returned an error.\r\n" + description, err);
             }
         }
 

@@ -4,11 +4,12 @@ using System.Linq;
 using codeRR.Client.Config;
 using codeRR.Client.Contracts;
 using codeRR.Client.Reporters;
+using Coderr.Client;
 
 namespace codeRR.Client.Processor
 {
     /// <summary>
-    ///     Will proccess the exception to generate context info and then upload it to the server.
+    ///     Will process the exception to generate context info and then upload it to the server.
     /// </summary>
     internal class ExceptionProcessor
     {
@@ -71,6 +72,9 @@ namespace codeRR.Client.Processor
         /// </remarks>
         public void Process(Exception exception)
         {
+            if (exception is CoderrClientException)
+                return;
+
             var context = new ErrorReporterContext(null, exception);
             var contextInfo = _configuration.ContextProviders.Collect(context);
             var reportId = ReportIdGenerator.Generate(exception);
@@ -99,6 +103,9 @@ namespace codeRR.Client.Processor
         /// <seealso cref="IReportFilter" />
         public ErrorReportDTO Process(IErrorReporterContext context)
         {
+            if (context.Exception is CoderrClientException)
+                return null;
+
             var contextInfo = _configuration.ContextProviders.Collect(context);
             var reportId = ReportIdGenerator.Generate(context.Exception);
             var report = new ErrorReportDTO(reportId, new ExceptionDTO(context.Exception), contextInfo.ToArray());
@@ -121,6 +128,9 @@ namespace codeRR.Client.Processor
         /// </remarks>
         public void Process(Exception exception, object contextData)
         {
+            if (exception is CoderrClientException)
+                return;
+
             var context = new ErrorReporterContext(null, exception);
             var contextInfo = _configuration.ContextProviders.Collect(context);
             AppendCustomContextData(contextData, contextInfo);
