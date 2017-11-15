@@ -14,6 +14,7 @@ namespace codeRR.Client.Processor
     internal class ExceptionProcessor
     {
         private readonly CoderrConfiguration _configuration;
+        private const string AlreadyReportedSetting = "ErrSetting.Reported";
 
         /// <summary>
         ///     Creates a new instance of <see cref="ExceptionProcessor" />.
@@ -29,6 +30,7 @@ namespace codeRR.Client.Processor
         ///     Build an report, but do not upload it
         /// </summary>
         /// <param name="exception">caught exception</param>
+        /// <returns>Report if it can be processed; otherwise <c>null</c>.</returns>
         /// <remarks>
         ///     <para>
         ///         Will collect context info and generate a report.
@@ -36,6 +38,8 @@ namespace codeRR.Client.Processor
         /// </remarks>
         public ErrorReportDTO Build(Exception exception)
         {
+            if (exception.Data.Contains(AlreadyReportedSetting))
+                return null;
             var context = new ErrorReporterContext(null, exception);
             var contextInfo = _configuration.ContextProviders.Collect(context);
             var reportId = ReportIdGenerator.Generate(exception);
@@ -54,6 +58,9 @@ namespace codeRR.Client.Processor
         /// </remarks>
         public ErrorReportDTO Build(Exception exception, object contextData)
         {
+            if (exception.Data.Contains(AlreadyReportedSetting))
+                return null;
+
             var context = new ErrorReporterContext(null, exception);
             var contextInfo = _configuration.ContextProviders.Collect(context);
             AppendCustomContextData(contextData, contextInfo);
@@ -74,6 +81,8 @@ namespace codeRR.Client.Processor
         {
             if (exception is CoderrClientException)
                 return;
+            if (exception.Data.Contains(AlreadyReportedSetting))
+                return;
 
             var context = new ErrorReporterContext(null, exception);
             var contextInfo = _configuration.ContextProviders.Collect(context);
@@ -82,6 +91,8 @@ namespace codeRR.Client.Processor
             var canUpload = _configuration.FilterCollection.CanUploadReport(report);
             if (!canUpload)
                 return;
+
+            exception.Data.Add(AlreadyReportedSetting, true);
             _configuration.Uploaders.Upload(report);
         }
 
@@ -105,13 +116,20 @@ namespace codeRR.Client.Processor
         {
             if (context.Exception is CoderrClientException)
                 return null;
+            if (context.Exception.Data.Contains(AlreadyReportedSetting))
+                return null;
 
+            if (context is IErrorReporterContext2 ctx2)
+                ErrorReporterContext.MoveCollectionsInException(context.Exception, ctx2.ContextCollections);
+            
             var contextInfo = _configuration.ContextProviders.Collect(context);
             var reportId = ReportIdGenerator.Generate(context.Exception);
             var report = new ErrorReportDTO(reportId, new ExceptionDTO(context.Exception), contextInfo.ToArray());
             var canUpload = _configuration.FilterCollection.CanUploadReport(report);
             if (!canUpload)
                 return null;
+
+            context.Exception.Data.Add(AlreadyReportedSetting, true);
             return report;
         }
 
@@ -130,6 +148,8 @@ namespace codeRR.Client.Processor
         {
             if (exception is CoderrClientException)
                 return;
+            if (exception.Data.Contains(AlreadyReportedSetting))
+                return;
 
             var context = new ErrorReporterContext(null, exception);
             var contextInfo = _configuration.ContextProviders.Collect(context);
@@ -140,6 +160,8 @@ namespace codeRR.Client.Processor
             var canUpload = _configuration.FilterCollection.CanUploadReport(report);
             if (!canUpload)
                 return;
+
+            exception.Data.Add(AlreadyReportedSetting, true);
             _configuration.Uploaders.Upload(report);
         }
 

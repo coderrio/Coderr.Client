@@ -30,7 +30,7 @@ namespace codeRR.Client
         ///     Will generate a report without uploading it.
         /// </summary>
         /// <param name="exception">Exception that you want to get reported</param>
-        /// <returns>Unique identifier for this report (generated using <see cref="ReportIdGenerator" />)</returns>
+        /// <returns>Report if it can be processed; otherwise <c>null</c>.</returns>
         /// <exception cref="System.ArgumentNullException">exception</exception>
         /// <remarks>
         ///     <para>
@@ -79,7 +79,7 @@ namespace codeRR.Client
         ///     exception. See <see cref="ObjectToContextCollectionConverter" /> to understand what kind of information you can
         ///     attach.
         /// </param>
-        /// <returns>Unique identifier for this report (generated using <see cref="ReportIdGenerator" />)</returns>
+        /// <returns>Report if it can be processed; otherwise <c>null</c>.</returns>
         /// <exception cref="System.ArgumentNullException">exception</exception>
         /// <remarks>
         ///     <para>
@@ -123,7 +123,7 @@ namespace codeRR.Client
         ///     Generate an error report
         /// </summary>
         /// <param name="context">context</param>
-        /// <returns>generated report</returns>
+        /// <returns>Report if it can be processed; otherwise <c>null</c>.</returns>
         /// <exception cref="ArgumentNullException"></exception>
         public static ErrorReportDTO GenerateReport(IErrorReporterContext context)
         {
