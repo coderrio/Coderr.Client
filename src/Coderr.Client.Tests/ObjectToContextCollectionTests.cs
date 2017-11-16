@@ -20,7 +20,7 @@ namespace codeRR.Client.Tests
         }
 
         [Fact]
-        public void should_be_able_To_convert_dictionaries_using_the_key_as_index()
+        public void Should_be_able_To_convert_dictionaries_using_the_key_as_index()
         {
             var obj = new Dictionary<object, string>() { { "ada", "hello" }, { 1, "world" } };
 
@@ -30,9 +30,9 @@ namespace codeRR.Client.Tests
             actual.Properties["ada"].Should().Be("hello");
             actual.Properties["1"].Should().Be("world");
         }
-
+       
         [Fact]
-        public void should_be_able_to_process_type_with_circular_reference()
+        public void Should_be_able_to_process_type_with_circular_reference()
         {
             var obj = new GotParentReference { Child = new GotParentReferenceChild { Title = "chld" }, Name = "prnt" };
             obj.Child.Parent = obj;
@@ -44,7 +44,7 @@ namespace codeRR.Client.Tests
         }
 
         [Fact]
-        public void should_be_able_to_convert_an_ienumerableKeyValuePair_as_a_dictionary()
+        public void Should_be_able_to_convert_an_ienumerableKeyValuePair_as_a_dictionary()
         {
             var obj = new CustomDictionary();
             obj.Dictionary["Ada"] = "Lovelace";
@@ -57,7 +57,7 @@ namespace codeRR.Client.Tests
         }
 
         [Fact]
-        public void should_be_able_to_convert_an_ienumerableKeyValuePair_as_a_dictionary_when_being_inner_object()
+        public void Should_be_able_to_convert_an_ienumerableKeyValuePair_as_a_dictionary_when_being_inner_object()
         {
             var obj = new CustomDictionary();
             obj.Dictionary["Ada"] = "Lovelace";
@@ -70,7 +70,7 @@ namespace codeRR.Client.Tests
         }
 
         [Fact]
-        public void should_be_able_To_convert_sub_object_dictionaries_using_the_key_as_index()
+        public void Should_be_able_To_convert_sub_object_dictionaries_using_the_key_as_index()
         {
             var obj = new
             {
@@ -89,7 +89,7 @@ namespace codeRR.Client.Tests
         }
 
         [Fact]
-        public void should_be_able_to_convert_a_dynamic_object()
+        public void Should_be_able_to_convert_a_dynamic_object()
         {
             var item = new
             {
@@ -106,7 +106,7 @@ namespace codeRR.Client.Tests
         }
 
         [Fact]
-        public void should_be_able_to_convert_a_dictionary_with_a_dynamic_object_as_an_item()
+        public void Should_be_able_to_convert_a_dictionary_with_a_dynamic_object_as_an_item()
         {
             var item = new
             {
@@ -123,7 +123,7 @@ namespace codeRR.Client.Tests
         }
 
         [Fact]
-        public void should_be_able_to_serialize_all_types_of_exceptions()
+        public void Should_be_able_to_serialize_all_types_of_exceptions()
         {
             var types = LoadAllTypes().Where(y => typeof(Exception).IsAssignableFrom(y)).ToList();
             string[] ignoredExceptions = new string[]

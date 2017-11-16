@@ -49,6 +49,7 @@ namespace codeRR.Client.Converters
         private readonly MethodInfo _dictionaryConverterMethod;
         private readonly MethodInfo _keyValuePairEnumeratorConverterMethod;
         private string[] _propertiesToIgnore = new string[0];
+        private Func<string, object, bool> _propertyFilter;
 
         /// <summary>
         ///     Creates a new instance of <see cref="ObjectToContextCollectionConverter" />.
@@ -177,6 +178,17 @@ namespace codeRR.Client.Converters
         }
 
         /// <summary>
+        ///     Filter properties.
+        /// </summary>
+        /// <param name="propertyFilter">propertyName, propertyValue</param>
+        /// <returns><c>true</c> if property should be filtered out; otherwise <c>false</c></returns>
+        public void FilterProperties(Func<string, object, bool> propertyFilter)
+        {
+            if (propertyFilter == null) throw new ArgumentNullException(nameof(propertyFilter));
+            _propertyFilter = propertyFilter;
+        }
+
+        /// <summary>
         ///     Properties that should be ignored when the context collection is being built.
         /// </summary>
         /// <param name="properties">Case sensitive names</param>
@@ -246,6 +258,9 @@ namespace codeRR.Client.Converters
                     contextCollection.Properties.Add(prefix + propertyName + "._error", exception.ToString());
                     continue;
                 }
+
+                if (_propertyFilter?.Invoke(propInfo.Name, value) == true)
+                    continue;
 
                 if (value == null)
                 {
@@ -344,6 +359,8 @@ namespace codeRR.Client.Converters
         protected void ReflectValue(string propertyName, object value, ContextCollectionDTO contextCollection,
             List<object> path)
         {
+            if (_propertyFilter?.Invoke(propertyName, value) == true)
+                return;
             if (IsFilteredOut(value))
                 return;
 
@@ -409,11 +426,26 @@ namespace codeRR.Client.Converters
                 {
                     var items = value as IEnumerable;
                     var index = 0;
+                    StringBuilder sb = new StringBuilder("[");
                     foreach (var item in items)
                     {
-                        var newPrefix = string.Format("{0}[{1}].", propertyName, index);
-                        ReflectObject(item, newPrefix, contextCollection, path);
+                        if (item != null && IsSimpleType(item.GetType()))
+                        {
+                            sb.Append(item);
+                            sb.Append(',');
+                        }
+                        else
+                        {
+                            var newPrefix = string.Format("{0}[{1}].", propertyName, index);
+                            ReflectObject(item, newPrefix, contextCollection, path);
+                        }
                         index++;
+                    }
+                    if (sb.Length > 1)
+                    {
+                        sb.Remove(sb.Length - 1, 1);
+                        sb.Append(']');
+                        contextCollection.Properties.Add(propertyName, sb.ToString());
                     }
                 }
                 else

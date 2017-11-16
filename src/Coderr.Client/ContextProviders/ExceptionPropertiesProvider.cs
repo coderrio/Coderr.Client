@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography.X509Certificates;
 using codeRR.Client.Contracts;
 using codeRR.Client.Converters;
 using codeRR.Client.Reporters;
@@ -32,6 +33,7 @@ namespace codeRR.Client.ContextProviders
                 {
                     MaxPropertyCount = Err.Configuration.MaxNumberOfPropertiesPerCollection
                 };
+                converter.FilterProperties((name,value) => name == "WatsonBuckets");
                 var collection = converter.Convert(context.Exception);
                 collection.Name = "ExceptionProperties";
                 return collection;
