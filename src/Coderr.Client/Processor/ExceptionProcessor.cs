@@ -13,8 +13,8 @@ namespace codeRR.Client.Processor
     /// </summary>
     internal class ExceptionProcessor
     {
-        private readonly CoderrConfiguration _configuration;
         private const string AlreadyReportedSetting = "ErrSetting.Reported";
+        private readonly CoderrConfiguration _configuration;
 
         /// <summary>
         ///     Creates a new instance of <see cref="ExceptionProcessor" />.
@@ -40,6 +40,7 @@ namespace codeRR.Client.Processor
         {
             if (exception.Data.Contains(AlreadyReportedSetting))
                 return null;
+
             var context = new ErrorReporterContext(null, exception);
             var contextInfo = _configuration.ContextProviders.Collect(context);
             var reportId = ReportIdGenerator.Generate(exception);
@@ -118,10 +119,12 @@ namespace codeRR.Client.Processor
                 return null;
             if (context.Exception.Data.Contains(AlreadyReportedSetting))
                 return null;
-
             if (context is IErrorReporterContext2 ctx2)
+            {
                 ErrorReporterContext.MoveCollectionsInException(context.Exception, ctx2.ContextCollections);
-            
+                InvokeFilter(ctx2);
+            }
+
             var contextInfo = _configuration.ContextProviders.Collect(context);
             var reportId = ReportIdGenerator.Generate(context.Exception);
             var report = new ErrorReportDTO(reportId, new ExceptionDTO(context.Exception), contextInfo.ToArray());
@@ -167,8 +170,7 @@ namespace codeRR.Client.Processor
 
         private static void AppendCustomContextData(object contextData, IList<ContextCollectionDTO> contextInfo)
         {
-            var dtos = contextData as IEnumerable<ContextCollectionDTO>;
-            if (dtos != null)
+            if (contextData is IEnumerable<ContextCollectionDTO> dtos)
             {
                 var arr = dtos;
                 foreach (var dto in arr)
@@ -179,6 +181,11 @@ namespace codeRR.Client.Processor
                 var col = contextData.ToContextCollection();
                 contextInfo.Add(col);
             }
+        }
+
+        private void InvokeFilter(IErrorReporterContext2 context)
+        {
+            Err.Configuration.ExceptionPreProcessor?.Invoke(context);
         }
     }
 }

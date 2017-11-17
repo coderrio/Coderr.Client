@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using codeRR.Client.Contracts;
+using Newtonsoft.Json;
 
 namespace codeRR.Client.Reporters
 {
@@ -8,7 +9,7 @@ namespace codeRR.Client.Reporters
     ///     Context supplied by error reports
     /// </summary>
     /// <remarks>
-    ///     Used to be able to provide app specific context information (for instance HTTP apps can provide the HTTP
+    ///     Used to be able to provide application specific context information (for instance HTTP applications can provide the HTTP
     ///     context)
     /// </remarks>
     public class ErrorReporterContext : IErrorReporterContext2
@@ -20,9 +21,7 @@ namespace codeRR.Client.Reporters
         /// <param name="exception">The exception.</param>
         public ErrorReporterContext(object reporter, Exception exception)
         {
-            if (exception == null) throw new ArgumentNullException("exception");
-
-            Exception = exception;
+            Exception = exception ?? throw new ArgumentNullException(nameof(exception));
             Reporter = reporter;
             ContextCollections = new List<ContextCollectionDTO>();
 
@@ -53,16 +52,42 @@ namespace codeRR.Client.Reporters
             foreach (var key in exception.Data.Keys)
             {
                 var keyStr = key?.ToString();
-                if (key == null || !keyStr.StartsWith("Err."))
+                if (key == null)
                     continue;
 
-                keysToRemove.Add(key);
-                var collection = (ContextCollectionDTO) exception.Data[key];
-                destination.Add(collection);
+                if (keyStr.Equals("ErrCollections") || keyStr.StartsWith("ErrCollections"))
+                {
+                    keysToRemove.Add(key);
+                    var value = exception.Data[key];
+                    if (!(value is string valueStr))
+                        continue;
+
+                    var data = JsonConvert.DeserializeObject(valueStr, typeof(object), new JsonSerializerSettings{TypeNameHandling = TypeNameHandling.Auto});
+                    if (data is IEnumerable<ContextCollectionDTO> cols)
+                    {
+                        foreach (var col in cols)
+                        {
+                            destination.Add(col);
+                        }
+                    }
+                }
+                else
+                {
+                    keysToRemove.Add(key);
+                    var value = exception.Data[key];
+                    if (!(value is string valueStr))
+                        continue;
+
+                    var col = JsonConvert.DeserializeObject(valueStr) as ContextCollectionDTO;
+                    destination.Add(col);
+                }
             }
 
             foreach (var key in keysToRemove)
                 exception.Data.Remove(key);
+
+            if (exception.InnerException != null)
+                MoveCollectionsInException(exception.InnerException, destination);
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net451</TargetFramework>
-    <PackageReleaseNotes>Added a WatsonBuckets filter (i.e. are excluded from exceptions).</PackageReleaseNotes>
-    <Version>1.0.10</Version>
+    <PackageReleaseNotes>Updated how context collections are attached to exceptions.</PackageReleaseNotes>
+    <Version>1.0.12</Version>
   </PropertyGroup>
   
   <PropertyGroup>

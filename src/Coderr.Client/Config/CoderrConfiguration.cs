@@ -22,6 +22,10 @@ namespace codeRR.Client.Config
             MaxNumberOfPropertiesPerCollection = 100;
         }
 
+        /// <summary>
+        /// Used to be able to process error reports before they are delivered.
+        /// </summary>
+        public ExceptionPreProcessorHandler ExceptionPreProcessor;
 
         /// <summary>
         ///     Used to add custom context info providers.
