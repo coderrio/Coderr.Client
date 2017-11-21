@@ -28,6 +28,11 @@ namespace codeRR.Client.Config
         public ExceptionPreProcessorHandler ExceptionPreProcessor;
 
         /// <summary>
+        /// Visit generated reports before they are sent.
+        /// </summary>
+        public ReportPreProcessorHandler ReportPreProcessor;
+
+        /// <summary>
         ///     Used to add custom context info providers.
         /// </summary>
         public ContextProvidersRegistrar ContextProviders { get; } = new ContextProvidersRegistrar();

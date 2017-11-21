@@ -77,6 +77,7 @@ namespace codeRR.Client.Uploaders
         /// </remarks>
         public void Upload(ErrorReportDTO dto)
         {
+            _configuration.ReportPreProcessor?.Invoke(dto);
             if (dto == null) throw new ArgumentNullException("dto");
             if (_configuration.QueueReports)
                 _reportQueue.Add(dto);

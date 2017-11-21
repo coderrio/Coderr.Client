@@ -17,7 +17,7 @@ namespace codeRR.Client.Contracts
     public class ExceptionDTO
     {
         private static readonly CultureInfo English = new CultureInfo("en-US");
-
+        
         /// <summary>
         ///     Initializes a new instance of the <see cref="ExceptionDTO" /> class.
         /// </summary>
@@ -42,53 +42,53 @@ namespace codeRR.Client.Contracts
         /// <summary>
         ///     Assembly name (version included)
         /// </summary>
-        public string AssemblyName { get; private set; }
+        public string AssemblyName { get; set; }
 
         /// <summary>
         ///     Exception base classes. Most specific first: <c>ArgumentOutOfRangeException</c>, <c>ArgumentException</c>,
         ///     <c>Exception</c>.
         /// </summary>
-        public string[] BaseClasses { get; private set; }
+        public string[] BaseClasses { get; set; }
 
         /// <summary>
         ///     Everything (<c>exception.ToString()</c>)
         /// </summary>
-        public string Everything { get; private set; }
+        public string Everything { get; set; }
 
         /// <summary>
         ///     Full type name (namespace + class name)
         /// </summary>
-        public string FullName { get; private set; }
+        public string FullName { get; set; }
 
         /// <summary>
         ///     Inner exception (if any; otherwise <c>null</c>).
         /// </summary>
-        public ExceptionDTO InnerException { get; private set; }
+        public ExceptionDTO InnerException { get; set; }
 
         /// <summary>
         ///     Exception message
         /// </summary>
-        public string Message { get; private set; }
+        public string Message { get; set; }
 
         /// <summary>
         ///     Type name
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
         /// <summary>
         ///     Namespace that the exception is in
         /// </summary>
-        public string Namespace { get; private set; }
+        public string Namespace { get; set; }
 
         /// <summary>
         ///     All properties (public and private)
         /// </summary>
-        public IDictionary<string, string> Properties { get; private set; }
+        public IDictionary<string, string> Properties { get; set; }
 
         /// <summary>
         ///     Stack trace, line numbers included if your app also distributes the PDB files.
         /// </summary>
-        public string StackTrace { get; private set; }
+        public string StackTrace { get; set; }
 
         /// <summary>
         ///     Copy the .NET exception information into our DTO.
@@ -103,7 +103,7 @@ namespace codeRR.Client.Contracts
             {
                 var evt = new ManualResetEventSlim(false);
 
-                // in a seperate thread to not get any side effects due to the culture change.
+                // in a separate thread to not get any side effects due to the culture change.
                 ThreadPool.QueueUserWorkItem(x =>
                 {
                     //TODO: wont work for some exceptions (where texts are preloaded). We need to use Google Translate.

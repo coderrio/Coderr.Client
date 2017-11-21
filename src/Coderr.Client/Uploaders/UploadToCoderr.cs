@@ -319,7 +319,8 @@ namespace codeRR.Client.Uploaders
                 {
                     TypeNameHandling = TypeNameHandling.None,
                     ContractResolver =
-                        new IncludeNonPublicMembersContractResolver()
+                        new IncludeNonPublicMembersContractResolver(),
+                    NullValueHandling = NullValueHandling.Ignore
                 });
             var buffer = Encoding.UTF8.GetBytes(reportJson);
 
