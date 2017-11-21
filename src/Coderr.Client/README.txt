@@ -3,22 +3,23 @@
 
 Welcome to codeRR! 
 
-We try to answer questions as fast as we can at our forum: http://discuss.coderrapp.com. 
-If you have any trouble at all, don't hesitate to post a message there.
+This library is the client library of codeRR. It allows you to manually report exceptions to the codeRR server.
+If you would like to use automated reporting, install one of the other codeRR nuget packages.
 
-This library is the client library of codeRR. What it does is to report exceptions to codeRR.
+This library doesn’t process the generated information. 
+Information processing is done by the codeRR server which you will need to install.
 
-However, this library do not process the information but require a codeRR server for that.
-You can either install the open source server from https://github.com/coderrapp/coderr.server, or
-use our hosted service at https://coderrapp.com/live.
+For a server with full functionality, we recommend you to use our hosted service at https://coderrapp.com/live. 
+But you can also use and install the open source server version from https://github.com/coderrapp/coderr.server.
 
+For any questions that you might have, please use our forum at http://discuss.coderrapp.com. At the forum, we will try to answer questions as fast as we can and post answers to questions that have already been asked. Don't hesitate to use it! 
 
 Configuration
 =============
 
-To start with, you need to configure the connection to the codeRR server, 
-this code is typically added in your Program.cs. This information is found either
-in our hosted service or in your installed codeRR server.
+Start by configuring the connection to the codeRR server. The code below is typically added in 
+your global.asax, Program.cs or Startup.cs. The configuration settings is found either in codeRR Live or 
+in your installed codeRR server.
 
     public class Program
     {
@@ -61,5 +62,5 @@ This is one of many examples:
         // some other code here...
     }
 
-Questions? http://discuss.coderrapp.com
-More examples: https://coderrapp.com/documentation/client/
+Again for questions, go to http://discuss.coderrapp.com
+Additional documentation can be found at https://coderrapp.com/documentation/client/

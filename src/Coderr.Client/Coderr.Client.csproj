@@ -1,8 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net451</TargetFramework>
-    <PackageReleaseNotes>Updated how context collections are attached to exceptions.</PackageReleaseNotes>
-    <Version>1.0.12</Version>
+    <TargetFrameworks>net45;net452;net40</TargetFrameworks>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Coderr.Client.xml</DocumentationFile>
+
+    <PackageReleaseNotes>Added support for NET 4.5, NET 4.0 and added a visitor callback for ErrorReportDTO.</PackageReleaseNotes>
+    <Version>1.0.13</Version>
   </PropertyGroup>
   
   <PropertyGroup>
