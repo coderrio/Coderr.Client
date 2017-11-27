@@ -1,7 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net451</TargetFramework>
-    <PackageReleaseNotes>ExceptionProcessor is now public to enable unit tests in client libraries based on this one.</PackageReleaseNotes>
+    <TargetFrameworks>net45;net452;net40</TargetFrameworks>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Coderr.Client.xml</DocumentationFile>
+
+    <PackageReleaseNotes>Added support for NET 4.5, NET 4.0 and added a visitor callback for ErrorReportDTO.</PackageReleaseNotes>
     <Version>1.0.13</Version>
   </PropertyGroup>
   
