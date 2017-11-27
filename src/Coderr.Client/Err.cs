@@ -128,7 +128,7 @@ namespace codeRR.Client
         public static ErrorReportDTO GenerateReport(IErrorReporterContext context)
         {
             if (context == null) throw new ArgumentNullException("context");
-            return _exceptionProcessor.Process(context);
+            return _exceptionProcessor.Build(context);
         }
 
         /// <summary>

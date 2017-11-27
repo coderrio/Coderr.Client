@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net451</TargetFramework>
-    <PackageReleaseNotes>Updated how context collections are attached to exceptions.</PackageReleaseNotes>
-    <Version>1.0.12</Version>
+    <PackageReleaseNotes>ExceptionProcessor is now public to enable unit tests in client libraries based on this one.</PackageReleaseNotes>
+    <Version>1.0.13</Version>
   </PropertyGroup>
   
   <PropertyGroup>

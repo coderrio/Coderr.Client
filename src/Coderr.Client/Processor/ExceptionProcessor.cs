@@ -11,9 +11,9 @@ namespace codeRR.Client.Processor
     /// <summary>
     ///     Will process the exception to generate context info and then upload it to the server.
     /// </summary>
-    internal class ExceptionProcessor
+    public class ExceptionProcessor : IExceptionProcessor
     {
-        private const string AlreadyReportedSetting = "ErrSetting.Reported";
+        internal const string AlreadyReportedSetting = "ErrSetting.Reported";
         private readonly CoderrConfiguration _configuration;
 
         /// <summary>
@@ -22,8 +22,7 @@ namespace codeRR.Client.Processor
         /// <param name="configuration">Current configuration.</param>
         public ExceptionProcessor(CoderrConfiguration configuration)
         {
-            if (configuration == null) throw new ArgumentNullException("configuration");
-            _configuration = configuration;
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         /// <summary>
@@ -72,6 +71,40 @@ namespace codeRR.Client.Processor
         /// <summary>
         ///     Process exception.
         /// </summary>
+        /// <param name="context">
+        ///     Used to reports (like for ASP.NET) can attach information which can be used during the context
+        ///     collection pipeline.
+        /// </param>
+        /// <remarks>
+        ///     <para>
+        ///         Will collect context info, generate a report, go through filters and finally upload it.
+        ///     </para>
+        /// </remarks>
+        /// <returns>
+        ///     Report if filter allowed the generated report; otherwise <c>null</c>.
+        /// </returns>
+        /// <seealso cref="IReportFilter" />
+        public ErrorReportDTO Build(IErrorReporterContext context)
+        {
+            if (context.Exception is CoderrClientException)
+                return null;
+            if (context.Exception.Data.Contains(AlreadyReportedSetting))
+                return null;
+            if (context is IErrorReporterContext2 ctx2)
+            {
+                ErrorReporterContext.MoveCollectionsInException(context.Exception, ctx2.ContextCollections);
+                InvokeFilter(ctx2);
+            }
+
+            var contextInfo = _configuration.ContextProviders.Collect(context);
+            var reportId = ReportIdGenerator.Generate(context.Exception);
+            var report = new ErrorReportDTO(reportId, new ExceptionDTO(context.Exception), contextInfo.ToArray());
+            return report;
+        }
+
+        /// <summary>
+        ///     Process exception.
+        /// </summary>
         /// <param name="exception">caught exception</param>
         /// <remarks>
         ///     <para>
@@ -113,27 +146,18 @@ namespace codeRR.Client.Processor
         ///     Report if filter allowed the generated report; otherwise <c>null</c>.
         /// </returns>
         /// <seealso cref="IReportFilter" />
-        public ErrorReportDTO Process(IErrorReporterContext context)
+        public void Process(IErrorReporterContext context)
         {
-            if (context.Exception is CoderrClientException)
-                return null;
-            if (context.Exception.Data.Contains(AlreadyReportedSetting))
-                return null;
-            if (context is IErrorReporterContext2 ctx2)
-            {
-                ErrorReporterContext.MoveCollectionsInException(context.Exception, ctx2.ContextCollections);
-                InvokeFilter(ctx2);
-            }
+            var report = Build(context);
+            if (report == null)
+                return;
 
-            var contextInfo = _configuration.ContextProviders.Collect(context);
-            var reportId = ReportIdGenerator.Generate(context.Exception);
-            var report = new ErrorReportDTO(reportId, new ExceptionDTO(context.Exception), contextInfo.ToArray());
             var canUpload = _configuration.FilterCollection.CanUploadReport(report);
             if (!canUpload)
-                return null;
+                return;
 
             context.Exception.Data.Add(AlreadyReportedSetting, true);
-            return report;
+            _configuration.Uploaders.Upload(report);
         }
 
 
