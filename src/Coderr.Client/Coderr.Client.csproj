@@ -3,8 +3,8 @@
     <TargetFrameworks>net45;net452;net40</TargetFrameworks>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Coderr.Client.xml</DocumentationFile>
 
-    <PackageReleaseNotes>Added support for NET 4.5, NET 4.0 and added a visitor callback for ErrorReportDTO.</PackageReleaseNotes>
-    <Version>1.0.13</Version>
+    <PackageReleaseNotes>Made ExceptionProcessor.cs public so that client libraries that are based on this one can be unit tested.</PackageReleaseNotes>
+    <Version>1.0.14</Version>
   </PropertyGroup>
   
   <PropertyGroup>

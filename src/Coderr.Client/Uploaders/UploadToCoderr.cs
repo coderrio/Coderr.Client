@@ -108,6 +108,9 @@ namespace codeRR.Client.Uploaders
             _queueReportsAccessor = queueReportsAccessor ?? throw new ArgumentNullException(nameof(queueReportsAccessor));
         }
 
+        /// <summary>
+        /// API key as defined in codeRR Server.
+        /// </summary>
         public string ApiKey { get; set; }
 
         /// <summary>
@@ -150,6 +153,9 @@ namespace codeRR.Client.Uploaders
             }
         }
 
+        /// <summary>
+        /// Shared secret as defined in the codeRR server.
+        /// </summary>
         public string SharedSecret { get; }
 
         /// <summary>

@@ -16,17 +16,13 @@ namespace codeRR.Client.Contracts
         /// <param name="contextCollections">The context collections.</param>
         public ErrorReportDTO(string reportId, ExceptionDTO exception, ContextCollectionDTO[] contextCollections)
         {
-            if (reportId == null) throw new ArgumentNullException("reportId");
-            if (exception == null) throw new ArgumentNullException("exception");
-            if (contextCollections == null) throw new ArgumentNullException("contextCollections");
+            if (reportId == null) throw new ArgumentNullException(nameof(reportId));
             if (reportId.Contains(" ") || reportId.Length > 30)
                 throw new ArgumentException(
-                    string.Format(
-                        "reportId must be 30 or less characters and should be alphanumeric only. Your id '{0}' is {1} chars.",
-                        reportId, reportId.Length));
+                    $"reportId must be 30 or less characters and should be alphanumeric only. Your id '{reportId}' is {reportId.Length} chars.");
 
-            ContextCollections = contextCollections;
-            Exception = exception;
+            ContextCollections = contextCollections ?? throw new ArgumentNullException(nameof(contextCollections));
+            Exception = exception ?? throw new ArgumentNullException(nameof(exception));
             ReportId = reportId;
             ReportVersion = "1.0";
             CreatedAtUtc = DateTime.UtcNow;
