@@ -3,8 +3,8 @@
     <TargetFrameworks>net45;net452;net40</TargetFrameworks>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Coderr.Client.xml</DocumentationFile>
 
-    <PackageReleaseNotes>Made ExceptionProcessor.cs public so that client libraries that are based on this one can be unit tested.</PackageReleaseNotes>
-    <Version>1.0.14</Version>
+    <PackageReleaseNotes>Corrected a bug for a new feature that allows collections to be transported in the exception data.</PackageReleaseNotes>
+    <Version>1.0.16</Version>
   </PropertyGroup>
   
   <PropertyGroup>

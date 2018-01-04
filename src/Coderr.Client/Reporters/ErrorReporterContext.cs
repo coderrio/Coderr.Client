@@ -55,31 +55,56 @@ namespace codeRR.Client.Reporters
                 if (key == null)
                     continue;
 
-                if (keyStr.Equals("ErrCollections") || keyStr.StartsWith("ErrCollections"))
+                if (keyStr.Equals("ErrCollections") || keyStr.StartsWith("ErrCollections."))
                 {
                     keysToRemove.Add(key);
                     var value = exception.Data[key];
                     if (!(value is string valueStr))
                         continue;
 
-                    var data = JsonConvert.DeserializeObject(valueStr, typeof(object), new JsonSerializerSettings{TypeNameHandling = TypeNameHandling.Auto});
-                    if (data is IEnumerable<ContextCollectionDTO> cols)
+                    try
                     {
-                        foreach (var col in cols)
+                        var data = JsonConvert.DeserializeObject<IEnumerable<ContextCollectionDTO>>(valueStr);
+                        foreach (var col in data)
                         {
                             destination.Add(col);
                         }
                     }
+                    catch (Exception ex)
+                    {
+                        var items = new Dictionary<string, string>()
+                        {
+                            {"MoveCollectionsInException.Err", ex.Message},
+                            {"JSON", valueStr}
+                        };
+                        var col = new ContextCollectionDTO("ErrCollections", items);
+                        destination.Add(col);
+                    }
+
                 }
-                else
+                else if (keyStr.StartsWith("ErrCollection."))
                 {
                     keysToRemove.Add(key);
                     var value = exception.Data[key];
                     if (!(value is string valueStr))
                         continue;
 
-                    var col = JsonConvert.DeserializeObject(valueStr) as ContextCollectionDTO;
-                    destination.Add(col);
+                    try
+                    {
+                        var col = JsonConvert.DeserializeObject<ContextCollectionDTO>(valueStr);
+                        destination.Add(col);
+                    }
+                    catch (Exception ex)
+                    {
+                        var pos = keyStr.IndexOf('.');
+                        var items = new Dictionary<string, string>()
+                        {
+                            {"MoveCollectionsInException.Err", ex.Message},
+                            {"JSON", valueStr}
+                        };
+                        var col = new ContextCollectionDTO(keyStr.Substring(pos + 1), items);
+                        destination.Add(col);
+                    }
                 }
             }
 
