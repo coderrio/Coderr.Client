@@ -158,16 +158,17 @@ namespace codeRR.Client.Converters
         /// </remarks>
         public ContextCollectionDTO Convert(object instance)
         {
-            if (instance == null)
-                throw new ArgumentNullException("instance");
-
-
-            if (instance is ContextCollectionDTO)
-                return (ContextCollectionDTO) instance;
-            if (instance is IDictionary<string, string>)
-                return new ContextCollectionDTO("ContextData", (IDictionary<string, string>) instance);
-            if (instance is NameValueCollection)
-                return new ContextCollectionDTO("ContextData", (NameValueCollection) instance);
+            switch (instance)
+            {
+                case null:
+                    throw new ArgumentNullException(nameof(instance));
+                case ContextCollectionDTO dto:
+                    return dto;
+                case IDictionary<string, string> dictionary:
+                    return new ContextCollectionDTO("ContextData", dictionary);
+                case NameValueCollection collection:
+                    return new ContextCollectionDTO("ContextData", collection);
+            }
 
             var name = instance.GetType().IsAnonymousType()
                 ? "ContextData"
@@ -184,8 +185,7 @@ namespace codeRR.Client.Converters
         /// <returns><c>true</c> if property should be filtered out; otherwise <c>false</c></returns>
         public void FilterProperties(Func<string, object, bool> propertyFilter)
         {
-            if (propertyFilter == null) throw new ArgumentNullException(nameof(propertyFilter));
-            _propertyFilter = propertyFilter;
+            _propertyFilter = propertyFilter ?? throw new ArgumentNullException(nameof(propertyFilter));
         }
 
         /// <summary>
@@ -194,8 +194,7 @@ namespace codeRR.Client.Converters
         /// <param name="properties">Case sensitive names</param>
         public void Ignore(params string[] properties)
         {
-            if (properties == null) throw new ArgumentNullException("properties");
-            _propertiesToIgnore = properties;
+            _propertiesToIgnore = properties ?? throw new ArgumentNullException(nameof(properties));
         }
 
         /// <summary>
@@ -262,29 +261,22 @@ namespace codeRR.Client.Converters
                 if (_propertyFilter?.Invoke(propInfo.Name, value) == true)
                     continue;
 
-                if (value == null)
+                switch (value)
                 {
-                    contextCollection.Properties.Add(prefix + propertyName, "null");
-                    continue;
+                    case null:
+                        contextCollection.Properties.Add(prefix + propertyName, "null");
+                        continue;
+                    case Encoding enc:
+                        contextCollection.Properties.Add(prefix + propertyName, enc.EncodingName);
+                        continue;
+                    case DateTimeFormatInfo v1:
+                        contextCollection.Properties.Add(prefix + propertyName, v1.NativeCalendarName);
+                        continue;
+                    case CultureInfo v2:
+                        contextCollection.Properties.Add(prefix + propertyName, "Culture[" + v2.LCID + "]");
+                        continue;
                 }
-                var enc = value as Encoding;
-                if (enc != null)
-                {
-                    contextCollection.Properties.Add(prefix + propertyName, enc.EncodingName);
-                    continue;
-                }
-                var v1 = value as DateTimeFormatInfo;
-                if (v1 != null)
-                {
-                    contextCollection.Properties.Add(prefix + propertyName, v1.NativeCalendarName);
-                    continue;
-                }
-                var v2 = value as CultureInfo;
-                if (v2 != null)
-                {
-                    contextCollection.Properties.Add(prefix + propertyName, "Culture[" + v2.LCID + "]");
-                    continue;
-                }
+
                 if (IsSimpleType(value.GetType()) || propertyName == "Encoding")
                 {
                     contextCollection.Properties.Add(prefix + propertyName, value.ToString());
@@ -308,8 +300,8 @@ namespace codeRR.Client.Converters
                         var items = value as IDictionary;
                         foreach (DictionaryEntry kvp in items)
                         {
-                            var dictPropName = kvp.Key == null ? "null" : kvp.Key.ToString();
-                            var newPrefix = string.Format("{0}{1}[{2}]", prefix, propertyName, dictPropName);
+                            var dictPropName = kvp.Key?.ToString() ?? "null";
+                            var newPrefix = $"{prefix}{propertyName}[{dictPropName}]";
                             ReflectValue(newPrefix, kvp.Value, contextCollection,
                                 path);
                         }
@@ -321,8 +313,8 @@ namespace codeRR.Client.Converters
                         foreach (var item in items)
                         {
                             var newPrefix = prefix == ""
-                                ? string.Format("{0}[{1}]", propertyName, index)
-                                : string.Format("{0}{1}[{2}]", prefix, propertyName, index);
+                                ? $"{propertyName}[{index}]"
+                                : $"{prefix}{propertyName}[{index}]";
                             ReflectValue(newPrefix, item, contextCollection, path);
                             index++;
                         }
@@ -364,36 +356,25 @@ namespace codeRR.Client.Converters
             if (IsFilteredOut(value))
                 return;
 
-            if (value == null)
+            switch (value)
             {
-                contextCollection.Properties.Add(propertyName, "null");
-                return;
+                case null:
+                    contextCollection.Properties.Add(propertyName, "null");
+                    return;
+                case string _:
+                    contextCollection.Properties.Add(propertyName, value.ToString());
+                    return;
+                case Encoding enc:
+                    contextCollection.Properties.Add(propertyName, enc.EncodingName);
+                    return;
+                case DateTimeFormatInfo v1:
+                    contextCollection.Properties.Add(propertyName, v1.NativeCalendarName);
+                    return;
+                case CultureInfo v2:
+                    contextCollection.Properties.Add(propertyName, "Culture[" + v2.LCID + "]");
+                    return;
             }
 
-            if (value is string)
-            {
-                contextCollection.Properties.Add(propertyName, value.ToString());
-                return;
-            }
-
-            var enc = value as Encoding;
-            if (enc != null)
-            {
-                contextCollection.Properties.Add(propertyName, enc.EncodingName);
-                return;
-            }
-            var v1 = value as DateTimeFormatInfo;
-            if (v1 != null)
-            {
-                contextCollection.Properties.Add(propertyName, v1.NativeCalendarName);
-                return;
-            }
-            var v2 = value as CultureInfo;
-            if (v2 != null)
-            {
-                contextCollection.Properties.Add(propertyName, "Culture[" + v2.LCID + "]");
-                return;
-            }
             if (IsSimpleType(value.GetType()) || propertyName == "Encoding")
             {
                 contextCollection.Properties.Add(propertyName, value.ToString());
@@ -422,11 +403,10 @@ namespace codeRR.Client.Converters
                         ReflectObject(kvp.Value, newPrefix, contextCollection, path);
                     }
                 }
-                else if (value is IEnumerable)
+                else if (value is IEnumerable items)
                 {
-                    var items = value as IEnumerable;
                     var index = 0;
-                    StringBuilder sb = new StringBuilder("[");
+                    var sb = new StringBuilder("[");
                     foreach (var item in items)
                     {
                         if (item != null && IsSimpleType(item.GetType()))
@@ -436,7 +416,7 @@ namespace codeRR.Client.Converters
                         }
                         else
                         {
-                            var newPrefix = string.Format("{0}[{1}].", propertyName, index);
+                            var newPrefix = $"{propertyName}[{index}].";
                             ReflectObject(item, newPrefix, contextCollection, path);
                         }
                         index++;
@@ -478,7 +458,7 @@ namespace codeRR.Client.Converters
                 var key = kvp.Key == null ? "null" : kvp.Key.ToString();
                 var prefix = string.IsNullOrEmpty(propertyName)
                     ? key
-                    : string.Format("{0}[{1}]", propertyName, key);
+                    : $"{propertyName}[{key}]";
                 ReflectValue(prefix, kvp.Value, contextCollection, path);
             }
         }
@@ -492,7 +472,7 @@ namespace codeRR.Client.Converters
             var collection = new ContextCollectionDTO(collectionName);
             foreach (DictionaryEntry kvp in dictionary)
             {
-                var propertyName = kvp.Key == null ? "null" : kvp.Key.ToString();
+                var propertyName = kvp.Key?.ToString() ?? "null";
                 ReflectValue(propertyName, kvp.Value, collection, path);
             }
             return collection;
@@ -508,8 +488,8 @@ namespace codeRR.Client.Converters
             {
                 var key = kvp.Key == null ? "null" : kvp.Key.ToString();
                 var prefix = string.IsNullOrEmpty(propertyName)
-                    ? string.Format("[{0}]", index++)
-                    : string.Format("{0}[{1}]", propertyName, index++);
+                    ? $"[{index++}]"
+                    : $"{propertyName}[{index++}]";
 
                 contextCollection.Properties.Add(prefix + ".Key", key);
                 ReflectValue(prefix + ".Value", kvp.Value, contextCollection, path);

@@ -6,10 +6,10 @@ using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
-using Newtonsoft.Json;
 using codeRR.Client.Contracts;
 using codeRR.Client.Converters;
 using Coderr.Client.Uploaders;
+using Newtonsoft.Json;
 
 namespace codeRR.Client.Uploaders
 {
@@ -34,19 +34,19 @@ namespace codeRR.Client.Uploaders
     /// </code>
     ///     </example>
     ///     <para>
-    ///         Reports will be queued internally if there are no internet connection available. The queue have the same
+    ///         Reports will be queued internally if there are no Internet connection available. The queue have the same
     ///         constrains as in the global
-    ///         configuration.  Thus the olders reports will be dropped if the connection is down and the queue limit have been
+    ///         configuration.  Thus the oldest reports will be dropped if the connection is down and the queue limit have been
     ///         reached.
     ///     </para>
     ///     <para>
     ///         Nothing in the queue is persisted. Thus if the application are stopped before all reports have been uploaded,
     ///         they will
-    ///         be lost. This is only a problem if the codeRR service is slow or if the internet connection is down.
+    ///         be lost. This is only a problem if the codeRR service is slow or if the Internet connection is down.
     ///     </para>
     ///     <para>
-    ///         This uploader will check the internet settings (that are configured in the windows control panel) to see if an
-    ///         internet proxy
+    ///         This uploader will check the Internet settings (that are configured in the windows control panel) to see if an
+    ///         Internet proxy
     ///         is required. If it is, the HttpClient will be configured to use it. So this library should work behind
     ///         corporate firewalls.
     ///     </para>
@@ -57,6 +57,7 @@ namespace codeRR.Client.Uploaders
         private readonly Uri _reportUri, _feedbackUri;
         private UploadQueue<FeedbackDTO> _feedbackQueue;
         private UploadQueue<ErrorReportDTO> _reportQueue;
+        private readonly Func<bool> _throwExceptionsAccessor;
 
 
         /// <summary>
@@ -84,10 +85,13 @@ namespace codeRR.Client.Uploaders
             _feedbackUri = new Uri(coderrServerAddress, "receiver/report/" + apiKey + "/feedback/");
             ApiKey = apiKey;
             SharedSecret = sharedSecret;
-            _feedbackQueue = new UploadQueue<FeedbackDTO>(TryUploadFeedbackNow);
+            _feedbackQueue = new UploadQueue<FeedbackDTO>(OnInvokeBackgroundUpload);
             _feedbackQueue.UploadFailed += OnUploadFailed;
-            _reportQueue = new UploadQueue<ErrorReportDTO>(TryUploadReportNow);
+            _reportQueue = new UploadQueue<ErrorReportDTO>(OnInvokeBackgroundUpload);
             _reportQueue.UploadFailed += OnUploadFailed;
+
+            _throwExceptionsAccessor = () => Err.Configuration.ThrowExceptions;
+            _queueReportsAccessor = () => Err.Configuration.QueueReports;
         }
 
         /// <summary>
@@ -100,16 +104,20 @@ namespace codeRR.Client.Uploaders
         /// <param name="apiKey">The API key.</param>
         /// <param name="sharedSecret">The shared secret.</param>
         /// <param name="queueReportsAccessor">Used to access the property that determines if the reports should be queued or not.</param>
+        /// <param name="throwExceptionsAccessor">Used to determine if the uploader can throw exceptions</param>
         /// <exception cref="ArgumentNullException">queueReportsAccessor</exception>
         public UploadToCoderr(Uri coderrServerAddress, string apiKey, string sharedSecret,
-            Func<bool> queueReportsAccessor)
+            Func<bool> queueReportsAccessor, Func<bool> throwExceptionsAccessor)
             : this(coderrServerAddress, apiKey, sharedSecret)
         {
-            _queueReportsAccessor = queueReportsAccessor ?? throw new ArgumentNullException(nameof(queueReportsAccessor));
+            _queueReportsAccessor = queueReportsAccessor
+                                    ?? throw new ArgumentNullException(nameof(queueReportsAccessor));
+            _throwExceptionsAccessor = throwExceptionsAccessor
+                                       ?? throw new ArgumentNullException(nameof(throwExceptionsAccessor));
         }
 
         /// <summary>
-        /// API key as defined in codeRR Server.
+        ///     API key as defined in codeRR Server.
         /// </summary>
         public string ApiKey { get; set; }
 
@@ -154,7 +162,7 @@ namespace codeRR.Client.Uploaders
         }
 
         /// <summary>
-        /// Shared secret as defined in the codeRR server.
+        ///     Shared secret as defined in the codeRR server.
         /// </summary>
         public string SharedSecret { get; }
 
@@ -171,14 +179,30 @@ namespace codeRR.Client.Uploaders
         ///     Upload the report to the web service.
         /// </summary>
         /// <param name="report">CreateReport to submit</param>
+        /// <remarks>
+        ///     <para>
+        ///         If
+        ///     </para>
+        /// </remarks>
         public void UploadReport(ErrorReportDTO report)
         {
-            if (report == null) throw new ArgumentNullException("report");
+            if (report == null) throw new ArgumentNullException(nameof(report));
 
+            if (!NetworkInterface.GetIsNetworkAvailable() && !_queueReportsAccessor())
+                return;
             if (!NetworkInterface.GetIsNetworkAvailable() || _queueReportsAccessor())
                 _reportQueue.Add(report);
             else
-                TryUploadReportNow(report);
+                try
+                {
+                    TryUploadReportNow(report);
+                }
+                catch (Exception ex)
+                {
+                    if (_throwExceptionsAccessor())
+                        throw;
+                    UploadFailed?.Invoke(this, new UploadReportFailedEventArgs(ex, report));
+                }
         }
 
         /// <summary>
@@ -200,57 +224,24 @@ namespace codeRR.Client.Uploaders
         /// </remarks>
         public void UploadFeedback(FeedbackDTO feedback)
         {
-            if (feedback == null) throw new ArgumentNullException("feedback");
+            if (feedback == null) throw new ArgumentNullException(nameof(feedback));
 
+
+            if (!NetworkInterface.GetIsNetworkAvailable() && !_queueReportsAccessor())
+                return;
             if (!NetworkInterface.GetIsNetworkAvailable() || _queueReportsAccessor())
                 _feedbackQueue.Add(feedback);
             else
-                TryUploadFeedbackNow(feedback);
-        }
-
-        /// <summary>
-        ///     Try to upload a report directly
-        /// </summary>
-        /// <param name="feedback">Report to upload</param>
-        /// <exception cref="WebException">No Internet connection is available; Destination server did not accept the report.</exception>
-        public void TryUploadFeedbackNow(FeedbackDTO feedback)
-        {
-            if (feedback == null) throw new ArgumentNullException("feedback");
-            if (!NetworkInterface.GetIsNetworkAvailable())
-                throw new UploadFailedException("Not connected, try again later.");
-
-            var reportJson = JsonConvert.SerializeObject(feedback, Formatting.None,
-                new JsonSerializerSettings
+                try
                 {
-                    TypeNameHandling = TypeNameHandling.None,
-                    ContractResolver =
-                        new IncludeNonPublicMembersContractResolver()
-                });
-            var buffer = Encoding.UTF8.GetBytes(reportJson);
-            var version = Assembly.GetExecutingAssembly().GetName().Version.ToString(2);
-            var hashAlgo = new HMACSHA256(Encoding.UTF8.GetBytes(SharedSecret));
-            var hash = hashAlgo.ComputeHash(buffer);
-            var signature = Convert.ToBase64String(hash);
-
-            try
-            {
-                var uri = _feedbackUri + "?sig=" + signature + "&v=" + version;
-                var request = (HttpWebRequest) WebRequest.Create(uri);
-                AddProxyIfRequired(request, uri);
-
-                request.Method = "POST";
-                request.ContentType = "application/json";
-                request.GetRequestStream().Write(buffer, 0, buffer.Length);
-                using (request.GetResponse())
-                {
+                    TryUploadFeedbackNow(feedback);
                 }
-            }
-            catch (Exception err)
-            {
-                AnalyzeException(err);
-                throw new UploadFailedException(
-                    "The actual upload failed (probably network error). We'll try again later..", err);
-            }
+                catch (Exception ex)
+                {
+                    if (_throwExceptionsAccessor())
+                        throw;
+                    UploadFailed?.Invoke(this, new UploadReportFailedEventArgs(ex, feedback));
+                }
         }
 
         /// <summary>
@@ -306,10 +297,56 @@ namespace codeRR.Client.Uploaders
                 _feedbackQueue.Dispose();
                 _feedbackQueue = null;
             }
+
             if (_reportQueue != null)
             {
                 _reportQueue.Dispose();
                 _reportQueue = null;
+            }
+        }
+
+        /// <summary>
+        ///     Try to upload a report directly
+        /// </summary>
+        /// <param name="feedback">Report to upload</param>
+        /// <exception cref="WebException">No Internet connection is available; Destination server did not accept the report.</exception>
+        protected void TryUploadFeedbackNow(FeedbackDTO feedback)
+        {
+            if (feedback == null) throw new ArgumentNullException(nameof(feedback));
+            if (!NetworkInterface.GetIsNetworkAvailable())
+                throw new UploadFailedException("Not connected, try again later.");
+
+            var reportJson = JsonConvert.SerializeObject(feedback, Formatting.None,
+                new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.None,
+                    ContractResolver =
+                        new IncludeNonPublicMembersContractResolver()
+                });
+            var buffer = Encoding.UTF8.GetBytes(reportJson);
+            var version = Assembly.GetExecutingAssembly().GetName().Version.ToString(2);
+            var hashAlgo = new HMACSHA256(Encoding.UTF8.GetBytes(SharedSecret));
+            var hash = hashAlgo.ComputeHash(buffer);
+            var signature = Convert.ToBase64String(hash);
+
+            try
+            {
+                var uri = _feedbackUri + "?sig=" + signature + "&v=" + version;
+                var request = (HttpWebRequest) WebRequest.Create(uri);
+                AddProxyIfRequired(request, uri);
+
+                request.Method = "POST";
+                request.ContentType = "application/json";
+                request.GetRequestStream().Write(buffer, 0, buffer.Length);
+                using (request.GetResponse())
+                {
+                }
+            }
+            catch (Exception err)
+            {
+                AnalyzeException(err);
+                throw new UploadFailedException(
+                    "The actual upload failed (probably network error). We'll try again later..", err);
             }
         }
 
@@ -371,15 +408,15 @@ namespace codeRR.Client.Uploaders
         private static void AddProxyIfRequired(HttpWebRequest request, string uri)
         {
             var proxy = request.Proxy;
-            if (proxy != null && !proxy.IsBypassed(new Uri(uri)))
+            if (proxy == null || proxy.IsBypassed(new Uri(uri))) 
+                return;
+
+            var proxyuri = proxy.GetProxy(request.RequestUri).ToString();
+            request.UseDefaultCredentials = true;
+            request.Proxy = new WebProxy(proxyuri, false)
             {
-                var proxyuri = proxy.GetProxy(request.RequestUri).ToString();
-                request.UseDefaultCredentials = true;
-                request.Proxy = new WebProxy(proxyuri, false)
-                {
-                    Credentials = CredentialCache.DefaultCredentials
-                };
-            }
+                Credentials = CredentialCache.DefaultCredentials
+            };
         }
 
         private static void AnalyzeException(Exception err)
@@ -399,6 +436,7 @@ namespace codeRR.Client.Uploaders
                 description = reader.ReadToEnd();
                 title = resp.StatusDescription;
             }
+
             try
             {
                 exception.Response.Close();
@@ -423,6 +461,30 @@ namespace codeRR.Client.Uploaders
                         throw new InvalidApplicationKeyException(title + "\r\n" + description, err);
 
                     throw new UploadFailedException("Server returned an error.\r\n" + description, err);
+            }
+        }
+
+        private void OnInvokeBackgroundUpload(FeedbackDTO dto)
+        {
+            try
+            {
+                TryUploadFeedbackNow(dto);
+            }
+            catch (Exception ex)
+            {
+                UploadFailed?.Invoke(this, new UploadReportFailedEventArgs(ex, dto));
+            }
+        }
+
+        private void OnInvokeBackgroundUpload(ErrorReportDTO dto)
+        {
+            try
+            {
+                TryUploadReportNow(dto);
+            }
+            catch (Exception ex)
+            {
+                UploadFailed?.Invoke(this, new UploadReportFailedEventArgs(ex, dto));
             }
         }
 
