@@ -3,8 +3,8 @@
     <TargetFrameworks>net45;net452;net40</TargetFrameworks>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Coderr.Client.xml</DocumentationFile>
 
-    <PackageReleaseNotes>Corrected a bug for a new feature that allows collections to be transported in the exception data.</PackageReleaseNotes>
-    <Version>1.0.16</Version>
+    <PackageReleaseNotes>Includes application version by default.</PackageReleaseNotes>
+    <Version>1.0.17</Version>
   </PropertyGroup>
   
   <PropertyGroup>
