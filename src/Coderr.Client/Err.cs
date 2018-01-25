@@ -250,7 +250,19 @@ namespace codeRR.Client
         public static void UploadReport(ErrorReportDTO dto)
         {
             if (dto == null) throw new ArgumentNullException("dto");
+            EnsureApplicationVersion(dto);
             Configuration.Uploaders.Upload(dto);
+        }
+
+        private static void EnsureApplicationVersion(ErrorReportDTO dto)
+        {
+            foreach (var collection in dto.ContextCollections)
+            {
+                if (collection.Properties.TryGetValue(ExceptionProcessor.AppAssemblyVersion, out var version))
+                    return;
+            }
+
+            _exceptionProcessor.AddAddemblyVersion(dto.ContextCollections);
         }
     }
 }

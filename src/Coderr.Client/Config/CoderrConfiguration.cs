@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using codeRR.Client.ContextProviders;
 using codeRR.Client.Converters;
 using codeRR.Client.Processor;
@@ -12,6 +13,16 @@ namespace codeRR.Client.Config
     public class CoderrConfiguration : IDisposable
     {
         /// <summary>
+        ///     Used to be able to process error reports before they are delivered.
+        /// </summary>
+        public ExceptionPreProcessorHandler ExceptionPreProcessor;
+
+        /// <summary>
+        ///     Visit generated reports before they are sent.
+        /// </summary>
+        public ReportPreProcessorHandler ReportPreProcessor;
+
+        /// <summary>
         ///     Creates a new instance of <see cref="CoderrConfiguration" />.
         /// </summary>
         public CoderrConfiguration()
@@ -23,14 +34,10 @@ namespace codeRR.Client.Config
         }
 
         /// <summary>
-        /// Used to be able to process error reports before they are delivered.
+        ///     Version of your application
         /// </summary>
-        public ExceptionPreProcessorHandler ExceptionPreProcessor;
-
-        /// <summary>
-        /// Visit generated reports before they are sent.
-        /// </summary>
-        public ReportPreProcessorHandler ReportPreProcessor;
+        /// <see cref="AssignAssemblyVersion(System.Reflection.Assembly)" />
+        public string ApplicationVersion { get; private set; }
 
         /// <summary>
         ///     Used to add custom context info providers.
@@ -107,6 +114,26 @@ namespace codeRR.Client.Config
         }
 
         /// <summary>
+        ///     Version of the entry assembly in the user application
+        /// </summary>
+        /// <param name="assembly">Assembly containing the application version</param>
+        public void AssignAssemblyVersion(Assembly assembly)
+        {
+            ApplicationVersion = assembly.GetName().Version?.ToString();
+            if (ApplicationVersion == "0.0.0.0")
+                ApplicationVersion = null;
+        }
+
+        /// <summary>
+        ///     Your application version
+        /// </summary>
+        /// <param name="version">Assembly version, format: "1.0.0.0"</param>
+        public void AssignAssemblyVersion(string version)
+        {
+            ApplicationVersion = version;
+        }
+
+        /// <summary>
         ///     Configure uploads
         /// </summary>
         /// <param name="coderrServerAddress">Host. Host and absolute path to the codeRR server</param>
@@ -117,6 +144,10 @@ namespace codeRR.Client.Config
             if (coderrServerAddress == null) throw new ArgumentNullException(nameof(coderrServerAddress));
             if (appKey == null) throw new ArgumentNullException(nameof(appKey));
             if (sharedSecret == null) throw new ArgumentNullException(nameof(sharedSecret));
+
+            if (ApplicationVersion == null)
+                AssignAssemblyVersion(Assembly.GetCallingAssembly());
+
             Uploaders.Register(new UploadToCoderr(coderrServerAddress, appKey, sharedSecret));
         }
 

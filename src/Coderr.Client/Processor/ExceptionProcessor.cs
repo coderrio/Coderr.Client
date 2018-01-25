@@ -14,6 +14,7 @@ namespace codeRR.Client.Processor
     public class ExceptionProcessor : IExceptionProcessor
     {
         internal const string AlreadyReportedSetting = "ErrSetting.Reported";
+        internal const string AppAssemblyVersion = "AppAssemblyVersion";
         private readonly CoderrConfiguration _configuration;
 
         /// <summary>
@@ -43,6 +44,7 @@ namespace codeRR.Client.Processor
             var context = new ErrorReporterContext(null, exception);
             var contextInfo = _configuration.ContextProviders.Collect(context);
             var reportId = ReportIdGenerator.Generate(exception);
+            AddAddemblyVersion(contextInfo);
             return new ErrorReportDTO(reportId, new ExceptionDTO(exception), contextInfo.ToArray());
         }
 
@@ -65,6 +67,7 @@ namespace codeRR.Client.Processor
             var contextInfo = _configuration.ContextProviders.Collect(context);
             AppendCustomContextData(contextData, contextInfo);
             var reportId = ReportIdGenerator.Generate(exception);
+            AddAddemblyVersion(contextInfo);
             return new ErrorReportDTO(reportId, new ExceptionDTO(exception), contextInfo.ToArray());
         }
 
@@ -98,6 +101,7 @@ namespace codeRR.Client.Processor
 
             var contextInfo = _configuration.ContextProviders.Collect(context);
             var reportId = ReportIdGenerator.Generate(context.Exception);
+            AddAddemblyVersion(contextInfo);
             var report = new ErrorReportDTO(reportId, new ExceptionDTO(context.Exception), contextInfo.ToArray());
             return report;
         }
@@ -121,6 +125,8 @@ namespace codeRR.Client.Processor
             var context = new ErrorReporterContext(null, exception);
             var contextInfo = _configuration.ContextProviders.Collect(context);
             var reportId = ReportIdGenerator.Generate(exception);
+
+            AddAddemblyVersion(contextInfo);
             var report = new ErrorReportDTO(reportId, new ExceptionDTO(exception), contextInfo.ToArray());
             var canUpload = _configuration.FilterCollection.CanUploadReport(report);
             if (!canUpload)
@@ -178,18 +184,34 @@ namespace codeRR.Client.Processor
             if (exception.Data.Contains(AlreadyReportedSetting))
                 return;
 
-            var context = new ErrorReporterContext(null, exception);
-            var contextInfo = _configuration.ContextProviders.Collect(context);
-            AppendCustomContextData(contextData, contextInfo);
-
-            var reportId = ReportIdGenerator.Generate(exception);
-            var report = new ErrorReportDTO(reportId, new ExceptionDTO(exception), contextInfo.ToArray());
+            var report = Build(exception, contextData);
             var canUpload = _configuration.FilterCollection.CanUploadReport(report);
             if (!canUpload)
                 return;
 
             exception.Data.Add(AlreadyReportedSetting, true);
             _configuration.Uploaders.Upload(report);
+        }
+
+        internal void AddAddemblyVersion(IList<ContextCollectionDTO> contextInfo)
+        {
+            if (_configuration.ApplicationVersion == null)
+                return;
+
+            if (contextInfo.Any())
+            {
+                contextInfo[0].Properties.Add(AppAssemblyVersion, _configuration.ApplicationVersion);
+            }
+            else
+            {
+                var items = new Dictionary<string, string>
+                {
+                    {"AppAssemblyVersion", _configuration.ApplicationVersion}
+                };
+
+                var col = new ContextCollectionDTO("Err", items);
+                contextInfo.Add(col);
+            }
         }
 
         private static void AppendCustomContextData(object contextData, IList<ContextCollectionDTO> contextInfo)

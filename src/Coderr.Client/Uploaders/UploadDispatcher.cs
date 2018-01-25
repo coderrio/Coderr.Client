@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using codeRR.Client.Config;
 using codeRR.Client.Contracts;
 
@@ -63,6 +64,10 @@ namespace codeRR.Client.Uploaders
             if (uploader == null) throw new ArgumentNullException("uploader");
             uploader.UploadFailed += OnUploadFailed;
             _uploaders.Add(uploader);
+
+            // For cases where a custom uploader is used instead of (Err.Configuration.Credentials)
+            if (_configuration.ApplicationVersion == null && Assembly.GetCallingAssembly() != Assembly.GetExecutingAssembly())
+                _configuration.AssignAssemblyVersion(Assembly.GetCallingAssembly());
         }
 
         /// <summary>
@@ -77,8 +82,9 @@ namespace codeRR.Client.Uploaders
         /// </remarks>
         public void Upload(ErrorReportDTO dto)
         {
+            if (dto == null) throw new ArgumentNullException(nameof(dto));
+
             _configuration.ReportPreProcessor?.Invoke(dto);
-            if (dto == null) throw new ArgumentNullException("dto");
             if (_configuration.QueueReports)
                 _reportQueue.Add(dto);
             else
@@ -91,7 +97,8 @@ namespace codeRR.Client.Uploaders
         /// <param name="dto">Feedback provided  by the user.</param>
         public void Upload(FeedbackDTO dto)
         {
-            if (dto == null) throw new ArgumentNullException("dto");
+            if (dto == null) throw new ArgumentNullException(nameof(dto));
+
             if (_configuration.QueueReports)
                 _feedbackQueue.Add(dto);
             else
