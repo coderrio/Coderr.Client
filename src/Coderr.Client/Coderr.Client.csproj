@@ -3,8 +3,8 @@
     <TargetFrameworks>net45;net452;net40</TargetFrameworks>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Coderr.Client.xml</DocumentationFile>
 
-    <PackageReleaseNotes>Includes application version by default.</PackageReleaseNotes>
-    <Version>1.0.17</Version>
+    <PackageReleaseNotes>Added support for the Coderr Live feature Partitions.</PackageReleaseNotes>
+    <Version>1.0.18</Version>
   </PropertyGroup>
   
   <PropertyGroup>

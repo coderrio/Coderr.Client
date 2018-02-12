@@ -1,26 +1,35 @@
-﻿using System;
-using codeRR.Client.Contracts;
+using System;
+using codeRR.Client.ContextCollections;
+using codeRR.Client.Reporters;
 
-namespace codeRR.Client.ContextCollections
+namespace codeRR.Client.Config
 {
     /// <summary>
-    ///     Partitioning is used to be able to drill down reports to see how errors affect your system or user base.
+    ///     Context used for the partition callback.
     /// </summary>
-    /// <remarks>
-    ///     <para>
-    ///         Do note that this feature is for codeRR Live and codeRR OnPremise only.
-    ///     </para>
-    /// </remarks>
-    public class ErrPartitionContextCollection : ContextCollectionDTO
+    public class PartitionContext
     {
-        public static string NAME = "ErrPartitions";
+        private readonly ErrPartitionContextCollection _contextCollection;
 
         /// <summary>
-        ///     Creates a new instance of <see cref="ErrPartitionContextCollection" />
+        ///     Creates a new instance of <see cref="PartitionContext" />.
         /// </summary>
-        public ErrPartitionContextCollection() : base(NAME)
+        /// <param name="contextCollection">context to add partitions to.</param>
+        /// <param name="reporterContext">
+        ///     Context used when collecting all other context data (before partition collection is
+        ///     invoked)
+        /// </param>
+        public PartitionContext(ErrPartitionContextCollection contextCollection, IErrorReporterContext2 reporterContext)
         {
+            _contextCollection = contextCollection ?? throw new ArgumentNullException(nameof(contextCollection));
+            ReporterContext = reporterContext;
         }
+
+        /// <summary>
+        ///     Context that the partition will be added to.
+        /// </summary>
+        public IErrorReporterContext2 ReporterContext { get; private set; }
+
 
         /// <summary>
         ///     Add a custom partition.
@@ -30,7 +39,7 @@ namespace codeRR.Client.ContextCollections
         public void AddPartition(string partitionKey, string value)
         {
             if (partitionKey == null) throw new ArgumentNullException(nameof(partitionKey));
-            Properties[partitionKey] = value ?? throw new ArgumentNullException(nameof(value));
+            _contextCollection.AddPartition(partitionKey, value);
         }
 
         /// <summary>
@@ -45,7 +54,7 @@ namespace codeRR.Client.ContextCollections
         /// </remarks>
         public void SetTenant(string tenantId)
         {
-            Properties["Tenant"] = tenantId ?? throw new ArgumentNullException(nameof(tenantId));
+            _contextCollection.SetTenant(tenantId);
         }
 
         /// <summary>
@@ -60,7 +69,7 @@ namespace codeRR.Client.ContextCollections
         /// </remarks>
         public void SetUser(string userIdentifier)
         {
-            Properties["User"] = userIdentifier ?? throw new ArgumentNullException(nameof(userIdentifier));
+            _contextCollection.SetUser(userIdentifier);
         }
     }
 }

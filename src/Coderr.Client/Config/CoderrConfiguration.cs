@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using codeRR.Client.ContextProviders;
 using codeRR.Client.Converters;
@@ -12,6 +13,8 @@ namespace codeRR.Client.Config
     /// </summary>
     public class CoderrConfiguration : IDisposable
     {
+        internal readonly List<Action<PartitionContext>> PartitionCallbacks = new List<Action<PartitionContext>>();
+
         /// <summary>
         ///     Used to be able to process error reports before they are delivered.
         /// </summary>
@@ -111,6 +114,31 @@ namespace codeRR.Client.Config
         public void Dispose()
         {
             Dispose(true);
+        }
+
+        /// <summary>
+        ///     Configure a callback which is used to attach partitions to the error report
+        /// </summary>
+        /// <param name="callback"></param>
+        /// <example>
+        ///     <code>
+        /// // Example for ASP.NET
+        /// Err.Configuration.AddPartition(ctx => {
+        ///    var aspNetContext = context as AspNetContext;
+        /// 
+        ///    // this check is required since different contexts are used
+        ///    // if you use multiple client libraries.
+        ///    if (aspNetContext?.HttpContext == null)
+        ///        return null;
+        /// 
+        ///    ctx.AddPartition("DeviceId", ctx.HttpContext.Session["DeviceId"]);
+        /// });
+        /// </code>
+        /// </example>
+        public void AddPartition(Action<PartitionContext> callback)
+        {
+            if (callback == null) throw new ArgumentNullException(nameof(callback));
+            PartitionCallbacks.Add(callback);
         }
 
         /// <summary>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using codeRR.Client.Config;
+using codeRR.Client.ContextCollections;
 using codeRR.Client.Contracts;
 using codeRR.Client.Reporters;
 using Coderr.Client;
@@ -38,14 +39,7 @@ namespace codeRR.Client.Processor
         /// </remarks>
         public ErrorReportDTO Build(Exception exception)
         {
-            if (exception.Data.Contains(AlreadyReportedSetting))
-                return null;
-
-            var context = new ErrorReporterContext(null, exception);
-            var contextInfo = _configuration.ContextProviders.Collect(context);
-            var reportId = ReportIdGenerator.Generate(exception);
-            AddAddemblyVersion(contextInfo);
-            return new ErrorReportDTO(reportId, new ExceptionDTO(exception), contextInfo.ToArray());
+            return Build(exception, null);
         }
 
         /// <summary>
@@ -60,15 +54,16 @@ namespace codeRR.Client.Processor
         /// </remarks>
         public ErrorReportDTO Build(Exception exception, object contextData)
         {
+            if (exception is CoderrClientException)
+                return null;
             if (exception.Data.Contains(AlreadyReportedSetting))
                 return null;
 
             var context = new ErrorReporterContext(null, exception);
-            var contextInfo = _configuration.ContextProviders.Collect(context);
-            AppendCustomContextData(contextData, contextInfo);
-            var reportId = ReportIdGenerator.Generate(exception);
-            AddAddemblyVersion(contextInfo);
-            return new ErrorReportDTO(reportId, new ExceptionDTO(exception), contextInfo.ToArray());
+            if (contextData != null)
+                AppendCustomContextData(contextData, context.ContextCollections);
+
+            return Build(context);
         }
 
         /// <summary>
@@ -93,11 +88,15 @@ namespace codeRR.Client.Processor
                 return null;
             if (context.Exception.Data.Contains(AlreadyReportedSetting))
                 return null;
+            context.Exception.Data.Add(AlreadyReportedSetting, true);
+
             if (context is IErrorReporterContext2 ctx2)
             {
                 ErrorReporterContext.MoveCollectionsInException(context.Exception, ctx2.ContextCollections);
                 InvokeFilter(ctx2);
             }
+
+            InvokePartitionCollection(context);
 
             var contextInfo = _configuration.ContextProviders.Collect(context);
             var reportId = ReportIdGenerator.Generate(context.Exception);
@@ -117,23 +116,8 @@ namespace codeRR.Client.Processor
         /// </remarks>
         public void Process(Exception exception)
         {
-            if (exception is CoderrClientException)
-                return;
-            if (exception.Data.Contains(AlreadyReportedSetting))
-                return;
-
-            var context = new ErrorReporterContext(null, exception);
-            var contextInfo = _configuration.ContextProviders.Collect(context);
-            var reportId = ReportIdGenerator.Generate(exception);
-
-            AddAddemblyVersion(contextInfo);
-            var report = new ErrorReportDTO(reportId, new ExceptionDTO(exception), contextInfo.ToArray());
-            var canUpload = _configuration.FilterCollection.CanUploadReport(report);
-            if (!canUpload)
-                return;
-
-            exception.Data.Add(AlreadyReportedSetting, true);
-            _configuration.Uploaders.Upload(report);
+            var report = Build(exception);
+            Process(report);
         }
 
         /// <summary>
@@ -155,15 +139,7 @@ namespace codeRR.Client.Processor
         public void Process(IErrorReporterContext context)
         {
             var report = Build(context);
-            if (report == null)
-                return;
-
-            var canUpload = _configuration.FilterCollection.CanUploadReport(report);
-            if (!canUpload)
-                return;
-
-            context.Exception.Data.Add(AlreadyReportedSetting, true);
-            _configuration.Uploaders.Upload(report);
+            Process(report);
         }
 
 
@@ -179,17 +155,19 @@ namespace codeRR.Client.Processor
         /// </remarks>
         public void Process(Exception exception, object contextData)
         {
-            if (exception is CoderrClientException)
-                return;
-            if (exception.Data.Contains(AlreadyReportedSetting))
+            var report = Build(exception, contextData);
+            Process(report);
+        }
+
+        protected void Process(ErrorReportDTO report)
+        {
+            if (report == null)
                 return;
 
-            var report = Build(exception, contextData);
             var canUpload = _configuration.FilterCollection.CanUploadReport(report);
             if (!canUpload)
                 return;
 
-            exception.Data.Add(AlreadyReportedSetting, true);
             _configuration.Uploaders.Upload(report);
         }
 
@@ -198,20 +176,13 @@ namespace codeRR.Client.Processor
             if (_configuration.ApplicationVersion == null)
                 return;
 
-            if (contextInfo.Any())
-            {
-                contextInfo[0].Properties.Add(AppAssemblyVersion, _configuration.ApplicationVersion);
-            }
-            else
-            {
-                var items = new Dictionary<string, string>
+            var items = new Dictionary<string, string>
                 {
                     {"AppAssemblyVersion", _configuration.ApplicationVersion}
                 };
 
-                var col = new ContextCollectionDTO("Err", items);
-                contextInfo.Add(col);
-            }
+            var col = new ContextCollectionDTO("AppVersion", items);
+            contextInfo.Add(col);
         }
 
         private static void AppendCustomContextData(object contextData, IList<ContextCollectionDTO> contextInfo)
@@ -232,6 +203,29 @@ namespace codeRR.Client.Processor
         private void InvokeFilter(IErrorReporterContext2 context)
         {
             Err.Configuration.ExceptionPreProcessor?.Invoke(context);
+        }
+
+        private void InvokePartitionCollection(IErrorReporterContext context)
+        {
+            var ctx2 = context as IErrorReporterContext2;
+            if (ctx2 == null)
+                return;
+
+            var col = new ErrPartitionContextCollection();
+            ctx2.ContextCollections.Add(col);
+
+            var partitionContext = new PartitionContext(col, ctx2);
+            foreach (var callback in _configuration.PartitionCallbacks)
+            {
+                try
+                {
+                    callback(partitionContext);
+                }
+                catch (Exception ex)
+                {
+                    col.Properties.Add("PartitionCollection.Err", $"Callback {callback} failed: {ex}");
+                }
+            }
         }
     }
 }

@@ -1,8 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Net;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 using codeRR.Client.ContextProviders;
+using codeRR.Client.Contracts;
+using codeRR.Client.Processor;
+using codeRR.Client.Reporters;
 
 namespace codeRR.Client.Demo
 {
@@ -28,9 +34,6 @@ namespace codeRR.Client.Demo
                 "yourOwnAppKey",
                 "yourOwnSharedSecret");
 
-            Err.Configuration.ReportPreProcessor = context => context.Exception.Everything = null;
-            Err.Configuration.ContextProviders.Clear();
-            //Err.Configuration.ContextProviders.Add(new ExceptionPropertiesProvider());
             try
             {
                 throw new InvalidDataException("corrupt data");

@@ -527,17 +527,22 @@ namespace codeRR.Client.Converters
                 return false;
 
             var type = instance.GetType();
+            if (type.FullName == "System.RuntimeType")
+                return true;
+            if (type.Name == "System.ContextStaticAttribute")
+                return true;
+
             var ns = type.Namespace;
-            if (ns != null && ns.StartsWith("System.Runtime"))
+            if (ns == null) 
+                return false;
+
+            if (ns.StartsWith("System.Runtime"))
                 return true;
-            if (instance.GetType().FullName == "System.RuntimeType")
+            if (ns.StartsWith("System.Reflection"))
                 return true;
-            if (ns != null && ns.StartsWith("System.Reflection"))
+            if (ns.StartsWith("System.Threading.Tasks"))
                 return true;
-            if (ns != null && ns.StartsWith("System.Threading.Tasks"))
-                return true;
-            if (instance.GetType().Name == "System.ContextStaticAttribute")
-                return true;
+
             return false;
         }
     }
