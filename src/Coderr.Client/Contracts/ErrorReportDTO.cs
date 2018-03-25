@@ -78,6 +78,11 @@ namespace codeRR.Client.Contracts
         }
 
         /// <summary>
+        /// Environment that the error was detected in (dev, test, prod)
+        /// </summary>
+        public string Environment { get; set; }
+
+        /// <summary>
         ///     Add an collection to the model
         /// </summary>
         /// <param name="collection">Collection of contextual information which can be used to aid in solving the error.</param>

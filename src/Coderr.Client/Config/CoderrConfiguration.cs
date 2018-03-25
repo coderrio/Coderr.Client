@@ -106,6 +106,11 @@ namespace codeRR.Client.Config
         /// </summary>
         public UserInteractionConfiguration UserInteraction { get; } = new UserInteractionConfiguration();
 
+        /// <summary>
+        /// Which environment are we running in? Dev, Production etc.
+        /// </summary>
+        public string EnvironmentName { get; set; }
+
 
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.

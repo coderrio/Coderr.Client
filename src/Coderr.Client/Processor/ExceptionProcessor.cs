@@ -96,12 +96,21 @@ namespace codeRR.Client.Processor
                 InvokeFilter(ctx2);
             }
 
-            InvokePartitionCollection(context);
 
             var contextInfo = _configuration.ContextProviders.Collect(context);
+
+            // Invoke partition collection AFTER other context info providers
+            // since those other collections might provide the property that
+            // we want to create partions on.
+            InvokePartitionCollection(context);
+
             var reportId = ReportIdGenerator.Generate(context.Exception);
             AddAddemblyVersion(contextInfo);
-            var report = new ErrorReportDTO(reportId, new ExceptionDTO(context.Exception), contextInfo.ToArray());
+            var report =
+                new ErrorReportDTO(reportId, new ExceptionDTO(context.Exception), contextInfo.ToArray())
+                {
+                    Environment = Err.Configuration.EnvironmentName
+                };
             return report;
         }
 
