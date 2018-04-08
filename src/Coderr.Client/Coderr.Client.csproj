@@ -3,8 +3,8 @@
     <TargetFrameworks>net45;net452;net40</TargetFrameworks>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Coderr.Client.xml</DocumentationFile>
 
-    <PackageReleaseNotes>Changed where the partitions are collected and introduced deployment environment tracking.</PackageReleaseNotes>
-    <Version>1.0.19</Version>
+    <PackageReleaseNotes>Corrected a bug for error partitions.</PackageReleaseNotes>
+    <Version>1.0.20</Version>
   </PropertyGroup>
   
   <PropertyGroup>

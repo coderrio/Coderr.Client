@@ -104,6 +104,7 @@ namespace codeRR.Client.Processor
             // we want to create partions on.
             InvokePartitionCollection(context);
 
+            MoveCollectionsFromContext(context, contextInfo);
             var reportId = ReportIdGenerator.Generate(context.Exception);
             AddAddemblyVersion(contextInfo);
             var report =
@@ -112,6 +113,19 @@ namespace codeRR.Client.Processor
                     Environment = Err.Configuration.EnvironmentName
                 };
             return report;
+        }
+
+        private void MoveCollectionsFromContext(IErrorReporterContext context, IList<ContextCollectionDTO> destination)
+        {
+            var ctx2=context as IErrorReporterContext2;
+            if (ctx2 == null)
+                return;
+            
+            foreach (var col in ctx2.ContextCollections)
+            {
+                destination.Add(col);
+            }
+            ctx2.ContextCollections.Clear();
         }
 
         /// <summary>
@@ -222,7 +236,6 @@ namespace codeRR.Client.Processor
 
             var col = new ErrPartitionContextCollection();
             ctx2.ContextCollections.Add(col);
-
             var partitionContext = new PartitionContext(col, ctx2);
             foreach (var callback in _configuration.PartitionCallbacks)
             {

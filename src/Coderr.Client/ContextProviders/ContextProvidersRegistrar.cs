@@ -66,15 +66,6 @@ namespace codeRR.Client.ContextProviders
             if (context == null) throw new ArgumentNullException("context");
 
             var items = new List<ContextCollectionDTO>();
-
-            if (context is IErrorReporterContext2 ctx2)
-            {
-                foreach (var collectionDto in ctx2.ContextCollections)
-                {
-                    items.Add(collectionDto);
-                }
-            }
-
             foreach (var provider in _providers)
                 try
                 {
