@@ -1,8 +1,8 @@
 using System;
-using codeRR.Client.ContextCollections;
-using codeRR.Client.Reporters;
+using Coderr.Client.ContextCollections;
+using Coderr.Client.Reporters;
 
-namespace codeRR.Client.Config
+namespace Coderr.Client.Config
 {
     /// <summary>
     ///     Context used for the partition callback.

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace codeRR.Client.ContextCollections
+namespace Coderr.Client.ContextCollections
 {
     /// <summary>
     ///     Information supplied by the user about this error.

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using codeRR.Client.Contracts;
-using codeRR.Client.Reporters;
+using Coderr.Client.Contracts;
+using Coderr.Client.Reporters;
 using FluentAssertions;
 using Newtonsoft.Json;
 using Xunit;

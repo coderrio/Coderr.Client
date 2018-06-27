@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
-using codeRR.Client.Contracts;
-using codeRR.Client.Reporters;
+using Coderr.Client.Contracts;
+using Coderr.Client.Reporters;
 
-namespace codeRR.Client.ContextProviders
+namespace Coderr.Client.ContextProviders
 {
     /// <summary>
     ///     Adds the logged in user (using <c>Thread.CurrentPrincipal</c>).

@@ -6,12 +6,11 @@ using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
-using codeRR.Client.Contracts;
-using codeRR.Client.Converters;
-using Coderr.Client.Uploaders;
+using Coderr.Client.Contracts;
+using Coderr.Client.Converters;
 using Newtonsoft.Json;
 
-namespace codeRR.Client.Uploaders
+namespace Coderr.Client.Uploaders
 {
     /// <summary>
     ///     Upload reports to our web site.

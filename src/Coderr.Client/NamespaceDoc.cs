@@ -1,7 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
-using codeRR.Client.Config;
 
-namespace codeRR.Client
+namespace Coderr.Client
 {
     /// <summary>
     ///     <para>

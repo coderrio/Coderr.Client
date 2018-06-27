@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using codeRR.Client.Contracts;
+using Coderr.Client.Contracts;
 using Newtonsoft.Json;
 
-namespace codeRR.Client.Reporters
+namespace Coderr.Client.Reporters
 {
     /// <summary>
     ///     Context supplied by error reports

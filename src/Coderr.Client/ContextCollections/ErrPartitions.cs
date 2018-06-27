@@ -1,7 +1,7 @@
 ﻿using System;
-using codeRR.Client.Contracts;
+using Coderr.Client.Contracts;
 
-namespace codeRR.Client.ContextCollections
+namespace Coderr.Client.ContextCollections
 {
     /// <summary>
     ///     Partitioning is used to be able to drill down reports to see how errors affect your system or user base.

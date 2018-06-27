@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace codeRR.Client.ContextCollections
+namespace Coderr.Client.ContextCollections
 {
     /// <summary>
     ///     Context collections provide information about the current application state when the exception as thrown.

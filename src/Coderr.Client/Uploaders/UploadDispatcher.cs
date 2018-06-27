@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using codeRR.Client.Config;
-using codeRR.Client.Contracts;
+using Coderr.Client.Config;
+using Coderr.Client.Contracts;
 
-namespace codeRR.Client.Uploaders
+namespace Coderr.Client.Uploaders
 {
     /// <summary>
     ///     Invokes all uploaders for every report.

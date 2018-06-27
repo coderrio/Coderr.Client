@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace codeRR.Client.Uploaders
+namespace Coderr.Client.Uploaders
 {
     /// <summary>
     ///     Submitters are the classes which takes error reports and delivers them to a specific destination. The destination

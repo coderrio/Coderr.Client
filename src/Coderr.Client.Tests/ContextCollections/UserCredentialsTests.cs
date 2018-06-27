@@ -1,6 +1,6 @@
 ﻿using System.Security.Principal;
+using Coderr.Client.ContextCollections;
 using FluentAssertions;
-using codeRR.Client.ContextCollections;
 using Xunit;
 
 namespace codeRR.Client.Tests.ContextCollections

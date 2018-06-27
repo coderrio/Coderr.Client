@@ -1,7 +1,7 @@
-using codeRR.Client.Contracts;
-using codeRR.Client.Reporters;
+using Coderr.Client.Contracts;
+using Coderr.Client.Reporters;
 
-namespace codeRR.Client.Config
+namespace Coderr.Client.Config
 {
     /// <summary>
     /// Used to be able to process exceptions before they are converted into DTOs

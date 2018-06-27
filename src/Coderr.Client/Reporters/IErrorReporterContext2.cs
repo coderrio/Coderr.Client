@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using codeRR.Client.Contracts;
+using Coderr.Client.Contracts;
 
-namespace codeRR.Client.Reporters
+namespace Coderr.Client.Reporters
 {
     /// <summary>
     /// To be able to add context collections directly

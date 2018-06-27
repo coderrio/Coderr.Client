@@ -5,8 +5,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using FluentAssertions;
-using codeRR.Client.Converters;
 using codeRR.Client.Tests.TestObjects;
+using Coderr.Client.Converters;
 using Xunit;
 using Xunit.Sdk;
 

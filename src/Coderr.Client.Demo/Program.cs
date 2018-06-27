@@ -3,7 +3,7 @@ using System.Data;
 using System.IO;
 using System.Net;
 
-namespace codeRR.Client.Demo
+namespace Coderr.Client.Demo
 {
     internal class Program
     {
@@ -27,10 +27,17 @@ namespace codeRR.Client.Demo
             //    "yourOwnAppKey",
             //    "yourOwnSharedSecret");
 
-            var url = new Uri("http://localhost:51970/");
-            Err.Configuration.Credentials(url,
-                "fda370d3a4444964b52d785a9b26fe21", 
-                "c3f786f9205c4572b5bbe4cfb81ba4f0");
+            var url = new Uri("http://localhost:50473/");
+            Err.Configuration.Credentials(url, 
+                "ae0428b701054c5d9481024f81ad8b05", 
+                "988cedd2bf4641d1aa228766450fab97");
+
+            var a = 10;
+
+            Err.ReportLogicError("This failed", new {id = 10}, "MixMax2");
+            
+            
+            
             try
             {
                 //throw new InvalidDataException("Hello world");

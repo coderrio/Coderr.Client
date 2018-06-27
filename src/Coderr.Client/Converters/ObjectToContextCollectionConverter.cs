@@ -6,9 +6,9 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using codeRR.Client.Contracts;
+using Coderr.Client.Contracts;
 
-namespace codeRR.Client.Converters
+namespace Coderr.Client.Converters
 {
     /// <summary>
     ///     Converts an object into a context collection.

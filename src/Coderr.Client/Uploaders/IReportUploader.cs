@@ -1,7 +1,7 @@
 ﻿using System;
-using codeRR.Client.Contracts;
+using Coderr.Client.Contracts;
 
-namespace codeRR.Client.Uploaders
+namespace Coderr.Client.Uploaders
 {
     /// <summary>
     ///     Defines the contract for all classes that will send the error report to a specific destination.

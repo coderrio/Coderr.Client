@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace codeRR.Client.Uploaders
+namespace Coderr.Client.Uploaders
 {
     /// <summary>
     ///     Event args for ReportingFailed

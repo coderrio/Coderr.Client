@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
+using Coderr.Client.Uploaders;
 using FluentAssertions;
-using codeRR.Client.Uploaders;
 using Xunit;
 
 namespace codeRR.Client.Tests.Uploaders

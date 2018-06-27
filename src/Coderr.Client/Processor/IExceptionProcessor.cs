@@ -1,8 +1,8 @@
 ﻿using System;
-using codeRR.Client.Contracts;
-using codeRR.Client.Reporters;
+using Coderr.Client.Contracts;
+using Coderr.Client.Reporters;
 
-namespace codeRR.Client.Processor
+namespace Coderr.Client.Processor
 {
     /// <summary>
     /// Runs the codeRR client pipeline

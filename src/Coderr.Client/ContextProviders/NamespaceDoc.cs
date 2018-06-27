@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace codeRR.Client.ContextProviders
+namespace Coderr.Client.ContextProviders
 {
     /// <summary>
     ///     Context providers are used to collect additional information that can aid you in solving the error.

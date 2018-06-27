@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace codeRR.Client.Contracts
+namespace Coderr.Client.Contracts
 {
     /// <summary>
     ///     The DTO's used to submit information to codeRR.

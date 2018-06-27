@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using codeRR.Client.Contracts;
-using codeRR.Client.Reporters;
+using Coderr.Client.Contracts;
+using Coderr.Client.Reporters;
 
-namespace codeRR.Client.ContextProviders
+namespace Coderr.Client.ContextProviders
 {
     /// <summary>
     ///     Collection information about all assemblies which has been loaded. Will be put into a collection named

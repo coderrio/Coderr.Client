@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace codeRR.Client.Config
+namespace Coderr.Client.Config
 {
     /// <summary>
     ///     Main configuration objects. Assessible through the <see cref="Err.Configuration" /> property.

@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 
-namespace codeRR.Client.Contracts
+namespace Coderr.Client.Contracts
 {
     /// <summary>
     ///     DTO for a context collection

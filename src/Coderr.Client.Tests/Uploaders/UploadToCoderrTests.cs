@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
-using codeRR.Client.Contracts;
-using codeRR.Client.Uploaders;
+using Coderr.Client.Contracts;
+using Coderr.Client.Uploaders;
 using FluentAssertions;
 using Griffin.Net.Channels;
 using Griffin.Net.Protocols.Http;

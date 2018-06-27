@@ -4,7 +4,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Management;
 
-namespace codeRR.Client.ContextProviders.Helpers
+namespace Coderr.Client.ContextProviders.Helpers
 {
     /// <summary>
     ///     Collector used to fetch information from the windows management API

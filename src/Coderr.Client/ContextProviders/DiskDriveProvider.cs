@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Specialized;
-using codeRR.Client.ContextProviders.Helpers;
-using codeRR.Client.Contracts;
-using codeRR.Client.Reporters;
+using Coderr.Client.ContextProviders.Helpers;
+using Coderr.Client.Contracts;
+using Coderr.Client.Reporters;
 
-namespace codeRR.Client.ContextProviders
+namespace Coderr.Client.ContextProviders
 {
     /// <summary>
     ///     Collects information about all disks in the computer. Will be added into a collection called <c>DiskDrives</c>.

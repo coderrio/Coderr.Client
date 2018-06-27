@@ -3,8 +3,8 @@
     <TargetFrameworks>net45;net452;net40</TargetFrameworks>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Coderr.Client.xml</DocumentationFile>
 
-    <PackageReleaseNotes>Corrected a bug for error partitions.</PackageReleaseNotes>
-    <Version>1.0.20</Version>
+    <PackageReleaseNotes>Added support for ReportLogicError.</PackageReleaseNotes>
+    <Version>1.1.0</Version>
   </PropertyGroup>
   
   <PropertyGroup>

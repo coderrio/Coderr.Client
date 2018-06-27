@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Security.Cryptography.X509Certificates;
-using codeRR.Client.Contracts;
-using codeRR.Client.Converters;
-using codeRR.Client.Reporters;
+using Coderr.Client.Contracts;
+using Coderr.Client.Converters;
+using Coderr.Client.Reporters;
 
-namespace codeRR.Client.ContextProviders
+namespace Coderr.Client.ContextProviders
 {
     /// <summary>
     ///     Goes through the exception and maps all custom properties. Will be added into a collection called

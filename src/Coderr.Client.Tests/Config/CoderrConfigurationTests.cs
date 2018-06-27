@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Coderr.Client.Config;
+using Coderr.Client.Uploaders;
 using FluentAssertions;
-using codeRR.Client.Config;
-using codeRR.Client.Uploaders;
 using Xunit;
 
 namespace codeRR.Client.Tests.Config

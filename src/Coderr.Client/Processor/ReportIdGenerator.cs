@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace codeRR.Client.Processor
+namespace Coderr.Client.Processor
 {
     /// <summary>
     ///     Used to be able to choose reportId id strategy

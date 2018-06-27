@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
+using Coderr.Client.Contracts;
 using FluentAssertions;
-using codeRR.Client.Contracts;
 using Xunit;
 
 namespace codeRR.Client.Tests

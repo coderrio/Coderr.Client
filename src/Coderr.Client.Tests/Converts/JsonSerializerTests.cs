@@ -1,4 +1,4 @@
-﻿using codeRR.Client.Converters;
+﻿using Coderr.Client.Converters;
 using FluentAssertions;
 using Newtonsoft.Json;
 using Xunit;

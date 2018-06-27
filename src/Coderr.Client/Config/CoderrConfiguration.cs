@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using codeRR.Client.ContextProviders;
-using codeRR.Client.Converters;
-using codeRR.Client.Processor;
-using codeRR.Client.Uploaders;
+using Coderr.Client.ContextProviders;
+using Coderr.Client.Converters;
+using Coderr.Client.Processor;
+using Coderr.Client.Uploaders;
 
-namespace codeRR.Client.Config
+namespace Coderr.Client.Config
 {
     /// <summary>
     ///     Configuration root object.

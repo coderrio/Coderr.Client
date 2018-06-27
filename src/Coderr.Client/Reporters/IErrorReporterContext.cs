@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace codeRR.Client.Reporters
+namespace Coderr.Client.Reporters
 {
     /// <summary>
     ///     contains context information which can be used during collection such as <c>HttpContext</c> (if the exception was

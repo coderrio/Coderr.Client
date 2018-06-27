@@ -3,8 +3,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using codeRR.Client.Contracts;
-using codeRR.Client.Uploaders;
+using Coderr.Client.Contracts;
+using Coderr.Client.Uploaders;
 using Xunit;
 
 namespace codeRR.Client.Tests

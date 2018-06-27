@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace codeRR.Client
+namespace Coderr.Client
 {
     internal class NativeMethods
     {

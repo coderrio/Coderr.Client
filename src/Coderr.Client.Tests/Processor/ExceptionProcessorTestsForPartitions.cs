@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using codeRR.Client.Config;
-using codeRR.Client.Processor;
-using codeRR.Client.Reporters;
+using Coderr.Client.Config;
+using Coderr.Client.Processor;
+using Coderr.Client.Reporters;
 using FluentAssertions;
 using Xunit;
 

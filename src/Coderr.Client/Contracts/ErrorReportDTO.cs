@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace codeRR.Client.Contracts
+namespace Coderr.Client.Contracts
 {
     /// <summary>
     ///     DTO used to transfer the report from the applications to the server.

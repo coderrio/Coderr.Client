@@ -1,7 +1,7 @@
 ﻿using System;
-using codeRR.Client.Contracts;
+using Coderr.Client.Contracts;
 
-namespace codeRR.Client.Processor
+namespace Coderr.Client.Processor
 {
     /// <summary>
     ///     Used when invoking all <see cref="IReportFilter" /> to determine if the current report may be sent to the

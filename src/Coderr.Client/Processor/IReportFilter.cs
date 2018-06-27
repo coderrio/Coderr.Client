@@ -1,4 +1,4 @@
-﻿namespace codeRR.Client.Processor
+﻿namespace Coderr.Client.Processor
 {
     /// <summary>
     ///     Invoked for every report that is about to be uploaded.

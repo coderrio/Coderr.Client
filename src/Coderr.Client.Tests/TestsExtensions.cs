@@ -1,6 +1,6 @@
 ﻿using System.Linq;
-using codeRR.Client.Contracts;
-using codeRR.Client.Reporters;
+using Coderr.Client.Contracts;
+using Coderr.Client.Reporters;
 using Xunit.Sdk;
 
 namespace Coderr.Client.Tests

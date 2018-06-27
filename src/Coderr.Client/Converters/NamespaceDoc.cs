@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace codeRR.Client.Converters
+namespace Coderr.Client.Converters
 {
     /// <summary>
     ///     Serializers and converters.

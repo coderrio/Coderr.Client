@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using codeRR.Client.Contracts;
+using Coderr.Client.Contracts;
 
-namespace codeRR.Client.Processor
+namespace Coderr.Client.Processor
 {
     /// <summary>
     ///     Purpose of this class is to invoke all callbacks to see if any of them objects to uploading this report.

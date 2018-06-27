@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using codeRR.Client.Config;
-using codeRR.Client.ContextCollections;
-using codeRR.Client.Contracts;
-using codeRR.Client.Reporters;
-using Coderr.Client;
+using Coderr.Client.Config;
+using Coderr.Client.ContextCollections;
+using Coderr.Client.Contracts;
+using Coderr.Client.Reporters;
 
-namespace codeRR.Client.Processor
+namespace Coderr.Client.Processor
 {
     /// <summary>
     ///     Will process the exception to generate context info and then upload it to the server.

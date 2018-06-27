@@ -6,10 +6,10 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using Coderr.Client.Converters;
 using Newtonsoft.Json;
-using codeRR.Client.Converters;
 
-namespace codeRR.Client.Contracts
+namespace Coderr.Client.Contracts
 {
     /// <summary>
     ///     Model used to wrap all information from an exception.

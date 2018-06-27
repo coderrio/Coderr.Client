@@ -5,7 +5,7 @@ using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace codeRR.Client.Converters
+namespace Coderr.Client.Converters
 {
     /// <summary>
     ///     JSON.NET class which also includes all private fields.

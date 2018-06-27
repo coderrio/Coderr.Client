@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace codeRR.Client.Converters
+namespace Coderr.Client.Converters
 {
     internal class Serializer
     {

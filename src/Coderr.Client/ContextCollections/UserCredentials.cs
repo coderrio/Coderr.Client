@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Principal;
 
-namespace codeRR.Client.ContextCollections
+namespace Coderr.Client.ContextCollections
 {
     /// <summary>
     ///     Carries the user credentials to the server.
