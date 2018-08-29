@@ -257,7 +257,6 @@ namespace Coderr.Client
         ///     Define your own unique identifier for this error. The message + the calling message are otherwise
         ///     used to generate an hash identifier for this method
         /// </param>
-        /// <param name="callerName">Name of invoking method</param>
         /// <remarks>
         ///     <para>
         ///         Logical errors are bugs where you expected a specific state in your application whole you received something

@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net45;net452;net40</TargetFrameworks>
+    <TargetFrameworks>net45;net452;net40;net46</TargetFrameworks>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Coderr.Client.xml</DocumentationFile>
 
-    <PackageReleaseNotes>Added support for ReportLogicError.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added support for ReportLogicError and renamed namespaces, update to "Coderr.*".</PackageReleaseNotes>
     <Version>1.1.0</Version>
   </PropertyGroup>
   
