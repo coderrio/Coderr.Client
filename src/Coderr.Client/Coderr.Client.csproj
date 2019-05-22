@@ -3,8 +3,8 @@
     <TargetFrameworks>net45;net452;net40;net46</TargetFrameworks>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Coderr.Client.xml</DocumentationFile>
 
-    <PackageReleaseNotes>Added support for ReportLogicError and renamed namespaces, update to "Coderr.*".</PackageReleaseNotes>
-    <Version>1.1.0</Version>
+    <PackageReleaseNotes>Added environment feature and corrected collection of arrays in Management Instrumentation</PackageReleaseNotes>
+    <Version>1.1.1</Version>
   </PropertyGroup>
   
   <PropertyGroup>
@@ -12,13 +12,13 @@
     <Authors>1TCompany AB</Authors>
     <Description>Automated exception handling for .NET applications</Description>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Copyright>Copyright 2017 (c) 1TCompany AB. All rights reserved.</Copyright>
+    <Copyright>Copyright 2019 (c) 1TCompany AB. All rights reserved.</Copyright>
     <PackageTags>logger exceptions analysis</PackageTags>
-    <PackageIconUrl>https://coderrapp.com/images/nuget_icon.png</PackageIconUrl>
-    <RepositoryUrl>https://github.com/coderrapp/coderr.client</RepositoryUrl>
+    <PackageIconUrl>https://coderr.io/images/nuget_icon.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/coderrio/coderr.client</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/coderrapp/coderr.client/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://coderrapp.com</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/coderrio/coderr.client/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://coderr.io</PackageProjectUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   

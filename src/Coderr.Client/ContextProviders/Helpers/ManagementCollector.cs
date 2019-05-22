@@ -66,7 +66,9 @@ namespace Coderr.Client.ContextProviders.Helpers
                 }
                 else if (sp.Value is IEnumerable || sp.IsArray)
                 {
-                    _collection.Add(sp.Name, string.Join(";;", (IEnumerable) sp.Value));
+                    var values = (IEnumerable) sp.Value;
+                    var result = string.Join(";;", values.Cast<object>());
+                    _collection.Add(sp.Name, result);
                 }
                 else
                 {
