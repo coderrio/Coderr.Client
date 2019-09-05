@@ -123,7 +123,7 @@ namespace Coderr.Client.ContextCollections
 
 
         /// <summary>
-        /// Highlighted collections are shown directly before the stack trace in the UI.
+        /// The first highlighted collection are selected per default in the context collection navigator.
         /// </summary>
         /// <param name="collections">instance</param>
         /// <param name="contextCollectionName">Name of the context collection that we should show all properties and their values from.</param>
@@ -171,7 +171,7 @@ namespace Coderr.Client.ContextCollections
         }
 
         /// <summary>
-        /// Highlighted collections are shown directly before the stack trace in the UI.
+        /// The first highlighted collection are selected per default in the context collection navigator.
         /// </summary>
         /// <param name="context">instance</param>
         /// <param name="contextCollectionName">Name of the context collection that we should show all properties and their values from.</param>
