@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Coderr.Client.Contracts;
 using Coderr.Client.Reporters;
@@ -42,6 +43,31 @@ namespace Coderr.Client.ContextCollections
             return collection;
         }
 
+        /// <summary>
+        /// Used to navigate through related errors (all related errors must have the same correlation id).
+        /// </summary>
+        public static void AddCorrelationId(this IList<ContextCollectionDTO> collections, string value)
+        {
+            var coderrCollection = GetCoderrCollection(collections);
+            coderrCollection.Properties["CorrelationId"] = value;
+        }
+
+        /// <summary>
+        /// Used to navigate through related errors (all related errors must have the same correlation id).
+        /// </summary>
+        public static void AddCorrelationId(this IErrorReporterContext context, string value)
+        {
+            if (!(context is IErrorReporterContext2 ctx))
+                throw new NotSupportedException("Only works with IErrorReporterContext2.");
+
+            ctx.ContextCollections.AddCorrelationId(value);
+        }
+
+        /// <summary>
+        /// Add a tag to the error report.
+        /// </summary>
+        /// <param name="collections">instance</param>
+        /// <param name="tagName">tag</param>
         public static void AddTag(this IList<ContextCollectionDTO> collections, string tagName)
         {
             var coderrCollection = GetCoderrCollection(collections);
@@ -55,6 +81,11 @@ namespace Coderr.Client.ContextCollections
                 coderrCollection.Properties["ErrTags"] = tags + "," + tagName;
         }
 
+        /// <summary>
+        /// Add a tag to the error report.
+        /// </summary>
+        /// <param name="context">instance</param>
+        /// <param name="tagName">tag</param>
         public static void AddTag(this IErrorReporterContext2 context, string tagName)
         {
             AddTag(context.ContextCollections, tagName);
