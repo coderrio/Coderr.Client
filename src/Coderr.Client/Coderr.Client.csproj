@@ -2,9 +2,8 @@
   <PropertyGroup>
     <TargetFrameworks>net45;net452;net40;net46</TargetFrameworks>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Coderr.Client.xml</DocumentationFile>
-
-    <PackageReleaseNotes>Added environment feature and corrected collection of arrays in Management Instrumentation</PackageReleaseNotes>
-    <Version>1.1.1</Version>
+    <PackageReleaseNotes>Added possibility to affect what is shown on the first UI page.</PackageReleaseNotes>
+    <Version>1.1.2</Version>
   </PropertyGroup>
   
   <PropertyGroup>
