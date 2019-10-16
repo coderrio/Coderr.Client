@@ -3,7 +3,7 @@
     <TargetFrameworks>net45;net452;net40;net46</TargetFrameworks>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Coderr.Client.xml</DocumentationFile>
     <PackageReleaseNotes>Added Correlation id support.</PackageReleaseNotes>
-    <Version>1.1.3</Version>
+    <Version>1.1.4</Version>
   </PropertyGroup>
   
   <PropertyGroup>
@@ -16,7 +16,7 @@
     <PackageIconUrl>https://coderr.io/images/nuget_icon.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/coderrio/coderr.client</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/coderrio/coderr.client/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://coderr.io</PackageProjectUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
