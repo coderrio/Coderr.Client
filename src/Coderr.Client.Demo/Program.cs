@@ -28,10 +28,11 @@ namespace Coderr.Client.Demo
             //    "yourOwnAppKey",
             //    "yourOwnSharedSecret");
 
-            var url = new Uri("http://localhost:50473/");
+            //var url = new Uri("http://localhost:50473/");
+            var url = new Uri("https://report.coderr.io/");
             Err.Configuration.Credentials(url,
-                "ae0428b701054c5d9481024f81ad8b05",
-                "988cedd2bf4641d1aa228766450fab97");
+                "d0c16767d68943dabe94dc581c45557c",
+                "88db0622561d4d1db389524e13901c22");
 
             try
             {

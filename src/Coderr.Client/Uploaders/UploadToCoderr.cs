@@ -54,9 +54,9 @@ namespace Coderr.Client.Uploaders
     {
         private readonly Func<bool> _queueReportsAccessor = () => Err.Configuration.QueueReports;
         private readonly Uri _reportUri, _feedbackUri;
+        private readonly Func<bool> _throwExceptionsAccessor;
         private UploadQueue<FeedbackDTO> _feedbackQueue;
         private UploadQueue<ErrorReportDTO> _reportQueue;
-        private readonly Func<bool> _throwExceptionsAccessor;
 
 
         /// <summary>
@@ -75,8 +75,11 @@ namespace Coderr.Client.Uploaders
             if (string.IsNullOrEmpty(sharedSecret)) throw new ArgumentNullException("sharedSecret");
 
             if (coderrServerAddress.AbsolutePath.Contains("/receiver/"))
+            {
                 throw new ArgumentException(
                     "The codeRR URI should not contain the reporting area '/receiver/', but should point at the site root.");
+            }
+
             if (!coderrServerAddress.AbsolutePath.EndsWith("/"))
                 coderrServerAddress = new Uri(coderrServerAddress + "/");
 
@@ -119,6 +122,11 @@ namespace Coderr.Client.Uploaders
         ///     API key as defined in codeRR Server.
         /// </summary>
         public string ApiKey { get; set; }
+
+        /// <summary>
+        ///     Do not detect and use the default proxy.
+        /// </summary>
+        public bool DisableProxyUsage { get; set; }
 
         /// <summary>
         ///     Max number of upload attempts per report
@@ -192,6 +200,7 @@ namespace Coderr.Client.Uploaders
             if (!NetworkInterface.GetIsNetworkAvailable() || _queueReportsAccessor())
                 _reportQueue.Add(report);
             else
+            {
                 try
                 {
                     TryUploadReportNow(report);
@@ -202,6 +211,7 @@ namespace Coderr.Client.Uploaders
                         throw;
                     UploadFailed?.Invoke(this, new UploadReportFailedEventArgs(ex, report));
                 }
+            }
         }
 
         /// <summary>
@@ -231,6 +241,7 @@ namespace Coderr.Client.Uploaders
             if (!NetworkInterface.GetIsNetworkAvailable() || _queueReportsAccessor())
                 _feedbackQueue.Add(feedback);
             else
+            {
                 try
                 {
                     TryUploadFeedbackNow(feedback);
@@ -241,6 +252,7 @@ namespace Coderr.Client.Uploaders
                         throw;
                     UploadFailed?.Invoke(this, new UploadReportFailedEventArgs(ex, feedback));
                 }
+            }
         }
 
         /// <summary>
@@ -404,10 +416,13 @@ namespace Coderr.Client.Uploaders
             }
         }
 
-        private static void AddProxyIfRequired(HttpWebRequest request, string uri)
+        private void AddProxyIfRequired(HttpWebRequest request, string uri)
         {
+            if (DisableProxyUsage)
+                return;
+
             var proxy = request.Proxy;
-            if (proxy == null || proxy.IsBypassed(new Uri(uri))) 
+            if (proxy == null || proxy.IsBypassed(new Uri(uri)))
                 return;
 
             var proxyuri = proxy.GetProxy(request.RequestUri).ToString();
