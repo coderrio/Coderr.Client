@@ -34,6 +34,31 @@ namespace Coderr.Client.Contracts
         /// <summary>
         ///     Initializes a new instance of the <see cref="ExceptionDTO" /> class.
         /// </summary>
+        /// <param name="exception">The exception.</param>
+        /// <exception cref="System.ArgumentNullException">exception</exception>
+        public ExceptionDTO(ExceptionDTO exception)
+        {
+            if (exception == null) throw new ArgumentNullException("exception");
+
+            AssemblyName = exception.AssemblyName;
+            BaseClasses = exception.BaseClasses;
+            Everything = exception.Everything;
+            FullName = exception.FullName;
+            if (exception.InnerException != null)
+            {
+                InnerException = new ExceptionDTO(exception.InnerException);
+            }
+
+            Message = exception.Message;
+            Namespace = exception.Namespace;
+            Name = exception.Name;
+            Properties = new Dictionary<string, string>(exception.Properties);
+            StackTrace = exception.StackTrace;
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ExceptionDTO" /> class.
+        /// </summary>
         [JsonConstructor]
         protected ExceptionDTO()
         {

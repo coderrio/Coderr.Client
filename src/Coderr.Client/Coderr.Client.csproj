@@ -2,8 +2,8 @@
   <PropertyGroup>
     <TargetFrameworks>net45;net452;net40;net46</TargetFrameworks>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Coderr.Client.xml</DocumentationFile>
-    <PackageReleaseNotes>Can now disable proxy usage.</PackageReleaseNotes>
-    <Version>1.1.5</Version>
+    <PackageReleaseNotes>Added a copy constructor.</PackageReleaseNotes>
+    <Version>1.1.6</Version>
   </PropertyGroup>
   
   <PropertyGroup>
