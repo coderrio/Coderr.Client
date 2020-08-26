@@ -7,7 +7,8 @@ namespace Coderr.Client.Processor
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         The reportId id is the string which are used during communication between the end customers and the codeRR
+    ///         The reportId id is the string which are used during communication between the end customers and the Err
+    ///         error
     ///         customers.
     ///     </para>
     ///     <para>
@@ -21,7 +22,12 @@ namespace Coderr.Client.Processor
     /// <seealso cref="ShortGuid" />
     public class ReportIdGenerator
     {
-        private static Func<Exception, string> _generator = report => ShortGuid.Encode(Guid.NewGuid());
+        /// <summary>
+        /// Used to configure the generator that this client will use
+        /// </summary>
+        public static ReportIdGenerator Instance = new ReportIdGenerator();
+
+        private Func<Exception, string> _generator = report => ShortGuid.Encode(Guid.NewGuid());
 
         /// <summary>
         ///     Assign a custom ID generator.
@@ -30,9 +36,17 @@ namespace Coderr.Client.Processor
         /// <exception cref="System.ArgumentNullException">generator</exception>
         public static void Assign(Func<Exception, string> generator)
         {
-            if (generator == null) throw new ArgumentNullException("generator");
+            Instance.AssignImp(generator);
+        }
 
-            _generator = generator;
+        /// <summary>
+        ///     Assign a custom ID generator.
+        /// </summary>
+        /// <param name="generator">The generator.</param>
+        /// <exception cref="System.ArgumentNullException">generator</exception>
+        public void AssignImp(Func<Exception, string> generator)
+        {
+            _generator = generator ?? throw new ArgumentNullException(nameof(generator));
         }
 
         /// <summary>
@@ -43,7 +57,18 @@ namespace Coderr.Client.Processor
         /// <exception cref="System.ArgumentNullException">exception</exception>
         public static string Generate(Exception exception)
         {
-            if (exception == null) throw new ArgumentNullException("exception");
+            return Instance.GenerateImp(exception);
+        }
+
+        /// <summary>
+        ///     Generate a new ID
+        /// </summary>
+        /// <param name="exception">Exception to get an reportId for</param>
+        /// <returns>reportId</returns>
+        /// <exception cref="System.ArgumentNullException">exception</exception>
+        public string GenerateImp(Exception exception)
+        {
+            if (exception == null) throw new ArgumentNullException(nameof(exception));
 
             return _generator(exception);
         }

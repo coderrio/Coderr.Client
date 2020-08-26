@@ -1,20 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Coderr.Client.Config;
+using Coderr.Client.NetStd.Tests.Processor.Helpers;
 using Coderr.Client.Processor;
 using Coderr.Client.Reporters;
 using FluentAssertions;
 using Xunit;
 
-namespace Coderr.Client.Tests.Processor
+namespace Coderr.Client.NetStd.Tests.Processor
 {
     public class ExceptionProcessorTestsForPartitions
     {
         [Fact]
-        public void Should_ignore_reports_that_have_already_been_reported_since_same_frameworks_have_multiple_injection_points_which_would_Report_the_same_exception()
+        public void Should_include_partitions_in_reports()
         {
             var upl = new TestUploader();
             var config = new CoderrConfiguration();
@@ -29,7 +26,7 @@ namespace Coderr.Client.Tests.Processor
             var processor = new ExceptionProcessor(config);
             processor.Process(ctx);
 
-            upl.Report.GetCollectionProperty("ErrPartitions", "Id").Should().Be("42");
+            upl.Report.GetCollectionProperty("CoderrData", "ErrPartition.Id").Should().Be("42");
         }
     }
 }

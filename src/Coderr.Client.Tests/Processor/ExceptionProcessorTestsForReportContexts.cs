@@ -1,12 +1,13 @@
 ﻿using System;
 using Coderr.Client.Config;
+using Coderr.Client.NetStd.Tests.Processor.Helpers;
 using Coderr.Client.Processor;
 using Coderr.Client.Reporters;
 using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
-namespace Coderr.Client.Tests.Processor
+namespace Coderr.Client.NetStd.Tests.Processor
 {
     public class ExceptionProcessorTestsForReportContexts
     {

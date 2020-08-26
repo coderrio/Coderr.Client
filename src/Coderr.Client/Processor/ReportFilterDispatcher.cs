@@ -15,6 +15,7 @@ namespace Coderr.Client.Processor
         ///     Add a filter to the collection
         /// </summary>
         /// <param name="filter">Filter</param>
+        /// <exception cref="ArgumentNullException">filter</exception>
         public void Add(IReportFilter filter)
         {
             if (filter == null) throw new ArgumentNullException("filter");
@@ -26,6 +27,7 @@ namespace Coderr.Client.Processor
         /// </summary>
         /// <param name="dto">Report to be uploaded.</param>
         /// <returns><c>false</c> if any of the callbacks return <c>false</c>; otherwise <c>true</c></returns>
+        /// <exception cref="ArgumentNullException">dto</exception>
         /// <remarks>
         ///     <para>
         ///         All callbacks will be invoked, even if one of them returns <c>false</c>.
@@ -33,6 +35,8 @@ namespace Coderr.Client.Processor
         /// </remarks>
         public bool CanUploadReport(ErrorReportDTO dto)
         {
+            if (dto == null) throw new ArgumentNullException(nameof(dto));
+
             var ctx = new ReportFilterContext(dto);
             var canUpload = true;
             foreach (var callback in _filters)

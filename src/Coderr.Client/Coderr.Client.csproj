@@ -1,39 +1,43 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFrameworks>net45;net452;net40;net46</TargetFrameworks>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Coderr.Client.xml</DocumentationFile>
-    <PackageReleaseNotes>Added a copy constructor.</PackageReleaseNotes>
-    <Version>1.1.6</Version>
-  </PropertyGroup>
-  
-  <PropertyGroup>
-    <PackageId>Coderr.Client</PackageId>
-    <Authors>1TCompany AB</Authors>
-    <Description>Automated exception handling for .NET applications</Description>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Copyright>Copyright 2019 (c) 1TCompany AB. All rights reserved.</Copyright>
-    <PackageTags>logger exceptions analysis</PackageTags>
-    <PackageIconUrl>https://coderr.io/images/nuget_icon.png</PackageIconUrl>
-    <RepositoryUrl>https://github.com/coderrio/coderr.client</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageProjectUrl>https://coderr.io</PackageProjectUrl>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-  </PropertyGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Content Include="README.txt">
-      <Pack>true</Pack>
-      <PackagePath>README.txt</PackagePath>
-    </Content>
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Management" />
-  </ItemGroup>
+
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Coderr.Client.xml</DocumentationFile>
+		<RootNamespace>Coderr.Client</RootNamespace>
+
+		<PackageReleaseNotes>Merged the core libraries.</PackageReleaseNotes>
+		<Version>2.0</Version>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<PackageId>Coderr.Client</PackageId>
+		<Authors>1TCompany AB</Authors>
+		<Description>Automated exception handling for .NET based applications</Description>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+		<Copyright>Copyright 2020 © 1TCompany AB. All rights reserved.</Copyright>
+		<PackageTags>logger exceptions analysis .net-core NetStandard</PackageTags>
+		<PackageIconUrl>https://coderr.io/images/nuget_icon.png</PackageIconUrl>
+		<RepositoryUrl>https://github.com/coderrio/coderr.client</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+		<PackageProjectUrl>https://coderr.io</PackageProjectUrl>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="README.txt">
+			<Pack>true</Pack>
+			<PackagePath>README.txt</PackagePath>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup Condition="$(TargetFramework) == 'net461'">
+		<PackageReference Include="Microsoft.Net.Http" Version="2.2.29" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+		<PackageReference Include="System.Security.Principal" Version="4.3.0" />
+		<PackageReference Include="System.IO.Compression" Version="4.3.0" />
+	</ItemGroup>
 </Project>

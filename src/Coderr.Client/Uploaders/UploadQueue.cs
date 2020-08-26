@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Coderr.Client.Uploaders
 {
@@ -8,7 +9,7 @@ namespace Coderr.Client.Uploaders
     ///     Purpose of this class is to take care of DTO queing to be able to upload reports in a structured manner.
     /// </summary>
     /// <typeparam name="T">Type of entity to queue</typeparam>
-    public class UploadQueue<T> : IDisposable where T : class
+    public class UploadQueue<T> : IDisposable, IUploadQueue<T> where T : class
     {
         private readonly ConcurrentQueue<T> _queue = new ConcurrentQueue<T>();
         private readonly ManualResetEvent _quitEvent = new ManualResetEvent(false);
@@ -25,10 +26,10 @@ namespace Coderr.Client.Uploaders
         ///     Action to invoke for the DTO that should be uploaded. Thrown exceptions are used to indicate
         ///     that a retry should be made.
         /// </param>
+        /// <exception cref="ArgumentNullException">uploadAction</exception>
         public UploadQueue(Action<T> uploadAction)
         {
-            if (uploadAction == null) throw new ArgumentNullException("uploadAction");
-            _uploadAction = uploadAction;
+            _uploadAction = uploadAction ?? throw new ArgumentNullException("uploadAction");
             MaxQueueSize = 10;
             MaxAttempts = 3;
             RetryInterval = TimeSpan.FromSeconds(5);
@@ -88,13 +89,12 @@ namespace Coderr.Client.Uploaders
         /// </summary>
         /// <param name="item">item to enqueue</param>
         /// <exception cref="ArgumentNullException">item</exception>
-        public void Add(T item)
+        public void Enqueue(T item)
         {
             if (item == null) throw new ArgumentNullException("item");
             if (_queue.Count >= MaxQueueSize)
             {
-                if (UploadFailed != null)
-                    UploadFailed(this, new UploadReportFailedEventArgs(new Exception("Too large queue"), item));
+                UploadFailed?.Invoke(this, new UploadReportFailedEventArgs(new Exception("Too large queue"), item));
                 return;
             }
 
@@ -103,17 +103,17 @@ namespace Coderr.Client.Uploaders
             {
                 if (ActivateSync)
                     _quitEvent.Reset();
-                ThreadPool.QueueUserWorkItem(TryUploadItem);
+                Task.Run((Action) TryUploadItem);
             }
         }
 
         /// <summary>
-        ///     Add report queue if the queue is empty; otherwise invoke the delegate.
+        ///     Enqueue DTO if the queue is empty; otherwise invoke the delegate.
         /// </summary>
         /// <param name="dto">DTO to add to the queue</param>
         /// <param name="uploadTask">Task to invoke if queue is empty</param>
         /// <returns><c>true</c> if item was added to the queue; otherwise <c>false</c></returns>
-        public bool AddIfNotEmpty(T dto, Action uploadTask)
+        public bool EnqueueIfNotEmpty(T dto, Action uploadTask)
         {
             if (dto == null) throw new ArgumentNullException("dto");
 
@@ -149,12 +149,13 @@ namespace Coderr.Client.Uploaders
             _waitForCompletion.Wait(ms);
         }
 
-        private void TryUploadItem(object state)
+        private void TryUploadItem()
         {
             if (ActivateSync)
                 TaskWasInvoked = true;
 
             while (true)
+            {
                 try
                 {
                     if (!PreConditionAction())
@@ -164,8 +165,7 @@ namespace Coderr.Client.Uploaders
                         continue;
                     }
 
-                    T item;
-                    if (!_queue.TryPeek(out item))
+                    if (!_queue.TryPeek(out T item))
                         break;
 
 
@@ -178,11 +178,9 @@ namespace Coderr.Client.Uploaders
                     _attemptNumber++;
                     if (_attemptNumber >= MaxAttempts)
                     {
-                        T failedItem;
-                        _queue.TryDequeue(out failedItem);
+                        _queue.TryDequeue(out T failedItem);
                         _attemptNumber = 0;
-                        if (UploadFailed != null)
-                            UploadFailed(this, new UploadReportFailedEventArgs(ex, failedItem));
+                        UploadFailed?.Invoke(this, new UploadReportFailedEventArgs(ex, failedItem));
                     }
                     else
                     {
@@ -190,6 +188,7 @@ namespace Coderr.Client.Uploaders
                             break;
                     }
                 }
+            }
             Interlocked.Exchange(ref _queueTasks, 0);
 
             if (ActivateSync)

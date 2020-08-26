@@ -9,11 +9,6 @@ namespace Coderr.Client
             StackTrace = stackTrace;
         }
 
-        /// <summary>
-        ///     Used to identify this error.
-        /// </summary>
-        public string ErrorHashSource { get; set; }
-
         /// <summary>Gets a string representation of the immediate frames on the call stack.</summary>
         /// <returns>A string that describes the immediate frames of the call stack.</returns>
         /// <filterpriority>2</filterpriority>
@@ -23,5 +18,10 @@ namespace Coderr.Client
         ///         version="1" PathDiscovery="*AllFiles*" />
         /// </PermissionSet>
         public override string StackTrace { get; }
+
+        /// <summary>
+        /// Used to identify this error.
+        /// </summary>
+        public string ErrorHashSource { get; set; }
     }
 }

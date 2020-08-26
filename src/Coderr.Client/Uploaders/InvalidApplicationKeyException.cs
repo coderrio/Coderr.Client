@@ -16,10 +16,9 @@ namespace Coderr.Client.Uploaders
         /// <summary>
         ///     Initializes a new instance of the <see cref="InvalidApplicationKeyException" /> class.
         /// </summary>
-        /// <param name="errMsg">The error MSG.</param>
-        /// <param name="inner">The inner.</param>
-        public InvalidApplicationKeyException(string errMsg, Exception inner)
-            : base(errMsg, inner)
+        /// <param name="errMsg">error description.</param>
+        public InvalidApplicationKeyException(string errMsg)
+            : base(errMsg)
         {
         }
     }

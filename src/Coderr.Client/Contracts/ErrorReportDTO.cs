@@ -52,6 +52,20 @@ namespace Coderr.Client.Contracts
         public ExceptionDTO Exception { get; }
 
         /// <summary>
+        ///     For backwards compatibility
+        /// </summary>
+        [Obsolete("Do not use")]
+        protected string IncidentId
+        {
+            get => null;
+            set
+            {
+                if (string.IsNullOrEmpty(ReportId))
+                    ReportId = value;
+            }
+        }
+
+        /// <summary>
         ///     Gets report id (unique identifier used in communication with the customer to identify this error)
         /// </summary>
         public string ReportId { get; private set; }
@@ -65,22 +79,19 @@ namespace Coderr.Client.Contracts
         public string ReportVersion { get; }
 
         /// <summary>
-        ///     For backwards compatibility
+        /// Application environment (like "Test" and "Production")
         /// </summary>
-        protected string IncidentId
-        {
-            get => null;
-            set
-            {
-                if (string.IsNullOrEmpty(ReportId))
-                    ReportId = value;
-            }
-        }
+        public string EnvironmentName { get; set; }
 
         /// <summary>
-        /// Environment that the error was detected in (dev, test, prod)
+        /// Name of collection to show per default in the UI.
         /// </summary>
-        public string Environment { get; set; }
+        public string HighlightCollection { get; set; }
+
+        /// <summary>
+        /// The 100 last log entries before the exception was detected (can be null).
+        /// </summary>
+        public LogEntryDto[] LogEntries { get; set; }
 
         /// <summary>
         ///     Add an collection to the model
@@ -89,7 +100,7 @@ namespace Coderr.Client.Contracts
         /// <exception cref="System.ArgumentNullException">collection</exception>
         public void Add(ContextCollectionDTO collection)
         {
-            if (collection == null) throw new ArgumentNullException("collection");
+            if (collection == null) throw new ArgumentNullException(nameof(collection));
 
             var col = new List<ContextCollectionDTO>(ContextCollections) {collection};
             ContextCollections = col.ToArray();
@@ -103,7 +114,7 @@ namespace Coderr.Client.Contracts
         /// </returns>
         public override string ToString()
         {
-            return ReportId + " (" + Exception.Message + ")";
+            return $"{ReportId} ({Exception.Message})";
         }
     }
 }

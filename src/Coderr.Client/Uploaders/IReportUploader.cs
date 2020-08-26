@@ -7,6 +7,7 @@ namespace Coderr.Client.Uploaders
     ///     Defines the contract for all classes that will send the error report to a specific destination.
     /// </summary>
     /// <seealso cref="UploadToCoderr" />
+    /// <seealso cref="UploadDispatcher"/>
     /// <remarks>
     ///     <para>
     ///         This contract gives a best effort promsie. i.e. it only promises to deliver the DTOs as soon as possible, but
@@ -30,12 +31,14 @@ namespace Coderr.Client.Uploaders
         ///     Send feedback for a previously submitted error report
         /// </summary>
         /// <param name="feedback">Feedback to send</param>
+        /// <exception cref="ArgumentNullException">feedback</exception>
         void UploadFeedback(FeedbackDTO feedback);
 
         /// <summary>
         ///     Upload report
         /// </summary>
         /// <param name="report">Error report that should be uploaded to the service</param>
+        /// <exception cref="ArgumentNullException">report</exception>
         void UploadReport(ErrorReportDTO report);
     }
 }

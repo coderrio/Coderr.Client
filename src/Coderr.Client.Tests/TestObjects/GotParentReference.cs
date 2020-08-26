@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace codeRR.Client.Tests.TestObjects
+﻿namespace Coderr.Client.NetStd.Tests.TestObjects
 {
     class GotParentReference
     {

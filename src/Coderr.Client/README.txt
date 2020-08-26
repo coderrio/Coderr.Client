@@ -1,28 +1,11 @@
-﻿Coderr client package
-=====================
+﻿Coderr .NET base library
+========================
 
 This library is the client library of Coderr. It allows you to manually report exceptions to the Coderr server.
-If you would like to use automated reporting, install one of our automation nuget packages.
+If you would like to use automated reporting, install one of the other Coderr nuget packages.
 
-https://coderr.io/documentation/getting-started/
+You need a Coderr server to process reported errors.
 
-Simple reporting example:
+https://coderr.io/get-started
 
-    public void SomeMethod(PostViewModel model)
-    {
-        try
-        {
-            _somService.Execute(model);
-        }
-        catch (Exception ex)
-        {
-            Err.Report(ex, model);
-
-            //some custom handling
-        }
-
-        // some other code here...
-    }
-
-For questions: https://discuss.coderr.io
-Homepage: https://coderr.io
+For any questions that you might have, please use our forum at http://discuss.coderr.io. 

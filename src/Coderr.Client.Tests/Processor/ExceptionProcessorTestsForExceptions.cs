@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Coderr.Client.Config;
+using Coderr.Client.NetStd.Tests.Processor.Helpers;
 using Coderr.Client.Processor;
 using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
-namespace Coderr.Client.Tests.Processor
+namespace Coderr.Client.NetStd.Tests.Processor
 {
     public class ExceptionProcessorTestsForExceptions
     {
@@ -20,7 +17,7 @@ namespace Coderr.Client.Tests.Processor
             var config = new CoderrConfiguration();
             config.Uploaders.Register(upl);
             var json =
-                @"{""$type"":""System.Collections.Generic.List`1[[codeRR.Client.Contracts.ContextCollectionDTO, Coderr.Client]], mscorlib"",""$values"":[{""Name"":""SqlCommand"",""Properties"":{""CommandText"":""WaitFor Delay '00:00:05'"",""CommandTimeout"":""3"",""ExecutionTime"":""00:00:03.0313327"",""OtherCommand[0]"":""select * from accounts where id=@id""}},{""Name"":""DbConnection"",""Properties"":{""ConnectionString"":""Data Source=.;Initial Catalog=OneTrueError;Integrated Security=True;Connect Timeout=30;multipleactiveresultsets=true"",""DataSource"":""."",""Database"":""OneTrueError"",""RunTime"":""00:00:03.0681702"",""State"":""Open"",""IsDisposed"":""False"",""ServerVersion"":""12.00.5207""}}]}";
+                @"{""$type"":""System.Collections.Generic.List`1[[Coderr.Client.Contracts.ContextCollectionDTO, Coderr.Client]], mscorlib"",""$values"":[{""Name"":""SqlCommand"",""Properties"":{""CommandText"":""WaitFor Delay '00:00:05'"",""CommandTimeout"":""3"",""ExecutionTime"":""00:00:03.0313327"",""OtherCommand[0]"":""select * from accounts where id=@id""}},{""Name"":""DbConnection"",""Properties"":{""ConnectionString"":""Data Source=.;Initial Catalog=OneTrueError;Integrated Security=True;Connect Timeout=30;multipleactiveresultsets=true"",""DataSource"":""."",""Database"":""OneTrueError"",""RunTime"":""00:00:03.0681702"",""State"":""Open"",""IsDisposed"":""False"",""ServerVersion"":""12.00.5207""}}]}";
             var ex = new InvalidOperationException();
             ex.Data["ErrCollections"] = json;
 

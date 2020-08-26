@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 
@@ -29,32 +27,6 @@ namespace Coderr.Client.Contracts
             if (name == null) throw new ArgumentNullException("name");
             Name = name;
             Properties = new Dictionary<string, string>();
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="ContextCollectionDTO" /> class.
-        /// </summary>
-        /// <param name="name">Collection name (will be shown in the web site).</param>
-        /// <param name="items">All Properties in this collection.</param>
-        /// <exception cref="System.ArgumentNullException">
-        ///     name
-        ///     or
-        ///     Properties
-        /// </exception>
-        public ContextCollectionDTO(string name, NameValueCollection items)
-        {
-            if (name == null) throw new ArgumentNullException("name");
-            if (items == null) throw new ArgumentNullException("items");
-            Name = name;
-            Properties = new Dictionary<string, string>();
-            foreach (string key in items)
-            {
-                if (key == null)
-                    Debugger.Break();
-
-                var value = items[key];
-                Properties.Add(key ?? "", value);
-            }
         }
 
         /// <summary>

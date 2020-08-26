@@ -1,5 +1,5 @@
-using System;
-using Coderr.Client.ContextCollections;
+﻿using System;
+using Coderr.Client.Contracts;
 using Coderr.Client.Reporters;
 
 namespace Coderr.Client.Config
@@ -9,7 +9,7 @@ namespace Coderr.Client.Config
     /// </summary>
     public class PartitionContext
     {
-        private readonly ErrPartitionContextCollection _contextCollection;
+        private readonly ContextCollectionDTO _contextCollection;
 
         /// <summary>
         ///     Creates a new instance of <see cref="PartitionContext" />.
@@ -19,7 +19,7 @@ namespace Coderr.Client.Config
         ///     Context used when collecting all other context data (before partition collection is
         ///     invoked)
         /// </param>
-        public PartitionContext(ErrPartitionContextCollection contextCollection, IErrorReporterContext2 reporterContext)
+        public PartitionContext(ContextCollectionDTO contextCollection, IErrorReporterContext reporterContext)
         {
             _contextCollection = contextCollection ?? throw new ArgumentNullException(nameof(contextCollection));
             ReporterContext = reporterContext;
@@ -28,7 +28,7 @@ namespace Coderr.Client.Config
         /// <summary>
         ///     Context that the partition will be added to.
         /// </summary>
-        public IErrorReporterContext2 ReporterContext { get; private set; }
+        public IErrorReporterContext ReporterContext { get; private set; }
 
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Coderr.Client.Config
         public void AddPartition(string partitionKey, string value)
         {
             if (partitionKey == null) throw new ArgumentNullException(nameof(partitionKey));
-            _contextCollection.AddPartition(partitionKey, value);
+            _contextCollection.Properties.Add($"ErrPartition.{partitionKey}", value);
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Coderr.Client.Config
         /// </remarks>
         public void SetTenant(string tenantId)
         {
-            _contextCollection.SetTenant(tenantId);
+            _contextCollection.Properties.Add("ErrPartition.TenantId", tenantId);
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace Coderr.Client.Config
         /// </remarks>
         public void SetUser(string userIdentifier)
         {
-            _contextCollection.SetUser(userIdentifier);
+            _contextCollection.Properties.Add("ErrPartition.UserId", userIdentifier);
         }
     }
 }

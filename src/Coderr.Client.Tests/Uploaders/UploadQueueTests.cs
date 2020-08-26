@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Threading;
+using System.Threading.Tasks;
 using Coderr.Client.Uploaders;
 using FluentAssertions;
 using Xunit;
 
-namespace codeRR.Client.Tests.Uploaders
+namespace Coderr.Client.NetStd.Tests.Uploaders
 {
     public class UploadQueueTests
     {
@@ -14,7 +14,7 @@ namespace codeRR.Client.Tests.Uploaders
             var uploadIsInvoked = false;
             var sut = new UploadQueue<string>(x => uploadIsInvoked = true) {ActivateSync = true};
 
-            sut.Add("hello");
+            sut.Enqueue("hello");
 
             sut.Wait(100);
             sut.TaskWasInvoked.Should().BeTrue();
@@ -28,7 +28,7 @@ namespace codeRR.Client.Tests.Uploaders
             var directly = false;
             var sut = new UploadQueue<string>(x => uploadIsInvoked = true) {ActivateSync = true};
 
-            sut.AddIfNotEmpty("hello", () => directly = true);
+            sut.EnqueueIfNotEmpty("hello", () => directly = true);
 
             sut.Wait(100);
             directly.Should().BeTrue("because queue is empty");
@@ -45,12 +45,12 @@ namespace codeRR.Client.Tests.Uploaders
             var sut = new UploadQueue<string>(x =>
             {
                 uploadIsInvoked = true;
-                Thread.Sleep(50);
+                Task.Delay(50).Wait();
             });
-            sut.Add("precondition");
+            sut.Enqueue("precondition");
             sut.ActivateSync = true;
 
-            sut.AddIfNotEmpty("hello", () => directly = true);
+            sut.EnqueueIfNotEmpty("hello", () => directly = true);
 
             sut.Wait(10000);
             directly.Should().BeFalse("because there is an active worker");
@@ -64,15 +64,15 @@ namespace codeRR.Client.Tests.Uploaders
         public void should_throw_new_entries_if_queue_is_full()
         {
             var failed = false;
-            var sut = new UploadQueue<string>(x => Thread.Sleep(100))
+            var sut = new UploadQueue<string>(x => Task.Delay(1000).Wait())
             {
                 MaxQueueSize = 1,
                 ActivateSync = true
             };
-            sut.Add("hello");
+            sut.Enqueue("hello");
 
             sut.UploadFailed += (o, e) => failed = true;
-            sut.Add("hello");
+            sut.Enqueue("hello");
 
             failed.Should().BeTrue();
         }
@@ -85,11 +85,13 @@ namespace codeRR.Client.Tests.Uploaders
             {
                 attempts++;
                 throw new NotSupportedException("we need more power");
-            });
-            sut.ActivateSync = true;
-            sut.RetryInterval = TimeSpan.FromMilliseconds(10);
+            })
+            {
+                ActivateSync = true,
+                RetryInterval = TimeSpan.FromMilliseconds(10)
+            };
 
-            sut.Add("hello");
+            sut.Enqueue("hello");
 
             sut.Wait(1000);
             attempts.Should().BeGreaterThan(1);
@@ -103,14 +105,16 @@ namespace codeRR.Client.Tests.Uploaders
             {
                 attempts++;
                 throw new NotSupportedException("we need more power");
-            });
-            sut.ActivateSync = true;
-            sut.RetryInterval = TimeSpan.FromMilliseconds(10);
-            sut.MaxAttempts = 3;
+            })
+            {
+                ActivateSync = true,
+                RetryInterval = TimeSpan.FromMilliseconds(10),
+                MaxAttempts = 3
+            };
             bool failed = false;
             sut.UploadFailed += (sender, args) => failed = true;
 
-            sut.Add("hello");
+            sut.Enqueue("hello");
 
             sut.Wait(1000);
             failed.Should().BeTrue();
@@ -125,10 +129,10 @@ namespace codeRR.Client.Tests.Uploaders
                 RetryInterval = TimeSpan.FromMilliseconds(10),
                 MaxAttempts = 3
             };
-            bool failed = false;
+            var failed = false;
             sut.UploadFailed += (sender, args) => failed = true;
 
-            sut.Add("hello");
+            sut.Enqueue("hello");
 
             sut.Wait(1000);
             failed.Should().BeFalse();

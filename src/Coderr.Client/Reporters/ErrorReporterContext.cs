@@ -9,16 +9,17 @@ namespace Coderr.Client.Reporters
     ///     Context supplied by error reports
     /// </summary>
     /// <remarks>
-    ///     Used to be able to provide application specific context information (for instance HTTP applications can provide the HTTP
+    ///     Used to be able to provide app specific context information (for instance HTTP apps can provide the HTTP
     ///     context)
     /// </remarks>
-    public class ErrorReporterContext : IErrorReporterContext2
+    public class ErrorReporterContext : IErrorReporterContext, IContextWithLogEntries
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="ErrorReporterContext" /> class.
         /// </summary>
         /// <param name="reporter">The reporter.</param>
         /// <param name="exception">The exception.</param>
+        /// <exception cref="ArgumentNullException">exception</exception>
         public ErrorReporterContext(object reporter, Exception exception)
         {
             Exception = exception ?? throw new ArgumentNullException(nameof(exception));
@@ -28,8 +29,14 @@ namespace Coderr.Client.Reporters
             MoveCollectionsInException(exception, ContextCollections);
         }
 
+        /// <inheritdoc />
+        public LogEntryDto[] LogEntries { get; set; }
+
+        /// <inheritdoc />
+        public IList<ContextCollectionDTO> ContextCollections { get; }
+
         /// <summary>
-        ///     Gets class which is sending the report
+        ///     Object that discovered the error.
         /// </summary>
         public object Reporter { get; }
 
@@ -38,8 +45,6 @@ namespace Coderr.Client.Reporters
         /// </summary>
         public Exception Exception { get; }
 
-        /// <inheritdoc />
-        public IList<ContextCollectionDTO> ContextCollections { get; }
 
         /// <summary>
         ///     Can be used to copy collections from an exception to a collection collection ;)
@@ -65,14 +70,11 @@ namespace Coderr.Client.Reporters
                     try
                     {
                         var data = JsonConvert.DeserializeObject<IEnumerable<ContextCollectionDTO>>(valueStr);
-                        foreach (var col in data)
-                        {
-                            destination.Add(col);
-                        }
+                        foreach (var col in data) destination.Add(col);
                     }
                     catch (Exception ex)
                     {
-                        var items = new Dictionary<string, string>()
+                        var items = new Dictionary<string, string>
                         {
                             {"MoveCollectionsInException.Err", ex.Message},
                             {"JSON", valueStr}
@@ -80,7 +82,6 @@ namespace Coderr.Client.Reporters
                         var col = new ContextCollectionDTO("ErrCollections", items);
                         destination.Add(col);
                     }
-
                 }
                 else if (keyStr.StartsWith("ErrCollection."))
                 {
@@ -97,7 +98,7 @@ namespace Coderr.Client.Reporters
                     catch (Exception ex)
                     {
                         var pos = keyStr.IndexOf('.');
-                        var items = new Dictionary<string, string>()
+                        var items = new Dictionary<string, string>
                         {
                             {"MoveCollectionsInException.Err", ex.Message},
                             {"JSON", valueStr}

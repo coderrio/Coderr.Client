@@ -5,7 +5,7 @@ using Coderr.Client.Reporters;
 namespace Coderr.Client.Processor
 {
     /// <summary>
-    /// Runs the codeRR client pipeline
+    /// Runs the Coderr client pipeline
     /// </summary>
     public interface IExceptionProcessor
     {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using Coderr.Client.Config;
 using Coderr.Client.Contracts;
@@ -12,62 +11,64 @@ namespace Coderr.Client.Uploaders
     /// </summary>
     /// <remarks>
     ///     <para>
+    ///         Every time a complete error report have been collected it need to be uploaded. But since the internet
+    ///         connection might be down, there might delivery failures etc we use
+    ///         specific classes for uploaded error reports. Those classes is reponsible of handling all that. This class takes
+    ///         care of invoking all uploaders.
+    ///     </para>
+    ///     <para>
     ///         This class uses the <see cref="CoderrConfiguration.QueueReports" /> to determine if uploads should be done in
     ///         the background (i.e. don't fail on errors, attempt again late).
     ///     </para>
     /// </remarks>
-    public class UploadDispatcher : IDisposable
+    /// <seealso cref="UploadQueue{T}" />
+    public class UploadDispatcher : IUploadDispatcher
     {
         private readonly CoderrConfiguration _configuration;
-        private readonly UploadQueue<FeedbackDTO> _feedbackQueue;
         private readonly List<IReportUploader> _uploaders = new List<IReportUploader>();
-        private UploadQueue<ErrorReportDTO> _reportQueue;
 
 
         /// <summary>
         ///     Creates a new instance of <see cref="UploadDispatcher" />.
         /// </summary>
         /// <param name="configuration">Used to check at runtime of queuing is enabled or not.</param>
+        /// <exception cref="ArgumentNullException">configuration</exception>
         public UploadDispatcher(CoderrConfiguration configuration)
         {
-            _configuration = configuration;
-            _reportQueue = new UploadQueue<ErrorReportDTO>(UploadReportNow);
-            _feedbackQueue = new UploadQueue<FeedbackDTO>(UploadFeedbackNow);
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
 
-        /// <summary>
-        ///     Max number of items that may wait in queue to get uploaded.
-        /// </summary>
-        public int MaxQueueSize
-        {
-            get => _reportQueue.MaxQueueSize;
-            set => _reportQueue.MaxQueueSize = value;
-        }
-
-        /// <summary>
-        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        /// <filterpriority>2</filterpriority>
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
+        ///// <summary>
+        /////     Max number of items that may wait in queue to get uploaded.
+        ///// </summary>
+        //public int MaxQueueSize
+        //{
+        //    get => _reportQueue.MaxQueueSize;
+        //    set => _reportQueue.MaxQueueSize = value;
+        //}
 
         /// <summary>
         ///     Register an uploader.
         /// </summary>
         /// <param name="uploader">uploader</param>
+        /// <exception cref="ArgumentNullException">uploader</exception>
         public void Register(IReportUploader uploader)
         {
             if (uploader == null) throw new ArgumentNullException("uploader");
-            uploader.UploadFailed += OnUploadFailed;
-            _uploaders.Add(uploader);
+
 
             // For cases where a custom uploader is used instead of (Err.Configuration.Credentials)
+#if NETSTANDARD2_0
             if (_configuration.ApplicationVersion == null && Assembly.GetCallingAssembly() != Assembly.GetExecutingAssembly())
                 _configuration.AssignAssemblyVersion(Assembly.GetCallingAssembly());
+#else
+            if (_configuration.ApplicationVersion == null && Assembly.GetEntryAssembly() != Assembly.GetEntryAssembly())
+                _configuration.AssignAssemblyVersion(Assembly.GetEntryAssembly());
+#endif
+
+            //uploader.UploadFailed += OnUploadFailed;
+            _uploaders.Add(uploader);
         }
 
         /// <summary>
@@ -80,77 +81,29 @@ namespace Coderr.Client.Uploaders
         ///         All callbacks will be invoked, even if one of them returns <c>false</c>.
         ///     </para>
         /// </remarks>
+        /// <exception cref="ArgumentNullException">dto</exception>
         public void Upload(ErrorReportDTO dto)
         {
+            if (dto == null) throw new ArgumentNullException("dto");
+
             if (dto == null) throw new ArgumentNullException(nameof(dto));
 
-            _configuration.ReportPreProcessor?.Invoke(dto);
-            if (_configuration.QueueReports)
-                _reportQueue.Add(dto);
-            else
-                UploadReportNow(dto);
+            foreach (var uploader in _uploaders)
+                uploader.UploadReport(dto);
         }
 
         /// <summary>
         ///     Upload feedback.
         /// </summary>
         /// <param name="dto">Feedback provided  by the user.</param>
+        /// <exception cref="ArgumentNullException">dto</exception>
         public void Upload(FeedbackDTO dto)
         {
-            if (dto == null) throw new ArgumentNullException(nameof(dto));
+            if (dto == null) throw new ArgumentNullException("dto");
 
-            if (_configuration.QueueReports)
-                _feedbackQueue.Add(dto);
-            else
-                UploadFeedbackNow(dto);
-        }
-
-        /// <summary>
-        ///     Dispose pattern
-        /// </summary>
-        /// <param name="isDisposing">Invoked from the dispose method.</param>
-        protected virtual void Dispose(bool isDisposing)
-        {
-            if (_reportQueue != null)
-            {
-                _reportQueue.Dispose();
-                _reportQueue = null;
-            }
-        }
-
-        /// <summary>
-        ///     For tests
-        /// </summary>
-        /// <returns></returns>
-        internal IReportUploader First()
-        {
-            return _uploaders.FirstOrDefault();
-        }
-
-        private void OnUploadFailed(object sender, UploadReportFailedEventArgs e)
-        {
-            if (UploadFailed != null)
-                UploadFailed(sender, e);
-        }
-
-        /// <summary>
-        ///     Have given up the attempt to deliver a report.
-        /// </summary>
-        /// <remarks>
-        ///     The reason is implementation specific but is typically configured using a set of properties.
-        /// </remarks>
-        private event EventHandler<UploadReportFailedEventArgs> UploadFailed;
-
-        private void UploadFeedbackNow(FeedbackDTO dto)
-        {
             foreach (var uploader in _uploaders)
                 uploader.UploadFeedback(dto);
         }
 
-        private void UploadReportNow(ErrorReportDTO dto)
-        {
-            foreach (var uploader in _uploaders)
-                uploader.UploadReport(dto);
-        }
     }
 }

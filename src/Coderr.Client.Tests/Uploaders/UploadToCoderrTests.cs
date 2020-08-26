@@ -1,108 +1,116 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Coderr.Client.Contracts;
 using Coderr.Client.Uploaders;
 using FluentAssertions;
-using Griffin.Net.Channels;
-using Griffin.Net.Protocols.Http;
+using NSubstitute;
 using Xunit;
-using HttpListener = Griffin.Net.Protocols.Http.HttpListener;
 
-namespace Coderr.Client.Tests.Uploaders
+namespace Coderr.Client.NetStd.Tests.Uploaders
 {
-    public class UploadToCoderrTests : IDisposable
+    public class UploadToCoderrTests
     {
+        private TestConfig _config;
+        
         public UploadToCoderrTests()
         {
-            _listener = new HttpListener();
-            _listener.Start(IPAddress.Any, 0);
-            _listener.MessageReceived += OnMessage;
+            _config = new TestConfig
+            {
+                QueueReportsAccessor = () => false,
+                UploadFunc = message => Task.FromResult(new HttpResponseMessage()),
+                FeedbackQueue = Substitute.For<IUploadQueue<FeedbackDTO>>(),
+                ReportQueue = Substitute.For<IUploadQueue<ErrorReportDTO>>(),
+                ThrowExceptionsAccessor = () => false
+            };
         }
-
-
-        public void Dispose()
+        [Fact]
+        public void should_make_sure_that_only_the_root_is_specified_in_the_uri_so_that_we_may_change_the_specific_uri_in_future_packages()
         {
-            _listener.Stop();
-        }
+            var uri = new Uri("http://localhost/receiver/");
 
-        private readonly HttpListener _listener;
+            Action actual = () => new UploadToCoderr(uri, "ada", "cesar", _config);
 
-        private void OnMessage(ITcpChannel channel, object message)
-        {
-            var msg = (HttpRequest) message;
-            channel.Send(msg.CreateResponse());
+            actual.ShouldThrow<ArgumentException>();
         }
 
         [Fact]
-        public void Should_throw_exception_when_ThrowExceptions_and_report_upload_fails()
+        public void should_make_sure_that_the_uri_ends_with_a_slash()
         {
-            _listener.Stop();
-            var collectionDto = new ContextCollectionDTO("MyName", new Dictionary<string, string> {{"Key", "Val"}});
-            var report = new ErrorReportDTO("aaa", new ExceptionDTO(new Exception()), new[] {collectionDto});
+            var report = Substitute.For<ErrorReportDTO>();
+            HttpRequestMessage msg = null;
+            var uri = new Uri("http://localhost");
+            _config.UploadFunc = x =>
+            {
+                msg = x;
+                return Task.FromResult(new HttpResponseMessage());
+            };
+            
 
-            var uri = new Uri($"http://localhost:{_listener.LocalPort}/coderr/");
-            var sut = new UploadToCoderr(uri, "api", "secret", () => false, () => true);
-            Action actual = () => sut.UploadReport(report);
-
-            actual.ShouldThrow<Exception>();
-        }
-
-        [Fact]
-        public void Should_not_throw_exception_when_ThrowExceptions_is_false_and_report_upload_fails()
-        {
-            _listener.Stop();
-            var collectionDto = new ContextCollectionDTO("MyName", new Dictionary<string, string> {{"Key", "Val"}});
-            var report = new ErrorReportDTO("aaa", new ExceptionDTO(new Exception()), new[] {collectionDto});
-
-            var uri = new Uri($"http://localhost:{_listener.LocalPort}/coderr/");
-            var sut = new UploadToCoderr(uri, "api", "secret", () => false, () => false);
+            var sut = new UploadToCoderr(uri, "ada", "cesar", _config);
             sut.UploadReport(report);
+
+            msg.RequestUri.ToString().EndsWith("/");
         }
 
         [Fact]
-        public void Should_not_throw_exception_when_ThrowExceptions_is_true_and_report_upload_succeeds()
+        public void should_queue_reports_when_specified()
         {
-            var uri = new Uri($"http://localhost:{_listener.LocalPort}/coderr/");
-            var collectionDto = new ContextCollectionDTO("MyName", new Dictionary<string, string> {{"Key", "Val"}});
-            var report = new ErrorReportDTO("aaa", new ExceptionDTO(new Exception()), new[] {collectionDto});
+            var report = Substitute.For<ErrorReportDTO>();
+            var uri = new Uri("http://localhost");
+            _config.QueueReportsAccessor = () => true;
 
-            var sut = new UploadToCoderr(uri, "api", "secret", () => false, () => true);
+            var sut = new UploadToCoderr(uri, "ada", "cesar", _config);
             sut.UploadReport(report);
+
+            _config.ReportQueue.Received().Enqueue(Arg.Any<ErrorReportDTO>());
         }
 
         [Fact]
-        public void Should_throw_exception_when_ThrowExceptions_and_feedback_upload_fails()
+        public void should_queue_feedback_when_specified()
         {
-            _listener.Stop();
-            var feedbackDto = new FeedbackDTO {Description = "Hello world"};
+            var dto = Substitute.For<FeedbackDTO>();
+            var uri = new Uri("http://localhost");
+            _config.QueueReportsAccessor = () => true;
 
-            var uri = new Uri($"http://localhost:{_listener.LocalPort}/coderr/");
-            var sut = new UploadToCoderr(uri, "api", "secret", () => false, () => true);
-            Action actual = () => sut.UploadFeedback(feedbackDto);
+            var sut = new UploadToCoderr(uri, "ada", "cesar", _config);
+            sut.UploadFeedback(dto);
 
-            actual.ShouldThrow<Exception>();
+            _config.FeedbackQueue.Received().Enqueue(Arg.Any<FeedbackDTO>());
         }
 
         [Fact]
-        public void Should_not_throw_exception_when_ThrowExceptions_is_false_and_feedback_upload_fails()
+        public void should_throw_exceptions_when_upload_fails_when_configured()
         {
-            _listener.Stop();
-            var feedbackDto = new FeedbackDTO {Description = "Hello world"};
+            _config.ThrowExceptionsAccessor = () => true;
+            var dto = Substitute.For<FeedbackDTO>();
+            var uri = new Uri("http://localhost");
+            _config.UploadFunc = message => throw new InvalidOperationException("err");
 
-            var uri = new Uri($"http://localhost:{_listener.LocalPort}/coderr/");
-            var sut = new UploadToCoderr(uri, "api", "secret", () => false, () => false);
-            sut.UploadFeedback(feedbackDto);
+            var sut = new UploadToCoderr(uri, "ada", "cesar", _config);
+            Action actual = ()=> sut.UploadFeedback(dto);
+
+
+            actual.ShouldThrow<InvalidOperationException>();
         }
 
         [Fact]
-        public void Should_not_throw_exception_when_ThrowExceptions_is_true_and_feedback_upload_succeeds()
+        public void should_always_throw_when_queing_is_configured_to_allow_retries()
         {
-            var uri = new Uri($"http://localhost:{_listener.LocalPort}/coderr/");
-            var feedbackDto = new FeedbackDTO {Description = "Hello world"};
+            _config.QueueReportsAccessor = () => true;
+            var dto = Substitute.For<FeedbackDTO>();
+            var uri = new Uri("http://localhost");
+            _config.UploadFunc = message =>
+            {
+                throw new InvalidOperationException("err");
+            };
 
-            var sut = new UploadToCoderr(uri, "api", "secret", () => false, () => true);
-            sut.UploadFeedback(feedbackDto);
+            var sut = new UploadToCoderr(uri, "ada", "cesar", _config);
+            Action actual = () => sut.UploadFeedbackNow(dto);
+
+
+            actual.ShouldThrow<InvalidOperationException>();
         }
     }
 }
+

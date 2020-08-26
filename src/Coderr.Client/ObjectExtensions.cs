@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Coderr.Client.ContextCollections;
 using Coderr.Client.Contracts;
-using Coderr.Client.Converters;
 
 namespace Coderr.Client
 {
@@ -22,13 +22,13 @@ namespace Coderr.Client
         public static bool IsAnonymousType(this Type type)
         {
             // TODO: The only way to detect anonymous types right now.
-            return type.IsGenericType
-                   && Attribute.IsDefined(type, typeof(CompilerGeneratedAttribute), false)
+            return type.GetTypeInfo().IsGenericType
+                   && type.GetTypeInfo().GetCustomAttribute<CompilerGeneratedAttribute>(false) != null
                    && type.Name.Contains("AnonymousType")
                    &&
                    (type.Name.StartsWith("<>", StringComparison.OrdinalIgnoreCase) ||
                     type.Name.StartsWith("VB$", StringComparison.OrdinalIgnoreCase))
-                   && (type.Attributes & TypeAttributes.NotPublic) == TypeAttributes.NotPublic;
+                   && (type.GetTypeInfo().Attributes & TypeAttributes.NotPublic) == TypeAttributes.NotPublic;
         }
 
 

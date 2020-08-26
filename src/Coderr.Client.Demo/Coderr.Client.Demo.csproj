@@ -1,12 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net451</TargetFramework>
-    <version>1.0.5.0</version>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <Version>1.1.0.0</Version>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\Coderr.Client\Coderr.Client.csproj" />
   </ItemGroup>
-  
+
 </Project>

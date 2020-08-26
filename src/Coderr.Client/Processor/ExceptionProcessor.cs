@@ -21,6 +21,7 @@ namespace Coderr.Client.Processor
         ///     Creates a new instance of <see cref="ExceptionProcessor" />.
         /// </summary>
         /// <param name="configuration">Current configuration.</param>
+        /// <exception cref="ArgumentNullException">configuration</exception>
         public ExceptionProcessor(CoderrConfiguration configuration)
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -30,15 +31,20 @@ namespace Coderr.Client.Processor
         ///     Build an report, but do not upload it
         /// </summary>
         /// <param name="exception">caught exception</param>
-        /// <returns>Report if it can be processed; otherwise <c>null</c>.</returns>
         /// <remarks>
         ///     <para>
         ///         Will collect context info and generate a report.
         ///     </para>
         /// </remarks>
+        /// <exception cref="ArgumentNullException">exception</exception>
         public ErrorReportDTO Build(Exception exception)
         {
-            return Build(exception, null);
+            if (exception == null) throw new ArgumentNullException(nameof(exception));
+            if (IsReported(exception))
+                return null;
+
+            var context = new ErrorReporterContext(null, exception);
+            return Build(context);
         }
 
         /// <summary>
@@ -51,80 +57,59 @@ namespace Coderr.Client.Processor
         ///         Will collect context info and generate a report.
         ///     </para>
         /// </remarks>
+        /// <exception cref="ArgumentNullException">exception;contextData</exception>
         public ErrorReportDTO Build(Exception exception, object contextData)
         {
-            if (exception is CoderrClientException)
-                return null;
-            if (exception.Data.Contains(AlreadyReportedSetting))
+            if (exception == null) throw new ArgumentNullException(nameof(exception));
+            if (contextData == null) throw new ArgumentNullException(nameof(contextData));
+            if (IsReported(exception))
                 return null;
 
             var context = new ErrorReporterContext(null, exception);
-            if (contextData != null)
-                AppendCustomContextData(contextData, context.ContextCollections);
-
+            AppendCustomContextData(contextData, context.ContextCollections);
             return Build(context);
         }
 
         /// <summary>
-        ///     Process exception.
+        ///     Build an report, but do not upload it
         /// </summary>
         /// <param name="context">
-        ///     Used to reports (like for ASP.NET) can attach information which can be used during the context
-        ///     collection pipeline.
+        ///     context passed to all context providers when collecting information. This context is typically
+        ///     implemented by one of the integration libraries to provide more context that can be used to process the
+        ///     environment.
         /// </param>
         /// <remarks>
         ///     <para>
-        ///         Will collect context info, generate a report, go through filters and finally upload it.
+        ///         Will collect context info and generate a report.
         ///     </para>
         /// </remarks>
-        /// <returns>
-        ///     Report if filter allowed the generated report; otherwise <c>null</c>.
-        /// </returns>
-        /// <seealso cref="IReportFilter" />
+        /// <exception cref="ArgumentNullException">exception;contextData</exception>
         public ErrorReportDTO Build(IErrorReporterContext context)
         {
+            if (context == null) throw new ArgumentNullException(nameof(context));
             if (context.Exception is CoderrClientException)
                 return null;
-            if (context.Exception.Data.Contains(AlreadyReportedSetting))
+            if (IsReported(context.Exception))
                 return null;
-            context.Exception.Data.Add(AlreadyReportedSetting, true);
+            ErrorReporterContext.MoveCollectionsInException(context.Exception, context.ContextCollections);
+            InvokePreProcessor(context);
 
-            if (context is IErrorReporterContext2 ctx2)
-            {
-                ErrorReporterContext.MoveCollectionsInException(context.Exception, ctx2.ContextCollections);
-                InvokeFilter(ctx2);
-            }
-
-
-            var contextInfo = _configuration.ContextProviders.Collect(context);
+            _configuration.ContextProviders.Collect(context);
 
             // Invoke partition collection AFTER other context info providers
             // since those other collections might provide the property that
             // we want to create partions on.
             InvokePartitionCollection(context);
 
-            MoveCollectionsFromContext(context, contextInfo);
             var reportId = ReportIdGenerator.Generate(context.Exception);
-            AddAddemblyVersion(contextInfo);
-            var report =
-                new ErrorReportDTO(reportId, new ExceptionDTO(context.Exception), contextInfo.ToArray())
-                {
-                    Environment = Err.Configuration.EnvironmentName
-                };
-            return report;
-        }
-
-        private void MoveCollectionsFromContext(IErrorReporterContext context, IList<ContextCollectionDTO> destination)
-        {
-            var ctx2=context as IErrorReporterContext2;
-            if (ctx2 == null)
-                return;
-            
-            foreach (var col in ctx2.ContextCollections)
+            AddAddemblyVersion(context.ContextCollections);
+            var report = new ErrorReportDTO(reportId, new ExceptionDTO(context.Exception),
+                context.ContextCollections.ToArray())
             {
-                destination.Add(col);
-            }
-            ctx2.ContextCollections.Clear();
+                EnvironmentName = _configuration.EnvironmentName,
+                LogEntries = (context as IContextWithLogEntries)?.LogEntries
+            };
+            return report;
         }
 
         /// <summary>
@@ -138,8 +123,14 @@ namespace Coderr.Client.Processor
         /// </remarks>
         public void Process(Exception exception)
         {
+            if (exception == null) throw new ArgumentNullException(nameof(exception));
+
+            if (IsReported(exception))
+                return;
+
             var report = Build(exception);
-            Process(report);
+            if (UploadReportIfAllowed(report))
+                MarkAsReported(exception);
         }
 
         /// <summary>
@@ -154,19 +145,23 @@ namespace Coderr.Client.Processor
         ///         Will collect context info, generate a report, go through filters and finally upload it.
         ///     </para>
         /// </remarks>
-        /// <returns>
-        ///     Report if filter allowed the generated report; otherwise <c>null</c>.
-        /// </returns>
         /// <seealso cref="IReportFilter" />
         public void Process(IErrorReporterContext context)
         {
+            if (context == null) throw new ArgumentNullException(nameof(context));
+
+            if (IsReported(context.Exception))
+                return;
+
+            ErrorReporterContext.MoveCollectionsInException(context.Exception, context.ContextCollections);
             var report = Build(context);
-            Process(report);
+            if (UploadReportIfAllowed(report))
+                MarkAsReported(context.Exception);
         }
 
 
         /// <summary>
-        ///     Process exception.
+        ///     Process exception and upload the generated error report (along with context data)
         /// </summary>
         /// <param name="exception">caught exception</param>
         /// <param name="contextData">Context data</param>
@@ -174,23 +169,19 @@ namespace Coderr.Client.Processor
         ///     <para>
         ///         Will collect context info, generate a report, go through filters and finally upload it.
         ///     </para>
+        ///     <para>
+        ///         Do note that reports can be discarded if a filter in <c>Err.Configuration.FilterCollection</c> says so.
+        ///     </para>
         /// </remarks>
         public void Process(Exception exception, object contextData)
         {
+            if (exception == null) throw new ArgumentNullException(nameof(exception));
+            if (IsReported(exception))
+                return;
+
             var report = Build(exception, contextData);
-            Process(report);
-        }
-
-        protected void Process(ErrorReportDTO report)
-        {
-            if (report == null)
-                return;
-
-            var canUpload = _configuration.FilterCollection.CanUploadReport(report);
-            if (!canUpload)
-                return;
-
-            _configuration.Uploaders.Upload(report);
+            if (UploadReportIfAllowed(report))
+                MarkAsReported(exception);
         }
 
         internal void AddAddemblyVersion(IList<ContextCollectionDTO> contextInfo)
@@ -198,12 +189,8 @@ namespace Coderr.Client.Processor
             if (_configuration.ApplicationVersion == null)
                 return;
 
-            var items = new Dictionary<string, string>
-                {
-                    {"AppAssemblyVersion", _configuration.ApplicationVersion}
-                };
-
-            var col = new ContextCollectionDTO("AppVersion", items);
+            var col = contextInfo.GetCoderrCollection();
+            col.Properties.Add(AppAssemblyVersion, _configuration.ApplicationVersion);
             contextInfo.Add(col);
         }
 
@@ -218,24 +205,31 @@ namespace Coderr.Client.Processor
             else
             {
                 var col = contextData.ToContextCollection();
-                contextInfo.Add(col);
+                if (col.Properties.ContainsKey("ErrTags"))
+                {
+                    var coderrCollection = contextInfo.GetCoderrCollection();
+                    if (coderrCollection.Properties.TryGetValue("ErrTags", out var value))
+                    {
+                        coderrCollection.Properties["ErrTags"] = value + "," + col.Properties["ErrTags"];
+                    }
+                    else
+                    {
+                        coderrCollection.Properties["ErrTags"] = col.Properties["ErrTags"];
+                    }
+
+                    col.Properties.Remove("ErrTags");
+                }
+
+                if (col.Properties.Count > 0)
+                    contextInfo.Add(col);
             }
         }
 
-        private void InvokeFilter(IErrorReporterContext2 context)
-        {
-            Err.Configuration.ExceptionPreProcessor?.Invoke(context);
-        }
 
         private void InvokePartitionCollection(IErrorReporterContext context)
         {
-            var ctx2 = context as IErrorReporterContext2;
-            if (ctx2 == null)
-                return;
-
-            var col = new ErrPartitionContextCollection();
-            ctx2.ContextCollections.Add(col);
-            var partitionContext = new PartitionContext(col, ctx2);
+            var col = context.GetCoderrCollection();
+            var partitionContext = new PartitionContext(col, context);
             foreach (var callback in _configuration.PartitionCallbacks)
             {
                 try
@@ -247,6 +241,33 @@ namespace Coderr.Client.Processor
                     col.Properties.Add("PartitionCollection.Err", $"Callback {callback} failed: {ex}");
                 }
             }
+        }
+
+        private void InvokePreProcessor(IErrorReporterContext context)
+        {
+            _configuration.ExceptionPreProcessor?.Invoke(context);
+        }
+
+        private bool IsReported(Exception exception)
+        {
+            return exception.Data.Contains(AlreadyReportedSetting);
+        }
+
+        private void MarkAsReported(Exception exception)
+        {
+            exception.Data[AlreadyReportedSetting] = true;
+        }
+
+        private bool UploadReportIfAllowed(ErrorReportDTO report)
+        {
+            if (report == null) throw new ArgumentNullException(nameof(report));
+
+            var canUpload = _configuration.FilterCollection.CanUploadReport(report);
+            if (!canUpload)
+                return false;
+
+            _configuration.Uploaders.Upload(report);
+            return true;
         }
     }
 }

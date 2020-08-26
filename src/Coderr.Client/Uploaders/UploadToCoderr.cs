@@ -2,509 +2,237 @@
 using System.IO;
 using System.IO.Compression;
 using System.Net;
-using System.Net.NetworkInformation;
-using System.Reflection;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
+using Coderr.Client.Config;
 using Coderr.Client.Contracts;
-using Coderr.Client.Converters;
 using Newtonsoft.Json;
 
 namespace Coderr.Client.Uploaders
 {
     /// <summary>
-    ///     Upload reports to our web site.
+    ///     Used to upload the report to the Coderr Server.
     /// </summary>
     /// <remarks>
-    ///     <para>
-    ///         To use this reporter you have to create an account at https://coderrapp.com and then register an application
-    ///         to get an application key and a shared secret.
-    ///     </para>
-    ///     <para>
-    ///         Finally use that information to configure this reporter:
-    ///     </para>
-    ///     <example>
-    ///         <code>
-    /// 
-    /// var uri = new Uri("http://coderr.yourdomain.com/");
-    /// Err.Configuration.Uploaders.Add(new UploadToCoderr(uri, "yourAppKey",
-    ///                                                             "yourSharedSecret"));
-    /// Err.Configuration.UserInteraction.AskUserForDetails = false;
-    /// </code>
-    ///     </example>
-    ///     <para>
-    ///         Reports will be queued internally if there are no Internet connection available. The queue have the same
-    ///         constrains as in the global
-    ///         configuration.  Thus the oldest reports will be dropped if the connection is down and the queue limit have been
-    ///         reached.
-    ///     </para>
-    ///     <para>
-    ///         Nothing in the queue is persisted. Thus if the application are stopped before all reports have been uploaded,
-    ///         they will
-    ///         be lost. This is only a problem if the codeRR service is slow or if the Internet connection is down.
-    ///     </para>
-    ///     <para>
-    ///         This uploader will check the Internet settings (that are configured in the windows control panel) to see if an
-    ///         Internet proxy
-    ///         is required. If it is, the HttpClient will be configured to use it. So this library should work behind
-    ///         corporate firewalls.
-    ///     </para>
+    ///     Will queue reports and try to upload them at a later point if the server is not available (or there are no internet
+    ///     connection).
     /// </remarks>
-    public class UploadToCoderr : IReportUploader, IDisposable
+    public class UploadToCoderr : IReportUploader
     {
-        private readonly Func<bool> _queueReportsAccessor = () => Err.Configuration.QueueReports;
+        private readonly string _apiKey;
+        private readonly HttpClient _client = new HttpClient();
+        private readonly IUploadQueue<FeedbackDTO> _feedbackQueue;
+        private readonly Func<bool> _queueReportsAccessor;
+        private readonly IUploadQueue<ErrorReportDTO> _reportQueue;
         private readonly Uri _reportUri, _feedbackUri;
+        private readonly string _sharedSecret;
         private readonly Func<bool> _throwExceptionsAccessor;
-        private UploadQueue<FeedbackDTO> _feedbackQueue;
-        private UploadQueue<ErrorReportDTO> _reportQueue;
-
+        private readonly Func<HttpRequestMessage, Task<HttpResponseMessage>> _uploadFunc;
+        private bool _signReport = true;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="UploadToCoderr" /> class.
         /// </summary>
-        /// <param name="coderrServerAddress">
+        /// <param name="oneTrueHost">
         ///     Uri to the root of the codeRR web. Example.
-        ///     <code>http://yourWebServer/coderr/</code>
+        ///     <code>http://yourWebServer/codeRR/</code>
         /// </param>
         /// <param name="apiKey">The API key.</param>
         /// <param name="sharedSecret">The shared secret.</param>
         /// <exception cref="System.ArgumentNullException">apiKey</exception>
-        public UploadToCoderr(Uri coderrServerAddress, string apiKey, string sharedSecret)
+        public UploadToCoderr(Uri oneTrueHost, string apiKey, string sharedSecret)
         {
             if (string.IsNullOrEmpty(apiKey)) throw new ArgumentNullException("apiKey");
             if (string.IsNullOrEmpty(sharedSecret)) throw new ArgumentNullException("sharedSecret");
 
-            if (coderrServerAddress.AbsolutePath.Contains("/receiver/"))
+            if (!oneTrueHost.AbsolutePath.EndsWith("/"))
+                oneTrueHost = new Uri(oneTrueHost + "/");
+
+            if (oneTrueHost.AbsolutePath.Contains("/receiver/"))
             {
                 throw new ArgumentException(
                     "The codeRR URI should not contain the reporting area '/receiver/', but should point at the site root.");
             }
 
-            if (!coderrServerAddress.AbsolutePath.EndsWith("/"))
-                coderrServerAddress = new Uri(coderrServerAddress + "/");
+            _reportUri = new Uri(oneTrueHost, "receiver/report/" + apiKey + "/");
+            _feedbackUri = new Uri(oneTrueHost, "receiver/report/" + apiKey + "/feedback/");
+            _apiKey = apiKey;
+            _sharedSecret = sharedSecret;
 
-            _reportUri = new Uri(coderrServerAddress, "receiver/report/" + apiKey + "/");
-            _feedbackUri = new Uri(coderrServerAddress, "receiver/report/" + apiKey + "/feedback/");
-            ApiKey = apiKey;
-            SharedSecret = sharedSecret;
-            _feedbackQueue = new UploadQueue<FeedbackDTO>(OnInvokeBackgroundUpload);
+            _feedbackQueue = new UploadQueue<FeedbackDTO>(UploadFeedbackNow);
             _feedbackQueue.UploadFailed += OnUploadFailed;
-            _reportQueue = new UploadQueue<ErrorReportDTO>(OnInvokeBackgroundUpload);
+
+            _reportQueue = new UploadQueue<ErrorReportDTO>(UploadReportNow);
             _reportQueue.UploadFailed += OnUploadFailed;
 
-            _throwExceptionsAccessor = () => Err.Configuration.ThrowExceptions;
+            _uploadFunc = message => _client.SendAsync(message);
             _queueReportsAccessor = () => Err.Configuration.QueueReports;
+            _throwExceptionsAccessor = () => Err.Configuration.ThrowExceptions;
         }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="UploadToCoderr" /> class.
         /// </summary>
-        /// <param name="coderrServerAddress">
+        /// <param name="oneTrueHost">
         ///     Uri to the root of the codeRR web. Example.
-        ///     <code>http://yourWebServer/coderr/</code>
+        ///     <code>http://yourWebServer/codeRR/</code>
         /// </param>
         /// <param name="apiKey">The API key.</param>
         /// <param name="sharedSecret">The shared secret.</param>
-        /// <param name="queueReportsAccessor">Used to access the property that determines if the reports should be queued or not.</param>
-        /// <param name="throwExceptionsAccessor">Used to determine if the uploader can throw exceptions</param>
-        /// <exception cref="ArgumentNullException">queueReportsAccessor</exception>
-        public UploadToCoderr(Uri coderrServerAddress, string apiKey, string sharedSecret,
-            Func<bool> queueReportsAccessor, Func<bool> throwExceptionsAccessor)
-            : this(coderrServerAddress, apiKey, sharedSecret)
+        /// <param name="config">parameters for tests</param>
+        /// <exception cref="System.ArgumentNullException">apiKey</exception>
+        internal UploadToCoderr(Uri oneTrueHost, string apiKey, string sharedSecret, TestConfig config)
+            : this(oneTrueHost, apiKey, sharedSecret)
         {
-            _queueReportsAccessor = queueReportsAccessor
-                                    ?? throw new ArgumentNullException(nameof(queueReportsAccessor));
-            _throwExceptionsAccessor = throwExceptionsAccessor
-                                       ?? throw new ArgumentNullException(nameof(throwExceptionsAccessor));
+            _queueReportsAccessor = config.QueueReportsAccessor;
+            _throwExceptionsAccessor = config.ThrowExceptionsAccessor;
+            _uploadFunc = config.UploadFunc;
+            _feedbackQueue = config.FeedbackQueue;
+            _reportQueue = config.ReportQueue;
         }
 
         /// <summary>
-        ///     API key as defined in codeRR Server.
+        ///     We've tried several times and failed to upload the report.
         /// </summary>
-        public string ApiKey { get; set; }
-
-        /// <summary>
-        ///     Do not detect and use the default proxy.
-        /// </summary>
-        public bool DisableProxyUsage { get; set; }
-
-        /// <summary>
-        ///     Max number of upload attempts per report
-        /// </summary>
-        public int MaxAttempts
-        {
-            get => _reportQueue.MaxAttempts;
-            set
-            {
-                _reportQueue.MaxAttempts = value;
-                _feedbackQueue.MaxAttempts = value;
-            }
-        }
-
-        /// <summary>
-        ///     Max number of items that may wait in queue to get upload.
-        /// </summary>
-        public int MaxQueueSize
-        {
-            get => _reportQueue.MaxQueueSize;
-            set
-            {
-                _reportQueue.MaxQueueSize = value;
-
-                _feedbackQueue.MaxQueueSize = value;
-            }
-        }
-
-        /// <summary>
-        ///     Amount of time to wait between each attempt
-        /// </summary>
-        public TimeSpan RetryInterval
-        {
-            get => _reportQueue.RetryInterval;
-            set
-            {
-                _reportQueue.RetryInterval = value;
-                _feedbackQueue.RetryInterval = value;
-            }
-        }
-
-        /// <summary>
-        ///     Shared secret as defined in the codeRR server.
-        /// </summary>
-        public string SharedSecret { get; }
-
-        /// <summary>
-        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        /// <filterpriority>2</filterpriority>
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
-        /// <summary>
-        ///     Upload the report to the web service.
-        /// </summary>
-        /// <param name="report">CreateReport to submit</param>
-        /// <remarks>
-        ///     <para>
-        ///         If
-        ///     </para>
-        /// </remarks>
-        public void UploadReport(ErrorReportDTO report)
-        {
-            if (report == null) throw new ArgumentNullException(nameof(report));
-
-            if (!NetworkInterface.GetIsNetworkAvailable() && !_queueReportsAccessor())
-                return;
-            if (!NetworkInterface.GetIsNetworkAvailable() || _queueReportsAccessor())
-                _reportQueue.Add(report);
-            else
-            {
-                try
-                {
-                    TryUploadReportNow(report);
-                }
-                catch (Exception ex)
-                {
-                    if (_throwExceptionsAccessor())
-                        throw;
-                    UploadFailed?.Invoke(this, new UploadReportFailedEventArgs(ex, report));
-                }
-            }
-        }
-
-        /// <summary>
-        ///     Failed to deliver DTO within the given parameters.
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
         public event EventHandler<UploadReportFailedEventArgs> UploadFailed;
 
-
         /// <summary>
-        ///     Send feedback for a previously submitted error report.
+        ///     Upload feedback to Coderr.
         /// </summary>
-        /// <param name="feedback">Feedback to send</param>
+        /// <param name="feedback">feedback to upload</param>
         /// <remarks>
         ///     <para>
-        ///         Will be queued internally (in memory) if the OS reports that there are no Internet connection available.
+        ///         Will either upload directly or queue if the <see cref="CoderrConfiguration.QueueReports" /> is true
         ///     </para>
         /// </remarks>
         public void UploadFeedback(FeedbackDTO feedback)
         {
-            if (feedback == null) throw new ArgumentNullException(nameof(feedback));
-
-
-            if (!NetworkInterface.GetIsNetworkAvailable() && !_queueReportsAccessor())
-                return;
-            if (!NetworkInterface.GetIsNetworkAvailable() || _queueReportsAccessor())
-                _feedbackQueue.Add(feedback);
+            if (_queueReportsAccessor())
+                _feedbackQueue.Enqueue(feedback);
             else
-            {
-                try
-                {
-                    TryUploadFeedbackNow(feedback);
-                }
-                catch (Exception ex)
-                {
-                    if (_throwExceptionsAccessor())
-                        throw;
-                    UploadFailed?.Invoke(this, new UploadReportFailedEventArgs(ex, feedback));
-                }
-            }
+                UploadFeedbackNow(feedback);
         }
 
         /// <summary>
-        ///     Try to upload a report directly
+        ///     Upload report
         /// </summary>
-        /// <param name="report">Report to upload</param>
-        /// <exception cref="WebException">No internet connection is available; Destination server did not accept the report.</exception>
-        public void TryUploadReportNow(ErrorReportDTO report)
+        /// <param name="report">Report DTO</param>
+        /// <remarks>
+        ///     <para>
+        ///         Will either upload directly or queue if the <see cref="CoderrConfiguration.QueueReports" /> is true
+        ///     </para>
+        /// </remarks>
+        public void UploadReport(ErrorReportDTO report)
         {
-            if (!NetworkInterface.GetIsNetworkAvailable())
-                throw new UploadFailedException("Not connected, try again later.");
-
-            var buffer = CompressErrorReport(report);
-            var version = Assembly.GetExecutingAssembly().GetName().Version.ToString(2);
-            var hashAlgo = new HMACSHA256(Encoding.UTF8.GetBytes(SharedSecret));
-            var hash = hashAlgo.ComputeHash(buffer);
-            var signature = Convert.ToBase64String(hash);
-
-            try
-            {
-                var uri = _reportUri + "?sig=" + signature + "&v=" + version;
-                var request = (HttpWebRequest) WebRequest.Create(uri);
-                AddProxyIfRequired(request, uri);
-
-                request.Method = "POST";
-                request.ContentType = "application/octet-stream";
-                var evt = request.BeginGetRequestStream(null, null);
-                var stream = request.EndGetRequestStream(evt);
-                stream.Write(buffer, 0, buffer.Length);
-                var responseRes = request.BeginGetResponse(null, null);
-                var response = (HttpWebResponse) request.EndGetResponse(responseRes);
-                using (response)
-                {
-                    //Console.WriteLine(response);
-                }
-            }
-            catch (Exception err)
-            {
-                AnalyzeException(err);
-                throw new UploadFailedException(
-                    "The actual upload failed (probably network error). We'll try again later..", err);
-            }
+            if (_queueReportsAccessor())
+                _reportQueue.Enqueue(report);
+            else
+                UploadReportNow(report);
         }
 
-        /// <summary>
-        ///     Dispose pattern
-        /// </summary>
-        /// <param name="isDisposing">Invoked from the dispose method.</param>
-        protected virtual void Dispose(bool isDisposing)
+        internal HttpRequestMessage CreateRequest(string uri, object dto)
         {
-            if (_feedbackQueue != null)
-            {
-                _feedbackQueue.Dispose();
-                _feedbackQueue = null;
-            }
-
-            if (_reportQueue != null)
-            {
-                _reportQueue.Dispose();
-                _reportQueue = null;
-            }
-        }
-
-        /// <summary>
-        ///     Try to upload a report directly
-        /// </summary>
-        /// <param name="feedback">Report to upload</param>
-        /// <exception cref="WebException">No Internet connection is available; Destination server did not accept the report.</exception>
-        protected void TryUploadFeedbackNow(FeedbackDTO feedback)
-        {
-            if (feedback == null) throw new ArgumentNullException(nameof(feedback));
-            if (!NetworkInterface.GetIsNetworkAvailable())
-                throw new UploadFailedException("Not connected, try again later.");
-
-            var reportJson = JsonConvert.SerializeObject(feedback, Formatting.None,
+            var reportJson = JsonConvert.SerializeObject(dto, Formatting.None,
                 new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.None,
                     ContractResolver =
                         new IncludeNonPublicMembersContractResolver()
                 });
-            var buffer = Encoding.UTF8.GetBytes(reportJson);
-            var version = Assembly.GetExecutingAssembly().GetName().Version.ToString(2);
-            var hashAlgo = new HMACSHA256(Encoding.UTF8.GetBytes(SharedSecret));
-            var hash = hashAlgo.ComputeHash(buffer);
-            var signature = Convert.ToBase64String(hash);
+            var jsonBytes = Encoding.UTF8.GetBytes(reportJson);
 
+
+            var ms = new MemoryStream();
+
+            using (var gzip = new GZipStream(ms, CompressionLevel.Optimal, true))
+            {
+                gzip.Write(jsonBytes, 0, jsonBytes.Length);
+                gzip.Flush();
+            }
+
+            var requestBody = ms.ToArray();
+
+            var content = new ByteArrayContent(requestBody);
+            if (_signReport)
+            {
+                var hashAlgo = new HMACSHA256(Encoding.UTF8.GetBytes(_sharedSecret));
+                var hash = hashAlgo.ComputeHash(requestBody, 0, requestBody.Length);
+                var signature = Convert.ToBase64String(hash);
+
+                // this is version 2. Need to push that on the server side first
+                // and we also need to calc the signature on the JSON and not the gzipped content
+                //content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                //content.Headers.ContentEncoding.Add("gzip");
+
+                uri = uri + "?sig=" + signature + "&v=1&throw=" + (Err.Configuration.ThrowExceptions ? "1" : "0");
+            }
+            else
+            {
+                uri = uri + "?v=1&throw=" + (Err.Configuration.ThrowExceptions ? "1" : "0");
+            }
+
+            return new HttpRequestMessage(HttpMethod.Post, uri) {Content = content};
+        }
+
+        internal void UploadFeedbackNow(FeedbackDTO dto)
+        {
+            PostData(_feedbackUri.ToString(), dto)
+                .GetAwaiter()
+                .GetResult();
+        }
+
+        private void OnUploadFailed(object sender, UploadReportFailedEventArgs e)
+        {
+            if (UploadFailed != null)
+                UploadFailed(this, e);
+        }
+
+        private async Task PostData(string uri, object dto)
+        {
+            var msg = CreateRequest(uri, dto);
             try
             {
-                var uri = _feedbackUri + "?sig=" + signature + "&v=" + version;
-                var request = (HttpWebRequest) WebRequest.Create(uri);
-                AddProxyIfRequired(request, uri);
-
-                request.Method = "POST";
-                request.ContentType = "application/json";
-                request.GetRequestStream().Write(buffer, 0, buffer.Length);
-                using (request.GetResponse())
-                {
-                }
+                var response = await _uploadFunc(msg);
+                if (!response.IsSuccessStatusCode)
+                    ProcessResponseError(response);
             }
-            catch (Exception err)
+            catch (Exception ex)
             {
-                AnalyzeException(err);
-                throw new UploadFailedException(
-                    "The actual upload failed (probably network error). We'll try again later..", err);
+                OnUploadFailed(this, new UploadReportFailedEventArgs(ex, dto));
+                if (_throwExceptionsAccessor() || _queueReportsAccessor())
+                    throw;
             }
         }
 
-        /// <summary>
-        ///     Compress an ErrorReport as JSON string
-        /// </summary>
-        /// <param name="errorReport">ErrorReport</param>
-        /// <returns>Compressed JSON representation of the ErrorReport.</returns>
-        internal byte[] CompressErrorReport(ErrorReportDTO errorReport)
+        private void ProcessResponseError(HttpResponseMessage response)
         {
-            var reportJson = JsonConvert.SerializeObject(errorReport, Formatting.None,
-                new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.None,
-                    ContractResolver =
-                        new IncludeNonPublicMembersContractResolver(),
-                    NullValueHandling = NullValueHandling.Ignore
-                });
-            var buffer = Encoding.UTF8.GetBytes(reportJson);
+            var title = response.ReasonPhrase;
+            var description = response.Content.ReadAsStringAsync().Result;
 
-            //collected by GZipStream
-            var outMs = new MemoryStream();
-            using (var zipStream = new GZipStream(outMs, CompressionMode.Compress))
-            {
-                zipStream.Write(buffer, 0, buffer.Length);
-
-                //MUST close the stream, flush doesn't help and without close
-                // the memory stream won't get its bytes
-                zipStream.Close();
-
-                var result = outMs.ToArray();
-                return result;
-            }
-        }
-
-        /// <summary>
-        ///     Deflate a compressed error report in JSON format
-        /// </summary>
-        /// <param name="errorReport">Compressed JSON errorReport</param>
-        /// <returns>JSON string decompressed</returns>
-        internal string DeflateErrorReport(byte[] errorReport)
-        {
-            // collected by GZipStream
-            var zipStream = new MemoryStream(errorReport);
-
-            //disposed by GZipStream
-            var deflateStream = new MemoryStream();
-            using (var decompressor = new GZipStream(zipStream, CompressionMode.Decompress))
-            {
-                decompressor.CopyTo(deflateStream);
-                deflateStream.Position = 0;
-                var buffer = new byte[deflateStream.Length];
-                deflateStream.Read(buffer, 0, (int) deflateStream.Length);
-                var strBuffer = Encoding.UTF8.GetString(buffer);
-                return strBuffer;
-            }
-        }
-
-        private void AddProxyIfRequired(HttpWebRequest request, string uri)
-        {
-            if (DisableProxyUsage)
-                return;
-
-            var proxy = request.Proxy;
-            if (proxy == null || proxy.IsBypassed(new Uri(uri)))
-                return;
-
-            var proxyuri = proxy.GetProxy(request.RequestUri).ToString();
-            request.UseDefaultCredentials = true;
-            request.Proxy = new WebProxy(proxyuri, false)
-            {
-                Credentials = CredentialCache.DefaultCredentials
-            };
-        }
-
-        private static void AnalyzeException(Exception err)
-        {
-            var exception = err as WebException;
-            if (exception?.Response == null)
-                return;
-
-            var title = "Failed to execute";
-            var description = "Did not get a response. Check your network connection.";
-
-            var resp = (HttpWebResponse) exception.Response;
-            var stream = exception.Response.GetResponseStream();
-            if (stream != null)
-            {
-                var reader = new StreamReader(stream);
-                description = reader.ReadToEnd();
-                title = resp.StatusDescription;
-            }
-
-            try
-            {
-                exception.Response.Close();
-            }
-            catch
-            {
-                // ignored
-            }
-
-            switch (resp.StatusCode)
+            switch (response.StatusCode)
             {
                 case HttpStatusCode.Unauthorized:
-                    throw new UnauthorizedAccessException(title + "\r\n" + description, err);
+                    throw new UnauthorizedAccessException($"{response.StatusCode}: {title}\r\n{description}");
                 case HttpStatusCode.NotFound:
-                    //legacy handling of 404. Mal-configured web servers will report 404,
+                    //legacy handling of 404. Misconfigured web servers will report 404,
                     //so remove the usage to avoid ambiguity
                     if (title.IndexOf("key", StringComparison.OrdinalIgnoreCase) != -1)
-                        throw new InvalidApplicationKeyException(title + "\r\n" + description, err);
-                    throw new UploadFailedException("Server returned an error.\r\n" + description, err);
+                        throw new InvalidApplicationKeyException($"{response.StatusCode}: {title}\r\n{description}");
+                    throw new InvalidOperationException($"{response.StatusCode}: {title}\r\n{description}");
                 default:
-                    if (resp.StatusCode == HttpStatusCode.BadRequest && title.Contains("APP_KEY"))
-                        throw new InvalidApplicationKeyException(title + "\r\n" + description, err);
-
-                    throw new UploadFailedException("Server returned an error.\r\n" + description, err);
+                    if (response.StatusCode == HttpStatusCode.BadRequest && title.Contains("APP_KEY"))
+                        throw new InvalidApplicationKeyException($"{response.StatusCode}: {title}\r\n{description}");
+                    throw new InvalidOperationException($"{response.StatusCode}: {title}\r\n{description}");
             }
         }
 
-        private void OnInvokeBackgroundUpload(FeedbackDTO dto)
+        private void UploadReportNow(ErrorReportDTO dto)
         {
-            try
-            {
-                TryUploadFeedbackNow(dto);
-            }
-            catch (Exception ex)
-            {
-                UploadFailed?.Invoke(this, new UploadReportFailedEventArgs(ex, dto));
-            }
-        }
-
-        private void OnInvokeBackgroundUpload(ErrorReportDTO dto)
-        {
-            try
-            {
-                TryUploadReportNow(dto);
-            }
-            catch (Exception ex)
-            {
-                UploadFailed?.Invoke(this, new UploadReportFailedEventArgs(ex, dto));
-            }
-        }
-
-        private void OnUploadFailed(object sender, UploadReportFailedEventArgs args)
-        {
-            UploadFailed?.Invoke(this, args);
+            PostData(_reportUri.ToString(), dto)
+                .GetAwaiter()
+                .GetResult();
         }
     }
 }

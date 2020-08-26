@@ -1,8 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Coderr.Client.ContextProviders;
-using Coderr.Client.Converters;
+using Coderr.Client.ContextCollections;
 using Coderr.Client.Processor;
 using Coderr.Client.Uploaders;
 
@@ -14,6 +13,11 @@ namespace Coderr.Client.Config
     public class CoderrConfiguration : IDisposable
     {
         internal readonly List<Action<PartitionContext>> PartitionCallbacks = new List<Action<PartitionContext>>();
+
+        /// <summary>
+        ///     Configure how the reporting UI will interact with the user.
+        /// </summary>
+        private UserInteractionConfiguration _userInteraction = new UserInteractionConfiguration();
 
         /// <summary>
         ///     Used to be able to process error reports before they are delivered.
@@ -31,7 +35,20 @@ namespace Coderr.Client.Config
         public CoderrConfiguration()
         {
             Uploaders = new UploadDispatcher(this);
-            UserInteraction.AskUserForDetails = true;
+            _userInteraction.AskUserForDetails = true;
+            ThrowExceptions = true;
+            MaxNumberOfPropertiesPerCollection = 100;
+        }
+
+
+        /// <summary>
+        ///     Creates a new instance of <see cref="CoderrConfiguration" />.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">uploadDispatcher</exception>
+        public CoderrConfiguration(IUploadDispatcher uploadDispatcher)
+        {
+            Uploaders = uploadDispatcher ?? throw new ArgumentNullException(nameof(uploadDispatcher));
+            _userInteraction.AskUserForDetails = true;
             ThrowExceptions = true;
             MaxNumberOfPropertiesPerCollection = 100;
         }
@@ -48,8 +65,19 @@ namespace Coderr.Client.Config
         public ContextProvidersRegistrar ContextProviders { get; } = new ContextProvidersRegistrar();
 
         /// <summary>
-        ///     Used to decide which reports can be uploaded (for instance to sample reports in high volume systems).
+        /// Which environment are we running in? Dev, Production etc.
         /// </summary>
+        public string EnvironmentName { get; set; }
+
+        /// <summary>
+        ///     Used to decide which reports can be uploaded.
+        /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         Use it to filter out reports from certain areas in the system or to use sampling in high load systems.
+        ///     </para>
+        ///     <para>Collection is empty unless you add filters to it.</para>
+        /// </remarks>
         public ReportFilterDispatcher FilterCollection { get; } = new ReportFilterDispatcher();
 
         /// <summary>
@@ -89,9 +117,7 @@ namespace Coderr.Client.Config
         ///         Default is <c>true</c>, turn of before going to production.
         ///     </para>
         ///     <para>
-        ///         You can use the <see cref="UploadDispatcher.UploadFailed" /> event to get aware of errors when this flag is set
-        ///         to
-        ///         <c>true</c>.
+        ///         This option is not used when <seealso cref="QueueReports" /> is <c>true</c>.
         ///     </para>
         /// </remarks>
         public bool ThrowExceptions { get; set; }
@@ -99,17 +125,16 @@ namespace Coderr.Client.Config
         /// <summary>
         ///     The objects used to upload reports to the codeRR service.
         /// </summary>
-        public UploadDispatcher Uploaders { get; private set; }
+        public IUploadDispatcher Uploaders { get; private set; }
 
         /// <summary>
         ///     Configure how the reporting UI will interact with the user.
         /// </summary>
-        public UserInteractionConfiguration UserInteraction { get; } = new UserInteractionConfiguration();
-
-        /// <summary>
-        /// Which environment are we running in? Dev, Production etc.
-        /// </summary>
-        public string EnvironmentName { get; set; }
+        public UserInteractionConfiguration UserInteraction
+        {
+            get => _userInteraction;
+            set => _userInteraction = value;
+        }
 
 
         /// <summary>
@@ -169,19 +194,26 @@ namespace Coderr.Client.Config
         /// <summary>
         ///     Configure uploads
         /// </summary>
-        /// <param name="coderrServerAddress">Host. Host and absolute path to the codeRR server</param>
+        /// <param name="oneTrueHost">Host. Host and absolute path to the coderr directory</param>
         /// <param name="appKey">Appkey from the web site</param>
         /// <param name="sharedSecret">Shared secret from the web site</param>
-        public void Credentials(Uri coderrServerAddress, string appKey, string sharedSecret)
+        public void Credentials(Uri oneTrueHost, string appKey, string sharedSecret)
         {
-            if (coderrServerAddress == null) throw new ArgumentNullException(nameof(coderrServerAddress));
-            if (appKey == null) throw new ArgumentNullException(nameof(appKey));
-            if (sharedSecret == null) throw new ArgumentNullException(nameof(sharedSecret));
+            if (oneTrueHost == null) throw new ArgumentNullException("oneTrueHost");
+            if (appKey == null) throw new ArgumentNullException("appKey");
+            if (sharedSecret == null) throw new ArgumentNullException("sharedSecret");
 
             if (ApplicationVersion == null)
+            {
+#if NETSTANDARD2_0
                 AssignAssemblyVersion(Assembly.GetCallingAssembly());
+#else
+                AssignAssemblyVersion(Assembly.GetEntryAssembly());
+#endif
+            }
+                
 
-            Uploaders.Register(new UploadToCoderr(coderrServerAddress, appKey, sharedSecret));
+            Uploaders.Register(new UploadToCoderr(oneTrueHost, appKey, sharedSecret));
         }
 
         /// <summary>
@@ -190,11 +222,6 @@ namespace Coderr.Client.Config
         /// <param name="isDisposing">Invoked from the dispose method.</param>
         protected virtual void Dispose(bool isDisposing)
         {
-            if (Uploaders != null)
-            {
-                Uploaders.Dispose();
-                Uploaders = null;
-            }
         }
     }
 }
