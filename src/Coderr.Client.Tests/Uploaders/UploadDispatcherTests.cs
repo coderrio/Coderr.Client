@@ -4,7 +4,7 @@ using Coderr.Client.Uploaders;
 using NSubstitute;
 using Xunit;
 
-namespace Coderr.Client.NetStd.Tests.Uploaders
+namespace Coderr.Client.Tests.Uploaders
 {
     public class UploadDispatcherTests
     {

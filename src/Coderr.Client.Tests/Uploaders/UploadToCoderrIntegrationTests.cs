@@ -11,7 +11,7 @@ using Xunit;
 
 #pragma warning disable 4014
 
-namespace Coderr.Client.NetStd.Tests.Uploaders
+namespace Coderr.Client.Tests.Uploaders
 {
     [SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     public class UploadToCoderrIntegrationTests
@@ -28,7 +28,7 @@ namespace Coderr.Client.NetStd.Tests.Uploaders
             var e1 = new ErrorReportDTO("dsadasdas", dto,
                 new[] { new ContextCollectionDTO("name1"), new ContextCollectionDTO("name2") });
 
-            var message = reporter.CreateRequest("http://somewherre.com/report", e1);
+            reporter.CreateRequest("http://somewherre.com/report", e1);
         }
 
         private void AcceptAndRead(Task<Socket> task)
@@ -104,7 +104,7 @@ namespace Coderr.Client.NetStd.Tests.Uploaders
             Action e = () => sut.UploadReport(e1);
 
 
-            e.ShouldThrow<InvalidApplicationKeyException>();
+            e.Should().Throw<InvalidApplicationKeyException>();
             listener.Stop();
         }
     }

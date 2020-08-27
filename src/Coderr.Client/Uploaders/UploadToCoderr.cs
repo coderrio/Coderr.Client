@@ -21,7 +21,6 @@ namespace Coderr.Client.Uploaders
     /// </remarks>
     public class UploadToCoderr : IReportUploader
     {
-        private readonly string _apiKey;
         private readonly HttpClient _client = new HttpClient();
         private readonly IUploadQueue<FeedbackDTO> _feedbackQueue;
         private readonly Func<bool> _queueReportsAccessor;
@@ -30,7 +29,7 @@ namespace Coderr.Client.Uploaders
         private readonly string _sharedSecret;
         private readonly Func<bool> _throwExceptionsAccessor;
         private readonly Func<HttpRequestMessage, Task<HttpResponseMessage>> _uploadFunc;
-        private bool _signReport = true;
+        private readonly bool _signReport = true;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="UploadToCoderr" /> class.
@@ -58,7 +57,6 @@ namespace Coderr.Client.Uploaders
 
             _reportUri = new Uri(oneTrueHost, "receiver/report/" + apiKey + "/");
             _feedbackUri = new Uri(oneTrueHost, "receiver/report/" + apiKey + "/feedback/");
-            _apiKey = apiKey;
             _sharedSecret = sharedSecret;
 
             _feedbackQueue = new UploadQueue<FeedbackDTO>(UploadFeedbackNow);
@@ -185,8 +183,7 @@ namespace Coderr.Client.Uploaders
 
         private void OnUploadFailed(object sender, UploadReportFailedEventArgs e)
         {
-            if (UploadFailed != null)
-                UploadFailed(this, e);
+            UploadFailed?.Invoke(this, e);
         }
 
         private async Task PostData(string uri, object dto)

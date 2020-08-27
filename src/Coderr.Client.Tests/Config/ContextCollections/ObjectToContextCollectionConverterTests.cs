@@ -4,12 +4,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
 using Coderr.Client.ContextCollections;
-using Coderr.Client.NetStd.Tests.TestObjects;
+using Coderr.Client.Tests.TestObjects;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Xunit;
 
-namespace Coderr.Client.NetStd.Tests.Config.ContextCollections
+namespace Coderr.Client.Tests.Config.ContextCollections
 {
     public class ObjectToContextCollectionConverterTests
     {

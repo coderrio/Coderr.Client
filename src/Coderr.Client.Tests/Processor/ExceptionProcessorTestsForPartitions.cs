@@ -1,12 +1,12 @@
 ﻿using System;
 using Coderr.Client.Config;
-using Coderr.Client.NetStd.Tests.Processor.Helpers;
 using Coderr.Client.Processor;
 using Coderr.Client.Reporters;
+using Coderr.Client.Tests.Processor.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace Coderr.Client.NetStd.Tests.Processor
+namespace Coderr.Client.Tests.Processor
 {
     public class ExceptionProcessorTestsForPartitions
     {

@@ -3,7 +3,7 @@ using Coderr.Client.ContextCollections;
 using FluentAssertions;
 using Xunit;
 
-namespace Coderr.Client.NetStd.Tests.Config.ContextCollections
+namespace Coderr.Client.Tests.Config.ContextCollections
 {
     public class ErrTagsTests
     {
@@ -22,7 +22,7 @@ namespace Coderr.Client.NetStd.Tests.Config.ContextCollections
 
             Action actual = () => CollectionBuilder.CreateTags();
 
-            actual.ShouldThrow<ArgumentOutOfRangeException>();
+            actual.Should().Throw<ArgumentOutOfRangeException>();
         }
 
         [Fact]
@@ -31,7 +31,7 @@ namespace Coderr.Client.NetStd.Tests.Config.ContextCollections
 
             Action actual = () => CollectionBuilder.CreateTags(null);
 
-            actual.ShouldThrow<ArgumentNullException>();
+            actual.Should().Throw<ArgumentNullException>();
         }
     }
 }

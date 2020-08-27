@@ -5,7 +5,7 @@ using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
-namespace Coderr.Client.NetStd.Tests.Config
+namespace Coderr.Client.Tests.Config
 {
     public class CoderrConfigurationTests
     {

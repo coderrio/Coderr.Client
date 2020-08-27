@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Security.Principal;
+﻿using System.Security.Principal;
 using System.Text;
 using Coderr.Client.ContextCollections;
 using Coderr.Client.ContextCollections.Providers;
 using FluentAssertions;
 using Xunit;
 
-namespace Coderr.Client.NetStd.Tests.ContextCollections
+namespace Coderr.Client.Tests.ContextCollections
 {
     public class CollectionBuilderTests
     {

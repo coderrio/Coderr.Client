@@ -4,7 +4,7 @@ using Coderr.Client.Processor;
 using FluentAssertions;
 using Xunit;
 
-namespace Coderr.Client.NetStd.Tests.Processor
+namespace Coderr.Client.Tests.Processor
 {
     public class ReportFilterContextTests
     {
@@ -24,7 +24,7 @@ namespace Coderr.Client.NetStd.Tests.Processor
 
             Action actual = () => new ReportFilterContext(null);
 
-            actual.ShouldThrow<ArgumentNullException>();
+            actual.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]

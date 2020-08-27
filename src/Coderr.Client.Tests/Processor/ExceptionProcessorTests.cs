@@ -8,7 +8,7 @@ using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
-namespace Coderr.Client.NetStd.Tests.Processor
+namespace Coderr.Client.Tests.Processor
 {
     public class ExceptionProcessorTests
     {

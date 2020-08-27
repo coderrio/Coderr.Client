@@ -1,4 +1,4 @@
-﻿namespace Coderr.Client.NetStd.Tests.Uploaders.TestObjects
+﻿namespace Coderr.Client.Tests.Uploaders.TestObjects
 {
     public class ClassWithPrivateSetter
     {

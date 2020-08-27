@@ -2,7 +2,7 @@
 using Coderr.Client.Contracts;
 using Coderr.Client.Uploaders;
 
-namespace Coderr.Client.NetStd.Tests.Processor.Helpers
+namespace Coderr.Client.Tests.Processor.Helpers
 {
     public class TestUploader : IReportUploader
     {

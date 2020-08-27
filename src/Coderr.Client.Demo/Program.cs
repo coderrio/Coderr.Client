@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Coderr.Client.NetStd.Demo
+namespace Coderr.Client.Demo
 {
     class Program
     {

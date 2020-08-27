@@ -1,9 +1,9 @@
 ﻿using Coderr.Client.ContextCollections;
-using Coderr.Client.NetStd.Tests.Config.ContextCollections.TestObjects;
+using Coderr.Client.Tests.Config.ContextCollections.TestObjects;
 using FluentAssertions;
 using Xunit;
 
-namespace Coderr.Client.NetStd.Tests.Config.ContextCollections
+namespace Coderr.Client.Tests.Config.ContextCollections
 {
     public class UserCredentialsTests
     {

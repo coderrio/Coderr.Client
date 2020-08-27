@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyModel;
 
-namespace Coderr.Client.NetStd.Tests
+namespace Coderr.Client.Tests
 {
     public class AppDomain
     {

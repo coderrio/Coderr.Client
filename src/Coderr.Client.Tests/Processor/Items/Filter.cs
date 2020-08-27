@@ -1,6 +1,6 @@
 ﻿using Coderr.Client.Processor;
 
-namespace Coderr.Client.NetStd.Tests.Processor.Items
+namespace Coderr.Client.Tests.Processor.Items
 {
     class Filter : IReportFilter
     {

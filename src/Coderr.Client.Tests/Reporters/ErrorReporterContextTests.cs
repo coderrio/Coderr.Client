@@ -3,7 +3,7 @@ using Coderr.Client.Reporters;
 using FluentAssertions;
 using Xunit;
 
-namespace Coderr.Client.NetStd.Tests.Reporters
+namespace Coderr.Client.Tests.Reporters
 {
     public class ErrorReporterContextTests
     {
@@ -42,7 +42,7 @@ namespace Coderr.Client.NetStd.Tests.Reporters
 
             Action actual = () => new ErrorReporterContext(this, null);
 
-            actual.ShouldThrow<ArgumentNullException>();
+            actual.Should().Throw<ArgumentNullException>();
         }
     }
 }

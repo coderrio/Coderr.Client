@@ -2,7 +2,7 @@
 using FluentAssertions;
 using Xunit;
 
-namespace Coderr.Client.NetStd.Tests.Config.ContextCollections
+namespace Coderr.Client.Tests.Config.ContextCollections
 {
     public class UserSuppliedInformationTests
     {

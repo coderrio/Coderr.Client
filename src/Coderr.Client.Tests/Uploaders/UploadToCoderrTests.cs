@@ -7,11 +7,11 @@ using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
-namespace Coderr.Client.NetStd.Tests.Uploaders
+namespace Coderr.Client.Tests.Uploaders
 {
     public class UploadToCoderrTests
     {
-        private TestConfig _config;
+        private readonly TestConfig _config;
         
         public UploadToCoderrTests()
         {
@@ -31,7 +31,7 @@ namespace Coderr.Client.NetStd.Tests.Uploaders
 
             Action actual = () => new UploadToCoderr(uri, "ada", "cesar", _config);
 
-            actual.ShouldThrow<ArgumentException>();
+            actual.Should().Throw<ArgumentException>();
         }
 
         [Fact]
@@ -91,7 +91,7 @@ namespace Coderr.Client.NetStd.Tests.Uploaders
             Action actual = ()=> sut.UploadFeedback(dto);
 
 
-            actual.ShouldThrow<InvalidOperationException>();
+            actual.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -109,7 +109,7 @@ namespace Coderr.Client.NetStd.Tests.Uploaders
             Action actual = () => sut.UploadFeedbackNow(dto);
 
 
-            actual.ShouldThrow<InvalidOperationException>();
+            actual.Should().Throw<InvalidOperationException>();
         }
     }
 }

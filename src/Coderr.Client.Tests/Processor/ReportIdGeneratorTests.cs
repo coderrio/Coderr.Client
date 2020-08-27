@@ -4,7 +4,7 @@ using FluentAssertions;
 using NCrunch.Framework;
 using Xunit;
 
-namespace Coderr.Client.NetStd.Tests.Processor
+namespace Coderr.Client.Tests.Processor
 {
     public class ReportIdGeneratorTests
     {

@@ -2,7 +2,7 @@
 using Coderr.Client.Contracts;
 using FluentAssertions.Execution;
 
-namespace Coderr.Client.NetStd.Tests
+namespace Coderr.Client.Tests
 {
     public static class TestExtensions
     {
