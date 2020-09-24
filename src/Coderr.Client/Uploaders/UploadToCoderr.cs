@@ -191,7 +191,7 @@ namespace Coderr.Client.Uploaders
             var msg = CreateRequest(uri, dto);
             try
             {
-                var response = await _uploadFunc(msg);
+                var response = await _uploadFunc(msg).ConfigureAwait(false);
                 if (!response.IsSuccessStatusCode)
                     ProcessResponseError(response);
             }
@@ -206,7 +206,7 @@ namespace Coderr.Client.Uploaders
         private void ProcessResponseError(HttpResponseMessage response)
         {
             var title = response.ReasonPhrase;
-            var description = response.Content.ReadAsStringAsync().Result;
+            var description = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
             switch (response.StatusCode)
             {

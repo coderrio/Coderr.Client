@@ -6,8 +6,8 @@
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Coderr.Client.xml</DocumentationFile>
 		<RootNamespace>Coderr.Client</RootNamespace>
 
-		<PackageReleaseNotes>Merged the core libraries.</PackageReleaseNotes>
-		<Version>2.0</Version>
+		<PackageReleaseNotes>Added ConfigureAwait to function better in desktop apps.</PackageReleaseNotes>
+		<Version>2.0.1</Version>
 	</PropertyGroup>
 
 	<PropertyGroup>
