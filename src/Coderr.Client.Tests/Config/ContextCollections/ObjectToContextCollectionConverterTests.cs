@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Coderr.Client.ContextCollections;
@@ -203,16 +204,22 @@ namespace Coderr.Client.Tests.Config.ContextCollections
             var sut = new ObjectToContextCollectionConverter();
 
             var inner = new Exception("hello");
-            List<Type> exceptionTypes;
-            try
+            var exceptionTypes = new List<Type>();
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
-                exceptionTypes = AppDomain.CurrentDomain.GetAssemblies()
-                    .SelectMany(assembly => assembly.GetTypes().Where(y => typeof(Exception).IsAssignableFrom(y)))
-                    .ToList();
-            }
-            catch (ReflectionTypeLoadException ex)
-            {
-                throw ex.LoaderExceptions[0];
+                try
+                {
+                    var myTypes = assembly.GetTypes().Where(y => typeof(Exception).IsAssignableFrom(y));
+                    exceptionTypes.AddRange(myTypes);
+                } //test assemblies and other dynamically loaded assemblies can mess up for us.
+                catch (ReflectionTypeLoadException)
+                {
+
+                }
+                catch (FileLoadException)
+                {
+
+                }
             }
 
             foreach (var exceptionType in exceptionTypes)
