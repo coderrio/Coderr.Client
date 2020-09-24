@@ -178,16 +178,16 @@ namespace Coderr.Client.Tests.Config.ContextCollections
             actual.Properties.ContainsKey("Child.Parent._error").Should().BeTrue();
         }
 
-        [Fact]
-        public void validation_exception_from_dataAnnotations_is_special_so_make_Sure_That_it_can_Be_serialized()
-        {
-            var ex = new ValidationException("Hello world");
+        //[Fact]
+        //public void validation_exception_from_dataAnnotations_is_special_so_make_Sure_That_it_can_Be_serialized()
+        //{
+        //    var ex = new ValidationException("Hello world");
             
-            var sut = new ObjectToContextCollectionConverter();
-            var actual = sut.Convert(ex);
+        //    var sut = new ObjectToContextCollectionConverter();
+        //    var actual = sut.Convert(ex);
 
-            actual.Properties["Message"].Should().Be("Hello world");
-        }
+        //    actual.Properties["Message"].Should().Be("Hello world");
+        //}
 
         [Fact]
         public void should_be_able_to_serialize_all_types_of_exceptions()

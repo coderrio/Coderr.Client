@@ -4,7 +4,7 @@ namespace Coderr.Client.Demo
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
 
             var url = new Uri("http://localhost:60473/");

@@ -5,6 +5,7 @@
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Coderr.Client.xml</DocumentationFile>
 		<RootNamespace>Coderr.Client</RootNamespace>
+    <PackageIcon>NugetIcon.png</PackageIcon>
 
 		<PackageReleaseNotes>Added ConfigureAwait to function better in desktop apps.</PackageReleaseNotes>
 		<Version>2.0.1</Version>
@@ -29,6 +30,7 @@
 			<Pack>true</Pack>
 			<PackagePath>README.txt</PackagePath>
 		</Content>
+    <None Include="NugetIcon.png" Pack="true" PackagePath=""/>
 	</ItemGroup>
 
 	<ItemGroup Condition="$(TargetFramework) == 'net461'">
@@ -37,7 +39,5 @@
 
 	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
-		<PackageReference Include="System.Security.Principal" Version="4.3.0" />
-		<PackageReference Include="System.IO.Compression" Version="4.3.0" />
 	</ItemGroup>
 </Project>

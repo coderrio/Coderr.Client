@@ -466,7 +466,7 @@ namespace Coderr.Client
         {
             foreach (var collection in dto.ContextCollections)
             {
-                if (collection.Properties.TryGetValue(ExceptionProcessor.AppAssemblyVersion, out var version))
+                if (collection.Properties.TryGetValue(ExceptionProcessor.AppAssemblyVersion, out _))
                     return;
             }
 
