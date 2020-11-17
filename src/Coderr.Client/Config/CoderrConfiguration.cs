@@ -177,6 +177,7 @@ namespace Coderr.Client.Config
         /// <param name="assembly">Assembly containing the application version</param>
         public void AssignAssemblyVersion(Assembly assembly)
         {
+            if (assembly == null) throw new ArgumentNullException(nameof(assembly));
             ApplicationVersion = assembly.GetName().Version?.ToString();
             if (ApplicationVersion == "0.0.0.0")
                 ApplicationVersion = null;
@@ -208,10 +209,10 @@ namespace Coderr.Client.Config
 #if NETSTANDARD2_0
                 AssignAssemblyVersion(Assembly.GetCallingAssembly());
 #else
-                AssignAssemblyVersion(Assembly.GetEntryAssembly());
+                AssignAssemblyVersion(Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly());
 #endif
             }
-                
+
 
             Uploaders.Register(new UploadToCoderr(oneTrueHost, appKey, sharedSecret));
         }

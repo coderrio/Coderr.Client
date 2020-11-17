@@ -6,8 +6,8 @@
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Coderr.Client.xml</DocumentationFile>
 		<RootNamespace>Coderr.Client</RootNamespace>
 
-		<PackageReleaseNotes>Merged the core libraries.</PackageReleaseNotes>
-		<Version>2.0.1</Version>
+		<PackageReleaseNotes>Re-added support for .NET 4.5.1.</PackageReleaseNotes>
+		<Version>2.0.2</Version>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -29,7 +29,7 @@
 			<Pack>true</Pack>
 			<PackagePath>README.txt</PackagePath>
 		</Content>
-		<None Include="NugetIcon.png" Pack="true" PackagePath="" />
+    <None Include="NugetIcon.png" Pack="true" PackagePath=""/>
 	</ItemGroup>
 
 	<ItemGroup Condition="$(TargetFramework) == 'net461'">
@@ -41,7 +41,5 @@
 
 	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
-		<PackageReference Include="System.Security.Principal" Version="4.3.0" />
-		<PackageReference Include="System.IO.Compression" Version="4.3.0" />
 	</ItemGroup>
 </Project>

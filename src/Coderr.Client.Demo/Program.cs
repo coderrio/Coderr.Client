@@ -4,14 +4,15 @@ namespace Coderr.Client.Demo
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            var url = new Uri("http://localhost:50473/");
-            Err.Configuration.Credentials(url, 
-                "ae0428b701054c5d9481024f81ad8b05", 
-                "988cedd2bf4641d1aa228766450fab97");
-            
-            
+
+            var url = new Uri("http://localhost:60473/");
+            Err.Configuration.Credentials(url,
+                "1a68bc3e123c48a3887877561b0982e2",
+                "bd73436e965c4f3bb0578f57c21fde69");
+
+
             Err.ReportLogicError("User should have been assigned.");
             try
             {
