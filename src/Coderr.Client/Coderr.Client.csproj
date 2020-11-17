@@ -29,7 +29,7 @@
 			<Pack>true</Pack>
 			<PackagePath>README.txt</PackagePath>
 		</Content>
-    <None Include="NugetIcon.png" Pack="true" PackagePath=""/>
+		<None Include="NugetIcon.png" Pack="true" PackagePath=""/>
 	</ItemGroup>
 
 	<ItemGroup Condition="$(TargetFramework) == 'net461'">
