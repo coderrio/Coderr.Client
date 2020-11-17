@@ -1,15 +1,15 @@
-Core client for codeRR
+Core client for Coderr
 ======================
 
 ![](https://1tcompany.visualstudio.com/_apis/public/build/definitions/75570083-b1ef-4e78-88e2-5db4982f756c/4/badge) [![NuGet](https://img.shields.io/nuget/dt/codeRR.Client.svg?style=flat-square)]()
 
-This client library is used to manually report exceptions to codeRR (`Err.Report(exception)`).
+This client library is used to manually report exceptions to Coderr (`Err.Report(exception)`).
 
-For more information about codeRR, check the [homepage](https://coderrapp.com).
+For more information about Coderr, visit our [homepage](https://coderr.io).
 
 # Installation
 
-1. Download and install the [codeRR server](https://github.com/coderrapp/coderr.server) or create an account at [coderrapp.com](https://coderrapp.com/live)
+1. Download and install the [Coderr Community Server](https://github.com/coderrio/coderr.server) or create a free account at [Coderr Cloud](https://app.coderr.io)
 2. Install this client library (using nuget `coderr.client`)
 3. Configure the credentials from your codeRR account in your `Program.cs`.
 
@@ -33,29 +33,16 @@ public void UpdatePost(int uid, ForumPost post)
 
 The context information will be attached as:
 
-![](https://coderrapp.com/images/features/custom-context.png)
+![](https://coderr.io/images/features/custom-context.png)
 
-[Read more...](https://coderrapp.com/features/)
+[Read more...](https://coderr.io/features/)
 
 
 # Automated handling
 
-For automated handling, use one of the integration libraries:
+For automated handling, use one of the integration libraries found in nuget.
 
-Regular .NET
-
-* [ASP.NET](https://github.com/coderrapp/coderr.client.aspnet)
-* [ASP.NET MVC5](https://github.com/coderrapp/coderr.client.aspnet.mvc5)
-* [ASP.NET WebApi2](https://github.com/coderrapp/coderr.client.aspnet.webapi2)
-* [log4net](https://github.com/coderrapp/coderr.client.log4net)
-* [WinForms](https://github.com/coderrapp/coderr.client.winforms)
-* [WPF](https://github.com/coderrapp/coderr.client.wpf)
-
-.NET Standard
-
-* [NetStd](https://github.com/coderrapp/coderr.Client.NetStandard)
-* [ASP.NET Core MVC](https://www.nuget.org/packages?q=coderr.client.aspnetcore.mvc)
-
+https://www.nuget.org/packages?q=coderr.client
 
 #  Features in this library
 
@@ -70,11 +57,8 @@ Regular .NET
 * Allow user to leave feedback
 * Automated information collection from windows, the process and the current thread.
 
-# Requirements
-
-You need to either install [codeRR Community Server](https://github.com/coderrapp/coderr.server) or use [codeRR Live](https://coderrapp.com/live).
 
 # More information
 
-* [Documentation](https://coderrapp.com/documentation/client/libraries/)
-* [Forum](http://discuss.coderrapp.com)
+* [Documentation](https://coderr.io/documentation/client/libraries/)
+* [Forum](http://discuss.coderr.io)

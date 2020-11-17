@@ -1,23 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net461;net451</TargetFrameworks>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Coderr.Client.xml</DocumentationFile>
 		<RootNamespace>Coderr.Client</RootNamespace>
 
 		<PackageReleaseNotes>Merged the core libraries.</PackageReleaseNotes>
-		<Version>2.0</Version>
+		<Version>2.0.1</Version>
 	</PropertyGroup>
 
 	<PropertyGroup>
 		<PackageId>Coderr.Client</PackageId>
-		<Authors>1TCompany AB</Authors>
+		<Authors>Coderr AB</Authors>
 		<Description>Automated exception handling for .NET based applications</Description>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-		<Copyright>Copyright 2020 © 1TCompany AB. All rights reserved.</Copyright>
+		<Copyright>Copyright 2020 © Coderr AB. All rights reserved.</Copyright>
 		<PackageTags>logger exceptions analysis .net-core NetStandard</PackageTags>
-		<PackageIconUrl>https://coderr.io/images/nuget_icon.png</PackageIconUrl>
+		<PackageIcon>NugetIcon.png</PackageIcon>
 		<RepositoryUrl>https://github.com/coderrio/coderr.client</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -29,9 +29,13 @@
 			<Pack>true</Pack>
 			<PackagePath>README.txt</PackagePath>
 		</Content>
+		<None Include="NugetIcon.png" Pack="true" PackagePath="" />
 	</ItemGroup>
 
 	<ItemGroup Condition="$(TargetFramework) == 'net461'">
+		<PackageReference Include="Microsoft.Net.Http" Version="2.2.29" />
+	</ItemGroup>
+	<ItemGroup Condition="$(TargetFramework) == 'net451'">
 		<PackageReference Include="Microsoft.Net.Http" Version="2.2.29" />
 	</ItemGroup>
 

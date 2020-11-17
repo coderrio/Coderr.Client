@@ -20,6 +20,9 @@ namespace Coderr.Client.Contracts
             Message = message;
         }
 
+        /// <summary>
+        /// Serialization constructor.
+        /// </summary>
         protected LogEntryDto()
         {
 
