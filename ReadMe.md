@@ -36,16 +36,9 @@ The context information will be attached as:
 
 # Automated handling
 
-For automated handling, use one of the integration libraries:
+For automated handling, use one of the integration libraries found in nuget.
 
-* [ASP.NET](https://github.com/coderrio/coderr.client.aspnet)
-* [ASP.NET MVC5](https://github.com/coderrio/coderr.client.aspnet.mvc5)
-* [ASP.NET WebApi2](https://github.com/coderrio/coderr.client.aspnet.webapi2)
-* [ASP.NET Core MVC](https://www.nuget.org/packages?q=coderr.client.aspnetcore.mvc)
-* [log4net](https://github.com/coderrio/coderr.client.log4net)
-* [WinForms](https://github.com/coderrio/coderr.client.winforms)
-* [WPF](https://github.com/coderrio/coderr.client.wpf)
-
+https://www.nuget.org/packages?q=coderr.client
 
 #  Features in this library
 
