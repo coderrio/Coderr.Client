@@ -5,10 +5,9 @@
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Coderr.Client.xml</DocumentationFile>
 		<RootNamespace>Coderr.Client</RootNamespace>
-    <PackageIcon>NugetIcon.png</PackageIcon>
 
-		<PackageReleaseNotes>Added ConfigureAwait to function better in desktop apps.</PackageReleaseNotes>
-		<Version>2.0.1</Version>
+		<PackageReleaseNotes>Corrected the package icon.</PackageReleaseNotes>
+		<Version>2.0.2</Version>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -18,8 +17,8 @@
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 		<Copyright>Copyright 2020 © 1TCompany AB. All rights reserved.</Copyright>
 		<PackageTags>logger exceptions analysis .net-core NetStandard</PackageTags>
-		<PackageIconUrl>https://coderr.io/images/nuget_icon.png</PackageIconUrl>
 		<RepositoryUrl>https://github.com/coderrio/coderr.client</RepositoryUrl>
+    <PackageIcon>NugetIcon.png</PackageIcon>
 		<RepositoryType>git</RepositoryType>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageProjectUrl>https://coderr.io</PackageProjectUrl>
@@ -30,10 +29,10 @@
 			<Pack>true</Pack>
 			<PackagePath>README.txt</PackagePath>
 		</Content>
-    <None Include="NugetIcon.png" Pack="true" PackagePath=""/>
+    <None Include="NugetIcon.png" Pack="true" PackagePath="/"/>
 	</ItemGroup>
 
-	<ItemGroup Condition="$(TargetFramework) == 'net461'">
+	<ItemGroup Condition="'$(TargetFramework)' == 'net461'">
 		<PackageReference Include="Microsoft.Net.Http" Version="2.2.29" />
 	</ItemGroup>
 
