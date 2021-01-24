@@ -178,8 +178,8 @@ namespace Coderr.Client
             {
                 Configuration.Uploaders.Upload(new FeedbackDTO
                 {
-                    Description = emailAddress,
-                    EmailAddress = stepsToReproduce,
+                    Description = stepsToReproduce,
+                    EmailAddress = emailAddress,
                     ReportId = errorId
                 });
             }

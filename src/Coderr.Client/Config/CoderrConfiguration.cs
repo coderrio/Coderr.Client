@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using Coderr.Client.ContextCollections;
 using Coderr.Client.Processor;
@@ -36,7 +37,8 @@ namespace Coderr.Client.Config
         {
             Uploaders = new UploadDispatcher(this);
             _userInteraction.AskUserForDetails = true;
-            ThrowExceptions = true;
+            ThrowExceptions = Debugger.IsAttached;
+            QueueReports = !Debugger.IsAttached;
             MaxNumberOfPropertiesPerCollection = 100;
         }
 
@@ -49,7 +51,8 @@ namespace Coderr.Client.Config
         {
             Uploaders = uploadDispatcher ?? throw new ArgumentNullException(nameof(uploadDispatcher));
             _userInteraction.AskUserForDetails = true;
-            ThrowExceptions = true;
+            ThrowExceptions = Debugger.IsAttached;
+            QueueReports = !Debugger.IsAttached;
             MaxNumberOfPropertiesPerCollection = 100;
         }
 

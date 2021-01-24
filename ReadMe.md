@@ -31,7 +31,7 @@ The context information will be attached as:
 
 ![](https://coderrio/images/features/custom-context.png)
 
-[Read more...](https://coderrio/features/)
+[Read more...](https://coderr.io/documentation/getting-started/)
 
 
 # Automated handling
