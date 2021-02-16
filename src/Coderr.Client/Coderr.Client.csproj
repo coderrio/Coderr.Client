@@ -6,8 +6,8 @@
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Coderr.Client.xml</DocumentationFile>
 		<RootNamespace>Coderr.Client</RootNamespace>
 
-		<PackageReleaseNotes>Added missing reference for .NET 4.7.2</PackageReleaseNotes>
-		<Version>2.0.4</Version>
+		<PackageReleaseNotes>Resharper cleanup removed private setters.</PackageReleaseNotes>
+		<Version>2.0.5</Version>
 	</PropertyGroup>
 
 	<PropertyGroup>

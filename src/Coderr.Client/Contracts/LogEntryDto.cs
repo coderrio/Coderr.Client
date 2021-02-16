@@ -25,7 +25,7 @@ namespace Coderr.Client.Contracts
         /// </summary>
         /// <remarks>
         ///     <para>
-        ///         Seralization constructor
+        ///         Serialization constructor
         ///     </para>
         /// </remarks>
         protected LogEntryDto()

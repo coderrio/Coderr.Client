@@ -73,16 +73,16 @@ namespace Coderr.Client.Uploaders
         /// <summary>
         ///     Initializes a new instance of the <see cref="UploadToCoderr" /> class.
         /// </summary>
-        /// <param name="oneTrueHost">
-        ///     Uri to the root of the codeRR web. Example.
-        ///     <code>http://yourWebServer/codeRR/</code>
+        /// <param name="coderrHost">
+        ///     Uri to the root of the Coderr web site. Example.
+        ///     <code>http://yourWebServer/coderr/</code>
         /// </param>
         /// <param name="apiKey">The API key.</param>
         /// <param name="sharedSecret">The shared secret.</param>
         /// <param name="config">parameters for tests</param>
         /// <exception cref="System.ArgumentNullException">apiKey</exception>
-        internal UploadToCoderr(Uri oneTrueHost, string apiKey, string sharedSecret, TestConfig config)
-            : this(oneTrueHost, apiKey, sharedSecret)
+        internal UploadToCoderr(Uri coderrHost, string apiKey, string sharedSecret, TestConfig config)
+            : this(coderrHost, apiKey, sharedSecret)
         {
             _queueReportsAccessor = config.QueueReportsAccessor;
             _throwExceptionsAccessor = config.ThrowExceptionsAccessor;
@@ -143,13 +143,11 @@ namespace Coderr.Client.Uploaders
 
 
             var ms = new MemoryStream();
-
             using (var gzip = new GZipStream(ms, CompressionLevel.Optimal, true))
             {
                 gzip.Write(jsonBytes, 0, jsonBytes.Length);
                 gzip.Flush();
             }
-
             var requestBody = ms.ToArray();
 
             var content = new ByteArrayContent(requestBody);
@@ -171,7 +169,7 @@ namespace Coderr.Client.Uploaders
                 uri = uri + "?v=1&throw=" + (Err.Configuration.ThrowExceptions ? "1" : "0");
             }
 
-            return new HttpRequestMessage(HttpMethod.Post, uri) {Content = content};
+            return new HttpRequestMessage(HttpMethod.Post, uri) { Content = content };
         }
 
         internal void UploadFeedbackNow(FeedbackDTO dto)

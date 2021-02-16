@@ -43,13 +43,13 @@ namespace Coderr.Client.Contracts
         /// <summary>
         ///     To get exact date
         /// </summary>
-        public DateTime CreatedAtUtc { get; }
+        public DateTime CreatedAtUtc { get; private set; }
 
 
         /// <summary>
         ///     Exception which was caught.
         /// </summary>
-        public ExceptionDTO Exception { get; }
+        public ExceptionDTO Exception { get; private set;  }
 
         /// <summary>
         ///     For backwards compatibility
@@ -76,7 +76,7 @@ namespace Coderr.Client.Contracts
         /// <example>
         ///     1.0
         /// </example>
-        public string ReportVersion { get; }
+        public string ReportVersion { get; private set; }
 
         /// <summary>
         /// Application environment (like "Test" and "Production")
