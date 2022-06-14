@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
 using Coderr.Client.Contracts;
@@ -36,7 +35,12 @@ namespace Coderr.Client.ContextCollections.Providers
             if (string.IsNullOrEmpty(identity.Name))
                 Properties.Add("UserName", "[Anonynmous]");
             else
-                SplitAccountName(identity.Name);
+            {
+                var pair = SplitAccountName(identity.Name);
+                DomainName = pair.Item1;
+                UserName = pair.Item2;
+            }
+                
         }
 
         /// <summary>
@@ -56,7 +60,9 @@ namespace Coderr.Client.ContextCollections.Providers
         /// <param name="userName">User name without domain (i.e. should not include "domainName\")</param>
         public UserCredentials(string userName) : base("UserCredentials")
         {
-            SplitAccountName(userName);
+            var pair = SplitAccountName(userName);
+            DomainName = pair.Item1;
+            UserName = pair.Item2;
         }
 
         /// <summary>

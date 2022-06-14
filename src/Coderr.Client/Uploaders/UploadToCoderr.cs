@@ -190,11 +190,13 @@ namespace Coderr.Client.Uploaders
             try
             {
                 var response = await _uploadFunc(msg).ConfigureAwait(false);
+                Console.WriteLine("Successs" + response.StatusCode + " " + response.ReasonPhrase);
                 if (!response.IsSuccessStatusCode)
                     ProcessResponseError(response);
             }
             catch (Exception ex)
             {
+                Console.WriteLine("FAILED! " + ex);
                 OnUploadFailed(this, new UploadReportFailedEventArgs(ex, dto));
                 if (_throwExceptionsAccessor() || _queueReportsAccessor())
                     throw;

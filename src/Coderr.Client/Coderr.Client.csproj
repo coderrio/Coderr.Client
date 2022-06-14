@@ -6,8 +6,8 @@
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Coderr.Client.xml</DocumentationFile>
 		<RootNamespace>Coderr.Client</RootNamespace>
 
-		<PackageReleaseNotes>Resharper cleanup removed private setters.</PackageReleaseNotes>
-		<Version>2.0.5</Version>
+		<PackageReleaseNotes>Bugfix for UserToken.</PackageReleaseNotes>
+		<Version>2.0.6</Version>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -15,14 +15,15 @@
 		<Authors>Coderr AB</Authors>
 		<Description>Automated exception handling for .NET based applications</Description>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-		<Copyright>Copyright 2020 © Coderr AB. All rights reserved.</Copyright>
+		<Copyright>Copyright 2022 © Coderr AB. All rights reserved.</Copyright>
 		<PackageTags>logger exceptions analysis .net-core NetStandard</PackageTags>
 		<RepositoryUrl>https://github.com/coderrio/coderr.client</RepositoryUrl>
-    <PackageIcon>NugetIcon.png</PackageIcon>
-    <PackageIconUrl>https://coderr.io/images/nuget_icon.png</PackageIconUrl>
+		<PackageIcon>NugetIcon.png</PackageIcon>
+		<PackageIconUrl>https://coderr.io/images/nuget_icon.png</PackageIconUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageProjectUrl>https://coderr.io</PackageProjectUrl>
+		<UserSecretsId>36db3a4e-b04d-4f4f-9fd8-0dbbba237f6f</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -30,7 +31,7 @@
 			<Pack>true</Pack>
 			<PackagePath>README.txt</PackagePath>
 		</Content>
-    <None Include="NugetIcon.png" Pack="true" PackagePath="/" />
+		<None Include="NugetIcon.png" Pack="true" PackagePath="/" />
 	</ItemGroup>
 
 	<ItemGroup>
